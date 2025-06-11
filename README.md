@@ -1,14 +1,14 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/cloud-identity-authorizations-libraries)](https://api.reuse.software/info/github.com/SAP/cloud-identity-authorizations-libraries)
 
-# cloud-identity-authorizations-libraries
+# AMS Client Libraries documentation
 
 ## About this project
+This repository contains the documentation for the client libraries of the Authorization Management Service (**AMS**) which is part of [SAP Cloud Identity Services](https://help.sap.com/docs/cloud-identity-services?locale=en-US) (**SCI**). The libraries provide APIs for policy-based authorization checks in applications of different programming languages.
 
-AMS Libraries documentation
+## Documentation
+The documentation for the client libraries is available in the [docs](/docs) directory. It includes:
 
-## Requirements and Setup
-
-*Insert a short description what is required to get your project running...*
+- [**Getting Started**](/docs/GettingStarted.md): A guide to help you get started with the correct client libraries for your application setup.
 
 ## Support, Feedback, Contributing
 
