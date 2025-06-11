@@ -47,7 +47,7 @@ The recommended modules and versions have changed over time (see [History](#hist
 |-----------------------------|:-----------:|:----------:|:---------------:|:-----------:|
 | Jakarta EE                  |     ✔️      |     -      |        -        |      -
 | Spring Boot                 |     -       |     ✔️     |        -        |      -
-| CAP (Spring Boot)           |     ✔️\*    |     -\*    |       ✔️        |     (✔️)\*
+| CAP (Spring Boot)           |     ✔️\*    |     -\*    |       ✔️        |     (✔️)\*\*
 
 \* Yes, `jakarta-ams` is required but `spring-ams` should not be installed even when the CAP application uses Spring.\
 \*\* The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide the following dev-time features as [cds build plugin](https://cap.cloud.sap/docs/guides/deployment/custom-builds#custom-build-plugins):
