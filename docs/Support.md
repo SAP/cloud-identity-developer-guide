@@ -1,14 +1,19 @@
 # Support
 
-### Provided Services
+## Provided Services
 The support channels mentioned below are primarily intended for bugs of the provided libraries and the service itself.
 But you can also use the support channels to raise feature requests and give feedback.
 
-::: warning Consulting
+::: warning Out of scope
 Please understand that, due to the high volume of requests, individual consulting can **not** be offered via the support channels unless it is part of a customer's service plan.
+
+For the same reason, we cannot handle tickets whose essence comes down to
+
+"Here is my code, why does it not work?".
 :::
 
-### Support Channels
+
+## Support Channels
 
 ::: danger Important
 Before opening support tickets, please try to solve the problem by following the steps in the [Troubleshooting](./Troubleshooting.md) section.
