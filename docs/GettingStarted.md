@@ -21,13 +21,18 @@ The AMS client libraries consist of different modules for the following programm
 The next section lists the required module dependencies for different application setups, depending on the programming language and framework you are using.
 
 ## Dependency Setup
+
+::: tip
+In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli) to add the correct dependencies automatically.
+:::
+
 The following tables give an overview of the required AMS module dependencies for different application setups.
 
-> :information_source: In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli) to add the correct dependencies automatically.
+::: warning
+The recommended modules and versions have changed over time (see [Historic Setups](#historic-setups))
 
-The recommended modules and versions have changed over time (see [Historic Setups](#historic-setups)).\
-**Please begin new projects with the currently recommended modules**.\
-If you have existing projects, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules eventually in discussion with us.
+**Please begin new projects with the currently recommended modules**.
+:::
 
 **Legend**: ✔️ runtime dependency (✔️) development dependency
 
@@ -62,3 +67,5 @@ If you have existing projects, you can usually continue using the modules you al
 | Go           |                    ✔️                        |
 
 ## Historical Setups
+
+If you operate productive applications with a dependency setup different from the recommended one, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules eventually in discussion with us.
