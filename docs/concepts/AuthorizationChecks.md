@@ -42,7 +42,7 @@ if(policyDecisionPoint.allow(attributes)) {
 
 ## Conditional Policies
 
-Grants of authorization policies can be restricted by conditions to filter the resources on which the action is allowed. For example, a policy can grant the right to read products only if the product is in stock:
+Grants of authorization policies can be restricted by conditions to filter the entities of a resource on which the action is allowed. For example, a policy can grant the right to read products only if the product is in stock:
 
 ```SQL
 POLICY ReadProducts {
@@ -50,9 +50,9 @@ POLICY ReadProducts {
 }
 ```
 
-### Conditional checks for single resource
+### Conditional checks for single entity
 
-When checking the authorization for a single resource, the condition is evaluated against the resource attributes of that resource. For example, if the product has `stock = 10`, the check will return `true`:
+When checking the authorization for a single entity, the condition is evaluated against the attributes of that entity. For example, if the product has `stock = 10`, the check will return `true`:
 
 ::: code-group
 ```js [Node.js]
@@ -81,15 +81,15 @@ if(policyDecisionPoint.allow(attributes)) {
 [Node.js Details](/nodejs//sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
 :::
 
-### Conditional checks for multiple resources
+### Conditional checks for multiple entities
 
-When checking the authorization for multiple resources, the application has two options:
+When checking the authorization for multiple entities, the application has two options:
 
-1. It can fetch all resources from the database, loop over them and check access for each resource individually.
-2. It can filter the resources in the database query based on the condition.
+1. It can fetch all entities from the database, loop over them and check access for each entity individually.
+2. It can filter the entities in the database query based on the condition.
 
 #### Looping
-The first option is simpler to implement and may be sufficient for resources with a small domain, such as a list of landscapes:
+The first option is simpler to implement and may be sufficient for resources with few entities, such as a list of landscapes:
 
 ::: code-group
 ```js [Node.js]
@@ -117,10 +117,10 @@ POLICY AccessEUCanaryLandscapes {
 ```
 :::
 
-However, this strategy can lead to performance issues for larger resource sets, such as REST entities, for which thousands of values would need to be checked individually.
+However, this strategy can lead to performance issues for larger entity sets, for which thousands of values would need to be checked individually.
 
 #### Filtering
-The second option is to filter the resources already in the database query. This is more efficient, as it reduces the number of resources fetched from the database to only those that the user is allowed to access. However, this strategy is non-trivial to implement as it requires traversing the condition tree and translating it into a query language condition.
+The second option is to filter the entities already in the database query. This is more efficient, as it reduces the number of entities in application memory to those that the user is allowed to access. However, this strategy is non-trivial to implement as it requires traversing the condition tree and translating it into a query language condition.
 
 In CAP projects, it is implemented out-of-the-box by the libraries to dynamically translate filter conditions imposed by authorization policies to *CQL* conditions. For non-CAP projects, we recommend to contact us for assistance with the existing API or discuss a feature request for a standard transformer to the required query format.
 
@@ -164,4 +164,4 @@ POLICY OrderAccessory {
 The advantage of declarative instead of explicit authorization checks, is that they can typically be defined centrally. This gives a central overview of the required privileges per service endpoint and allows changing required privileges without touching the implementation.
 
 ### Disadvantages
-However, this approach typically does not work well for *action*/*resource* pairs for which conditional access may be granted. The best we can do in this case, is to do a pre-check for the action and resource, and then let the application code handle the condition check. This is because the condition check requires access to the resource attributes.
+However, this approach typically does not work well for *action*/*resource* pairs for which conditional access may be granted. The best we can do in this case, is to do a pre-check for the action and resource, and then let the application code handle the condition check. This is because the condition check requires access to the entity attributes.
