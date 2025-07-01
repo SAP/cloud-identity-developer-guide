@@ -21,9 +21,10 @@ Before opening support tickets, please try to solve the problem by following the
 Make sure to provide the [required information](#required-information) when creating a support ticket.
 :::
 
-As registered SAP customers, report your issue in creating a ticket on the [SAP Support Portal](https://support.sap.com/en/index.html) for this component:
+As registered SAP customers, report your issue by creating a ticket on the [SAP Support Portal](https://support.sap.com/en/index.html) for this component:
 
-**BC-CP-CF-SEC-LIB**
+**BC-CP-CF-SEC-LIB** (Problem in AMS client libraries)
+**BC-IAM-CAS** (Problem in AMS service)
 
 See also [Getting Support](https://help.sap.com/docs/btp/sap-business-technology-platform/btp-getting-support) in the SAP BTP documentation.
 
