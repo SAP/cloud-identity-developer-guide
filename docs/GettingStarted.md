@@ -4,18 +4,6 @@ This document provides the basic information required to use AMS for authorizati
 
 
 
-## Table of Contents
-
-- [Supported Languages](#supported-languages)
-- [Dependency Setup](#dependency-setup)
-    - [Java](#java)
-    - [Node.js](#nodejs)
-    - [Go](#go)
-    - [Historic Setups](#historic-setups)
-- [Deploying DCL Policies](#deploying-dcl-policies)
-
-
-
 ## Supported Languages and Frameworks
 The AMS client libraries consist of different modules for the following programming languages and frameworks:
 
@@ -72,4 +60,4 @@ If you have existing projects, you can usually continue using the modules you al
 |--------------|:-------------------------------------------:|
 | Go           |                    ✔️                        |
 
-### Historic Setups
+## Historical Setups
