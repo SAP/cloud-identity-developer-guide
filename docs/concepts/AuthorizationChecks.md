@@ -46,7 +46,7 @@ Grants of authorization policies can be restricted by conditions to filter the r
 
 ```SQL
 POLICY ReadProducts {
-    GRANT read ON products IF stock > 0;
+    GRANT read ON products WHERE stock > 0;
 }
 ```
 
