@@ -36,7 +36,7 @@ if(policyDecisionPoint.allow(attributes)) {
 }
 ```
 
-[Node.js Details](/nodejs//sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
+[Node.js Details](/nodejs/sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
 
 :::
 
@@ -78,7 +78,7 @@ if(policyDecisionPoint.allow(attributes)) {
 }
 ```
 
-[Node.js Details](/nodejs//sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
+[Node.js Details](/nodejs/sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
 :::
 
 ### Conditional checks for multiple entities
@@ -156,7 +156,7 @@ POLICY OrderAccessory {
 }
 ```
 
-[Node.js Details](/nodejs//sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
+[Node.js Details](/nodejs/sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
 
 :::
 
