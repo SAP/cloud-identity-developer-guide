@@ -1,43 +1,44 @@
 # Getting Started
 
-This document helps you get started with the correct client library setup in your application. It provides an overview of the available libraries, their features, and how to integrate them into your projects.
+This document provides the basic information required to use AMS for authorization checks in your application. It provides an overview of the available library modules, their features, and how to integrate them into your projects.
 
 
 
 ## Table of Contents
 
 - [Supported Languages](#supported-languages)
-- [Project Dependencies](#project-dependencies)
+- [Dependency Setup](#dependency-setup)
     - [Java](#java)
     - [Node.js](#nodejs)
     - [Go](#go)
-    - [Historic Project Setups](#historic-project-setups)
+    - [Historic Setups](#historic-setups)
 - [Deploying DCL Policies](#deploying-dcl-policies)
 
 
 
-## Supported Languages
-The AMS client libraries are available for the following programming languages and frameworks:
+## Supported Languages and Frameworks
+The AMS client libraries consist of different modules for the following programming languages and frameworks:
 
-- **Java**:
-    - [jakarta-ams](/docs/libraries/java/jakarta-ams/jakarta-ams.md)
-    - [spring-ams](/docs/libraries/java/spring-ams/spring-ams.md)
-    - [cap-ams-support](/docs/libraries/java/cap-ams-support/cap-ams-support.md)
-    - ~~`cap-support`~~ (superseded by `cap-ams-support`)
-- **JavaScript**:
-    - [@sap/ams](/docs/libraries/nodejs/ams/ams.md)
-    - [@sap/ams-dev](/docs/libraries/nodejs/ams-dev/ams-dev.md)
+- **Java** (Maven):
+    - [jakarta-ams](/docs/java/jakarta-ams/jakarta-ams.md)
+    - [spring-ams](/docs/java/spring-ams/spring-ams.md)
+    - [cap-ams-support](/docs/java/cap-ams-support/cap-ams-support.md) (replaces [~~`cap-support`~~](/docs/java/cap-support/cap-support.md))
+- **JavaScript** (Node.js):
+    - [@sap/ams](/docs/nodejs/sap_ams/sap_ams.md)
+    - [@sap/ams-dev](/docs/nodejs/sap_ams-dev/sap_ams-dev.md)
 - **Go**:
-    - [cloud-identity-authorizations-golang-library](/docs/libraries/go/go-ams/go-ams.md)
+    - [cloud-identity-authorizations-golang-library](/docs/go/go-ams/go-ams.md)
 
+The next section lists the required module dependencies for different application setups, depending on the programming language and framework you are using.
 
+## Dependency Setup
+The following tables give an overview of the required AMS module dependencies for different application setups.
 
-## Project Dependencies
-The following tables give an overview of the required AMS module dependencies in your project setup.
+> :information_source: In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli) to add the correct dependencies automatically.
 
-In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli) to add the correct dependencies automatically.
-
-The recommended modules and versions have changed over time (see [History](#history)), so please begin new projects with the currently recommended modules. If you have existing projects, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules eventually in discussion with us.
+The recommended modules and versions have changed over time (see [Historic Setups](#historic-setups)).\
+**Please begin new projects with the currently recommended modules**.\
+If you have existing projects, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules eventually in discussion with us.
 
 **Legend**: ✔️ runtime dependency (✔️) development dependency
 
@@ -59,11 +60,11 @@ The recommended modules and versions have changed over time (see [History](#hist
 
 | Project Type        | @sap/ams | @sap/ams-dev   | Java JDK |
 |---------------------|:--------:|:--------------:|:----------:|
-| Plain Node.js       |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)** 17+
-| express (Node.js)   |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)** 17+
-| CAP (Node.js)       |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)** 17+
+| Plain Node.js       |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)* 17+
+| express (Node.js)   |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)* 17+
+| CAP (Node.js)       |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)* 17+
 
-\* / \*\*  required to compile DCL files before running local tests. We are currently finishing a compiler in Javascript that will make these dependencies obsolete.
+\* only required to compile DCL files before running local tests. We are currently finishing a compiler in Javascript that will make these dependencies obsolete.
 
 ### Go
 
@@ -71,9 +72,4 @@ The recommended modules and versions have changed over time (see [History](#hist
 |--------------|:-------------------------------------------:|
 | Go           |                    ✔️                        |
 
-### Historic Project Setups
-
-
-
-## Deploying DCL Policies
-Learn how to deploy DCL policies together with your application in the dedicated [DCL Policy Deployment Guide](/docs/DeployDCL.md).
+### Historic Setups
