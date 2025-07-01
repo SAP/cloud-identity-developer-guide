@@ -5,12 +5,7 @@ export default defineConfig({
     description: 'Documentation for SAP Authorization Management Service (AMS) client libraries',
     themeConfig: {
         nav: [
-            { text: 'Getting Started', link: '/GettingStarted' },
-            { text: 'Authorization Checks', link: '/AuthorizationChecks' },
-            { text: 'Testing', link: '/Testing' },
-            { text: 'Technical Communication', link: '/TechincalCommunication' },
-            { text: 'Deploying DCL Policies', link: '/DeployDCL' },
-            { text: 'ValueHelp', link: '/ValueHelp' },
+            { text: 'Troubleshooting', link: '/Troubleshooting' },
             { text: 'Support', link: '/Support' }
         ],
         sidebar: [
@@ -20,10 +15,18 @@ export default defineConfig({
                     { text: 'Getting Started', link: '/GettingStarted' },
                     { text: 'Authorization Checks', link: '/AuthorizationChecks' },
                     { text: 'Testing', link: '/Testing' },
-                    { text: 'Technical Communication', link: '/TechincalCommunication' },
+                    { text: 'Technical Communication', link: '/TechnicalCommunication' },
                     { text: 'Deploying DCL Policies', link: '/DeployDCL' },
                     { text: 'ValueHelp', link: '/ValueHelp' },
-                    { text: 'Support', link: '/Support' }
+                    { text: 'Logging', link: '/Logging' },
+                ]
+            },
+            {
+                text: 'CAP Integration',
+                items: [
+                    { text: 'Role Policies', link: '/CAP/RolePolicies' },
+                    { text: 'Instance-based Authorization', link: '/CAP/InstanceBasedAuthorization' },
+                    { text: 'DCL generation', link: '/CAP/DCLGeneration' }
                 ]
             },
             {
