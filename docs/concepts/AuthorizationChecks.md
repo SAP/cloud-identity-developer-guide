@@ -50,7 +50,7 @@ POLICY ReadProducts {
 }
 ```
 
-### Authorization checks for single resource
+### Conditional checks for single resource
 
 When checking the authorization for a single resource, the condition is evaluated against the resource attributes of that resource. For example, if the product has `stock = 10`, the check will return `true`:
 
@@ -81,7 +81,7 @@ if(policyDecisionPoint.allow(attributes)) {
 [Node.js Details](/nodejs//sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
 :::
 
-### Authorization checks for multiple resources
+### Conditional checks for multiple resources
 
 When checking the authorization for multiple resources, the application has two options:
 
