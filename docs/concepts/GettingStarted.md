@@ -9,14 +9,14 @@ This document provides the basic information required to use AMS for authorizati
 The AMS client libraries consist of different modules for the following programming languages and frameworks:
 
 - **Java** (Maven):
-    - [jakarta-ams](./java/jakarta-ams/jakarta-ams.md)
-    - [spring-ams](./java/spring-ams/spring-ams.md)
-    - [cap-ams-support](./java/cap-ams-support/cap-ams-support.md) (replaces [~~`cap-support`~~](./java/cap-support/cap-support.md))
+    - [jakarta-ams](/java/jakarta-ams/jakarta-ams.md)
+    - [spring-ams](/java/spring-ams/spring-ams.md)
+    - [cap-ams-support](/java/cap-ams-support/cap-ams-support.md) (replaces [~~`cap-support`~~](/java/cap-support/cap-support.md))
 - **JavaScript** (Node.js):
-    - [@sap/ams](./nodejs/sap_ams/sap_ams.md)
-    - [@sap/ams-dev](./nodejs/sap_ams-dev/sap_ams-dev.md)
+    - [@sap/ams](/nodejs/sap_ams/sap_ams.md)
+    - [@sap/ams-dev](/nodejs/sap_ams-dev/sap_ams-dev.md)
 - **Go**:
-    - [cloud-identity-authorizations-golang-library](./go/go-ams.md)
+    - [cloud-identity-authorizations-golang-library](/go/go-ams.md)
 
 The next section lists the required module dependencies for different application setups, depending on the programming language and framework you are using.
 

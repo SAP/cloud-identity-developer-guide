@@ -12,13 +12,13 @@ export default defineConfig({
             {
                 text: 'Concepts',
                 items: [
-                    { text: 'Getting Started', link: '/GettingStarted' },
-                    { text: 'Authorization Checks', link: '/AuthorizationChecks' },
-                    { text: 'Testing', link: '/Testing' },
-                    { text: 'Technical Communication', link: '/TechnicalCommunication' },
-                    { text: 'Deploying DCL Policies', link: '/DeployDCL' },
-                    { text: 'ValueHelp', link: '/ValueHelp' },
-                    { text: 'Logging', link: '/Logging' },
+                    { text: 'Getting Started', link: '/Concepts/GettingStarted' },
+                    { text: 'Authorization Checks', link: '/Concepts/AuthorizationChecks' },
+                    { text: 'Testing', link: '/Concepts/Testing' },
+                    { text: 'Technical Communication', link: '/Concepts/TechnicalCommunication' },
+                    { text: 'Deploying DCL Policies', link: '/Concepts/DeployDCL' },
+                    { text: 'ValueHelp', link: '/Concepts/ValueHelp' },
+                    { text: 'Logging', link: '/Concepts/Logging' },
                 ]
             },
             {
