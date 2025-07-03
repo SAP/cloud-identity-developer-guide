@@ -66,6 +66,9 @@ The recommended modules and versions have changed over time (see [Historic Setup
 |--------------|:-------------------------------------------:|
 | Go           |                    ✔️                        |
 
+## Samples
+For practical examples of how to set up and use the AMS client libraries, refer to the [Samples](/Samples) section. It contains sample applications demonstrating the necessary setup for authorization with AMS in various programming languages and frameworks.
+
 ## Historical Setups
 
 If you operate productive applications with a dependency setup different from the recommended one, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules eventually in discussion with us.

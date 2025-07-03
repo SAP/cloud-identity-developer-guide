@@ -1,0 +1,21 @@
+# Samples
+
+The following samples demonstrate the necessary application setup for authorization with the SAP Authorization Management Service (AMS). They are designed to help you understand how to implement authorization in your applications using the AMS client libraries.
+
+The focus of the samples is on the authorization via AMS but as the authentication is a necessary requirement, it is typically demonstrated as well.
+
+## Java
+The [Java samples repository](https://github.com/SAP-samples/ams-samples-java) contains the following samples for implementing AMS in Java applications:
+
+- `CAP Java`: [ams-cap-sample](https://github.com/SAP-samples/ams-samples-java/tree/main/ams-cap-sample)
+- `Spring Boot`: [spring-security-ams](https://github.com/SAP-samples/ams-samples-java/tree/main/spring-security-ams)
+- `Jakarta EE`: [jakarta-ams-sample](https://github.com/SAP-samples/ams-samples-java/tree/main/jakarta-ams-sample)
+
+## Node.js
+The [Node.js samples repository](https://github.com/SAP-samples/ams-samples-node) contains the following samnples for implementing AMS in Node.js applications:
+
+- `CAP Node.js`: [ams-cap-nodejs-bookshop](https://github.com/SAP-samples/ams-samples-node/tree/main/ams-cap-nodejs-bookshop)
+- `Express.js`: [ams-express-shopping](https://github.com/SAP-samples/ams-samples-node/tree/main/ams-express-shopping)
+
+## Go
+For Go, we currently do not have a sample available. However, you can refer to the Go client library [documentation](/go/go-ams) for more information on how to use the library.
