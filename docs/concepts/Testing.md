@@ -117,10 +117,10 @@ cds:
 
 ### Loading local DCL bundle
 
-To test with local DCL files, the AMS client library needs to use the local DCL files instead of the bundle from the AMS cloud instance.
+To test without an AMS cloud instance, the AMS client library needs to use the local DCL files instead of the bundle from the AMS cloud instance.
 
 #### Compiling DCL to DCN
-Before running the tests, the local DCL files need to be compiled to DCN files as input for the AMS client library:
+Before running the tests, the local DCL files need to be compiled to DCN files as input for the AMS client library.
 
 ::: tip
 In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cds start/watch/test`. In other projects, you need to compile the DCL files manually.
@@ -144,7 +144,7 @@ https://github.wdf.sap.corp/CPSecurity/cloud-authorization-client-library-java/b
 :::
 
 #### Loading DCN
-To load the compiled DCN files, the AMS client library needs to be configured to load the local bundle:
+To load the compiled DCN files, the AMS client library needs to be configured to do so before tests.
 
 ::: tip
 In CAP Node.js projects, this is done automatically by the `@sap/ams` runtime when `requires.auth.kind = mocked`.
