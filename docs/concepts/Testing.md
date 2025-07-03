@@ -45,7 +45,8 @@ The two steps are described in the following sections.
 
 ### Assigning Policies to Mocked Users
 
-It depends on the application type how policies are assigned to mocked users. In CAP applications, they are assigned to mock users. In non-CAP applications, it depends on the language of the AMS client library.
+In CAP applications, policies can be assigned to (both existing and custom) mocked users directly.\
+In non-CAP applications, they are assigned to `app_tid` and `scim_id` pairs mocked during authentication (Node.js) or to a special claim `test_policies` in the JWT token (Java):
 
 ::: code-group
 ```json [CAP Node.js] 
@@ -116,7 +117,7 @@ cds:
 
 ### Loading local DCL bundle
 
-To test with local DCL files, the AMS client library needs to be configured to load a local DCL bundle instead of the one from the AMS cloud instance. This is done by specifying the path to the local bundle. It depends on the language of the AMS client library how this is done.
+To test with local DCL files, the AMS client library needs to use the local DCL files instead of the bundle from the AMS cloud instance.
 
 #### Compiling DCL to DCN
 Before running the tests, the local DCL files need to be compiled to DCN files as input for the AMS client library:
@@ -143,26 +144,35 @@ https://github.wdf.sap.corp/CPSecurity/cloud-authorization-client-library-java/b
 :::
 
 #### Loading DCN
-To load the compiled DCN files, the AMS client library needs to be configured accordingly:
+To load the compiled DCN files, the AMS client library needs to be configured to load the local bundle:
 
 ::: tip
 In CAP Node.js projects, this is done automatically by the `@sap/ams` runtime when `requires.auth.kind = mocked`.
 :::
 
 ::: code-group
-```json [Node.js]
-// package.json
-"scripts": {
-        "jest": "NODE_ENV=test npx jest",
-        "pretest": "npx compile-dcl -d auth/dcl -o test/dcn", // [!code focus]
-},
-"devDependencies": {
-        "@sap/ams-dev": "^2", // [!code focus]
+```js [Node.js]
+// application setup
+let ams;
+if (process.env.NODE_ENV === 'test') {
+    ams = AuthorizationManagementService.fromLocalDcn("./test/dcn", {
+        assignments: "./test/mockPolicyAssignments.json"
+    });
+} else {
+    // production
+    const identityService = require('./identityService');
+    ams = AuthorizationManagementService.fromIdentityService(identityService);
 }
 ```
 
-``` [Java]
-https://github.wdf.sap.corp/CPSecurity/cloud-authorization-client-library-java/blob/3391eb3c4bd8ef9bf5c8a361d35379918571990e/docs/maven-plugins.md#-maven-dcl-compiler
+```xml [Java]
+ <!-- pom.xml -->
+<dependency>
+    <groupId>com.sap.cloud.security.ams.client</groupId>
+    <artifactId>java-ams-test</artifactId>
+    <version>${sap.cloud.security.ams.client.version}</version>
+    <scope>test</scope>
+</dependency>
 ```
 :::
 
