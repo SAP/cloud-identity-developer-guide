@@ -2,6 +2,12 @@
 
 In this section, we will cover the basic concepts of authorization checks with the Authorization Management Service (AMS).
 
+::: tip
+In CAP applications, it is typically not necessary to implement authorization checks programmatically. Instead, authorization requirements are [declared](#declarative-authorization-checks) via [annotations](https://cap.cloud.sap/docs/guides/security/authorization#requires). The resulting authorization checks are performed dynamically for the application by the AMS modules.
+
+As CAP has role-based authorization, AMS policies and authorization checks in CAP follow a [*role-based*](/CAP/RolePolicies) paradigm instead of the standard *action*/*resource* paradigm documented below.
+:::
+
 ## Actions and Resources
 
 Authorization policies grant the right for a one (or multiple) *actions* on one (or multiple) *resources*. For example:
@@ -126,7 +132,7 @@ In CAP projects, it is implemented out-of-the-box by the libraries to dynamicall
 
 ## Declarative Authorization Checks
 Instead of manually implementing authorization checks in the code, it is sometimes more elegant to impose them automatically with declarations for required privileges.
-As CAP applications are role-based, the standard `@restrict` and `@requires` annotations are used to make checks for roles with AMS.
+For example, in CAP applications, the standard `@restrict` and `@requires` annotations are used to make checks for roles with AMS.
 In non-CAP applications, there are other ways to impose authorization checks by defining required privileges (i.e. *action*/*resource* pairs) on service endpoints:
 
 ::: code-group
@@ -161,7 +167,7 @@ POLICY OrderAccessory {
 :::
 
 ### Advantages
-The advantage of declarative instead of explicit authorization checks, is that they can typically be defined centrally. This gives a central overview of the required privileges per service endpoint and allows changing required privileges without touching the implementation.
+The advantage of declarative instead of explicit authorization checks, is that they can typically be defined centrally. This gives a central overview of the required privileges per service endpoint and allows changing required privileges without touching the implementation of service handlers.
 
 ### Disadvantages
-However, this approach typically does not work well for *action*/*resource* pairs for which conditional access may be granted. The best we can do in this case, is to do a pre-check for the action and resource, and then let the application code handle the condition check. This is because the condition check requires access to the entity attributes.
+However, this approach typically does not work well for *action*/*resource* pairs for which conditional access may be granted. The best we can do in this case, is to do a pre-check for the action and resource, and then let the service handler perform an additional check for the condition. This is because the condition check requires access to the entity attributes.
