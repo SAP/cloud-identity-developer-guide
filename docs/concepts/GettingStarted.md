@@ -11,7 +11,7 @@ The AMS client libraries consist of different modules for the following programm
 - **Java** (Maven):
     - [jakarta-ams](/java/jakarta-ams/jakarta-ams.md)
     - [spring-ams](/java/spring-ams/spring-ams.md)
-    - [cap-ams-support](/java/cap-ams-support/cap-ams-support.md) (replaces [~~`cap-support`~~](/java/cap-support/cap-support.md))
+    - [cap-ams-support](/java/cap-ams-support/cap-ams-support.md)
 - **JavaScript** (Node.js):
     - [@sap/ams](/nodejs/sap_ams/sap_ams.md)
     - [@sap/ams-dev](/nodejs/sap_ams-dev/sap_ams-dev.md)
@@ -29,7 +29,7 @@ In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cl
 The following tables give an overview of the required AMS module dependencies for different application setups.
 
 ::: warning
-The recommended modules and versions have changed over time (see [Historic Setups](#historic-setups))
+The recommended modules and versions have changed over time (see [Historical Setups](#historical-setups))
 
 **Please begin new projects with the currently recommended modules**.
 :::
@@ -40,31 +40,25 @@ The recommended modules and versions have changed over time (see [Historic Setup
 |-----------------------------|:-----------:|:----------:|:----------------:|:---------------:|:-----------:|
 | Jakarta EE                  |     ✔️      |     -      |        [✔️]      |        -        |      -
 | Spring Boot                 |     -       |     ✔️     |        [✔️]      |        -        |      -
-| CAP (Spring Boot)           |     ✔️\*    |     -\*    |         -        |       ✔️        |     (✔️)\*\*  
+| CAP                         |     -       |     -      |         -        |       ✔️        |     (✔️)\*  
 
 [✔️] = *test-scoped **(!)** maven dependency*\
 (✔️) = *devDependency in package.json*
 
-::: warning *
-Yes, `jakarta-ams` is required but `spring-ams` should not be installed even when the CAP application uses Spring.
-:::
-
-::: tip **
+::: tip *
 The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide the following dev-time features as [cds build plugin](https://cap.cloud.sap/docs/guides/deployment/custom-builds#custom-build-plugins):
 - Validation of `@ams.attributes` annotations against `schema.dcl` during `cds build`
-- Generation of DCL during `cds build` (in monolithic CAP applications)
-- Generation of DCL policy deployer application during `cds build` (in monolithic CAP applications)
+- Generation of DCL during `cds build` (for monolithic CAP applications)
+- Generation of DCL policy deployer application during `cds build` (for monolithic CAP applications)
 :::
-
-
 
 ### Node.js
 
 | Project Type        | @sap/ams | @sap/ams-dev   | Java JDK |
-|---------------------|:--------:|:--------------:|:----------:|
-| Plain Node.js       |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)* 17+
-| express (Node.js)   |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)* 17+
-| CAP (Node.js)       |   ✔️ ^3  |      (✔️)* ^2    |    (✔️)* 17+
+|---------------------|:--------:|:--------------:|:---------------:|
+| Plain Node.js       |   ✔️ ^3  |      (✔️)* ^2  |    (✔️)* 17+
+| express (Node.js)   |   ✔️ ^3  |      (✔️)* ^2  |    (✔️)* 17+
+| CAP (Node.js)       |   ✔️ ^3  |      (✔️)* ^2  |    (✔️)* 17+
 
 (✔️) = *devDependency*
 
@@ -75,7 +69,7 @@ only required to compile DCL files before running local tests. We are currently 
 ### Go
 
 | Project Type | cloud-identity-authorizations-golang-library |
-|--------------|:-------------------------------------------:|
+|--------------|:--------------------------------------------:|
 | Go           |                    ✔️                        |
 
 ## Samples
@@ -83,17 +77,7 @@ For practical examples of how to set up and use the AMS client libraries, refer 
 
 ## Historical Setups
 
-If you operate productive applications with a dependency setup different from the recommended one, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules eventually in discussion with us.
-
-### Old CAP setup
-Previous versions of the AMS modules for CAP applications were based on a different paradigm where the authorization policies looked completely different than in the current integration paradigm.
-
-Existing Java CAP applications based on the old setup with `cap-support` will receive individual support but new projects must use the new `cap-ams-support` module.
-
-The same holds true for Node.js CAP application based on `@sap/ams version 1` which is superseded by `@sap/ams version 2` and later.
+If you operate productive applications with a dependency setup different from the recommended one, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules and major versions eventually in discussion with us.
 
 ### JDK < 17
-For Java versions < 17, there are modules called `java-ams` and `java-ams-test` that will be sunsetted.
-
-### @sap/ams version < 3
-Version 3 of `@sap/ams` introduced an overhaul of the core API for non-CAP applications, which is not compatible with previous versions. New projects must use version 3 or later. Existing applications may contact us for individual migration support.
+For Java versions < 17, the modules `java-ams` and `java-ams-test` are a drop-in replacement for `jakarta-ams` and `jakarta-ams-test`.
