@@ -1,16 +1,16 @@
 # Testing AMS Integration
 
-This guide explains how to efficiently test your AMS (Authorization Management Service) integration, ensuring fast feedback and reliable authorization logic.
+This guide explains how to efficiently test your AMS integration, ensuring fast feedback and reliable authorization logic.
 
 ## Why and When?
 
 ::: tip
-Write tests early to save time and get your AMS setup running quickly. Well-designed tests help you catch issues in your authorization logic before deployment.
+Write tests early to save time and get your AMS setup running quickly. Well-designed tests help you catch issues in your authorization logic **before** deployment.
 :::
 
 To maximize productivity, tests should be executable locally—without requiring cloud resources or deploying the application. This enables rapid feedback cycles and lets you iterate on your authorization policies and application logic efficiently.
 
-Local tests also make it easy to use a debugger or analyze debug logs to understand unexpected authorization check behavior. This is invaluable for [troubleshooting](/Troubleshooting).
+Local tests also make it easy to use a debugger or analyze debug logs without persisting sensitive information to understand unexpected authorization check behavior. This is invaluable for [troubleshooting](/Troubleshooting).
 
 ::: warning TEST BEFORE DEPLOYMENT
 Nothing is more frustrating—both for you and the AMS support team—than spending time on a cloud deployment with limited debuggability, only to find out that your authorization logic is not working as expected. Local tests help you avoid this pitfall.
@@ -18,11 +18,11 @@ Nothing is more frustrating—both for you and the AMS support team—than spend
 
 ## Mock Authentication, Not Authorization
 
-When testing your application's AMS integration, always mock authentication—not authorization. This way you test the same AMS code that runs in production which means, local authorization tests are generally very reliable. Avoid mocking internal authorization logic, as it is complex and may change, making tests brittle and less reliable.
+When testing your application's AMS integration, always mock authentication—not authorization. This way you test the same AMS code that runs in production which means, local authorization tests are generally very reliable. Avoid mocking internal authorization logic, e.g. AMS library functions, as it is complex and prone to API changes, making tests brittle and less reliable.
 
 The authorization checks in the AMS libraries typically use the security context created by the BTP authentication libraries as input. To test effectively, it is best practice to mock the security context directly—either by mocking its properties or by constructing it from a test *JWT token*.
 
-::: info
+::: tip
 In CAP, simply use the standard [mock users](https://cap.cloud.sap/docs/node.js/authentication#mock-users) for testing.
 :::
 
@@ -123,18 +123,45 @@ To test without an AMS cloud instance, the AMS client library needs to use the l
 Before running the tests, the local DCL files need to be compiled to DCN files as input for the AMS client library.
 
 ::: tip
-In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cds start/watch/test`. In other projects, you need to compile the DCL files manually.
+In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cds start/watch/test`. In other projects, you need to setup a compilation step manually that runs before the tests.
 :::
 
 ::: code-group
+```xml [CAP Java]
+<!-- srv/pom.xml -->
+<build>
+    <plugins>
+        <plugin> <!-- [!code ++:20] -->
+        	<groupId>com.sap.cloud.security.ams.client</groupId>
+        	<artifactId>dcl-compiler-plugin</artifactId>
+        	<version>${sap.cloud.security.ams.version}</version>
+        	<executions>
+                <execution>
+        			<id>compile</id>
+        			<goals>
+        				<goal>compile</goal>
+        			</goals>
+        			<configuration>
+        				<sourceDirectory>${project.basedir}/src/main/resources/ams</sourceDirectory>
+        				<dcn>true</dcn>
+        				<dcnParameter>pretty</dcnParameter>
+        				<compileTestToDcn>true</compileTestToDcn>
+        			</configuration>
+        		</execution>        
+        	</executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
 ```json [Node.js]
 // package.json
 "scripts": {
         "jest": "NODE_ENV=test npx jest",
-        "pretest": "npx compile-dcl -d auth/dcl -o test/dcn", // [!code focus]
+        "pretest": "npx compile-dcl -d auth/dcl -o test/dcn", // [!code ++]
 },
 "devDependencies": {
-        "@sap/ams-dev": "^2", // [!code focus]
+        "@sap/ams-dev": "^2", // [!code ++]
 }
 ```
 
@@ -147,14 +174,14 @@ https://github.wdf.sap.corp/CPSecurity/cloud-authorization-client-library-java/b
 To load the compiled DCN files, the AMS client library needs to be configured to do so before tests.
 
 ::: tip
-In CAP Node.js projects, this is done automatically by the `@sap/ams` runtime when `requires.auth.kind = mocked`.
+In CAP Node.js and Java projects, this is done automatically by the AMS modules when `requires.auth.kind = mocked` (Node.js) or when there are mocked users in the active profile (Java).
 :::
 
 ::: code-group
 ```js [Node.js]
 // application setup
 let ams;
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'test') { // [!code ++:5]
     ams = AuthorizationManagementService.fromLocalDcn("./test/dcn", {
         assignments: "./test/mockPolicyAssignments.json"
     });
@@ -162,17 +189,19 @@ if (process.env.NODE_ENV === 'test') {
     // production
     const identityService = require('./identityService');
     ams = AuthorizationManagementService.fromIdentityService(identityService);
-}
+} // [!code ++]
 ```
 
-```xml [Java]
+```xml{6} [Java]
  <!-- pom.xml -->
-<dependency>
-    <groupId>com.sap.cloud.security.ams.client</groupId>
-    <artifactId>java-ams-test</artifactId>
-    <version>${sap.cloud.security.ams.client.version}</version>
-    <scope>test</scope>
-</dependency>
+ <dependencies>
+    <dependency> 
+        <groupId>com.sap.cloud.security.ams.client</groupId> <!-- [!code ++:4] -->
+        <artifactId>jakarta-ams-test</artifactId>
+        <version>${sap.cloud.security.ams.client.version}</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
 ```
 :::
 
