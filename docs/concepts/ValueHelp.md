@@ -23,7 +23,7 @@ The value help feature allows the administrator to select the "electronics" cate
 To retrieve the list of available values for a specific attribute, the AMS server sends a value help request to the application. In the response, the AMS server receives a list of valid values for the requested attribute from the application, which it can then present to the administrator in the IAS Administration Console.
 
 <!-- TODO: insert link to AMS Value Help documentation on help.sap.com once available -->
-This [documentation]() describes how to annotate the DCL schema to enable value help for attributes as well as the required response format which applications need to implement in the value help request handlers.
+This documentation describes how to annotate the DCL schema to enable value help for attributes as well as the required response format which applications need to implement in the value help request handlers.
 
 ## Authorizing Value Help Requests
 
