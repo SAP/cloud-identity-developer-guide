@@ -4,3 +4,58 @@
   --vp-c-brand-3: var(--vp-c-green-3);
   --vp-c-brand-soft: var(--vp-c-green-soft);
 }
+
+/* Feature highlighting for the Enforce card */
+.VPFeatures .container {
+  display: flex !important;
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* Target the middle feature item (Enforce) */
+.VPFeatures .items .item:nth-child(2) {
+  transform: scale(1.08);
+  position: relative;
+  z-index: 1;
+}
+
+.VPFeatures .items .item:nth-child(2) .VPFeature .box {
+  background: var(--vp-c-brand-soft) !important;
+  border-radius: 12px;
+  padding: 24px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--vp-c-brand-1);
+}
+
+/* Make other feature cards less prominent */
+.VPFeatures .items .item:nth-child(1),
+.VPFeatures .items .item:nth-child(3) {
+  opacity: 0.6;
+  transform: scale(0.9)
+}
+
+/* Ensure proper spacing and alignment */
+.VPFeatures .items .item {
+  transition: all 0.3s ease;
+}
+
+/* Hover effects */
+.VPFeatures .items .item:nth-child(1):hover,
+.VPFeatures .items .item:nth-child(3):hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.VPFeatures .items .item:nth-child(2):hover {
+  transform: scale(1.1) translateY(-4px);
+}
+
+.VPFeatures .items .item:nth-child(2):hover .VPFeature .box {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced styling for the highlighted feature */
+.VPFeatures .items .item:nth-child(2) .VPFeature .box .title {
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+}
