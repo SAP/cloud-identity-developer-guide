@@ -38,12 +38,12 @@ The recommended modules and versions have changed over time (see [Historical Set
 
 | Project Type                | jakarta-ams | spring-ams | jakarta-ams-test | cap-ams-support | @sap/ams    |
 |-----------------------------|:-----------:|:----------:|:----------------:|:---------------:|:-----------:|
-| Jakarta EE                  |     ✔️      |     -      |        [✔️]      |        -        |      -
-| Spring Boot                 |     -       |     ✔️     |        [✔️]      |        -        |      -
-| CAP                         |     -       |     -      |         -        |       ✔️        |     (✔️)\*  
+| Jakarta EE                  |     ✓       |     -      |        [✓]      |        -        |      -
+| Spring Boot                 |     -       |     ✓      |        [✓]      |        -        |      -
+| CAP                         |     -       |     -      |         -       |        ✓        |     (✓)\*  
 
-[✔️] = *test-scoped **(!)** maven dependency*\
-(✔️) = *devDependency in package.json*
+[✓] = *test-scoped **(!)** maven dependency*\
+(✓) = *devDependency in package.json*
 
 ::: tip *
 The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide the following dev-time features as [cds build plugin](https://cap.cloud.sap/docs/guides/deployment/custom-builds#custom-build-plugins):
@@ -56,11 +56,11 @@ The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as
 
 | Project Type        | @sap/ams | @sap/ams-dev   | Java JDK |
 |---------------------|:--------:|:--------------:|:---------------:|
-| Plain Node.js       |   ✔️ ^3  |      (✔️)* ^2  |    (✔️)* 17+
-| express (Node.js)   |   ✔️ ^3  |      (✔️)* ^2  |    (✔️)* 17+
-| CAP (Node.js)       |   ✔️ ^3  |      (✔️)* ^2  |    (✔️)* 17+
+| Plain Node.js       |   ✓ ^3   |      (✓)* ^2   |    (✓)* 17+
+| express (Node.js)   |   ✓ ^3   |      (✓)* ^2   |    (✓)* 17+
+| CAP (Node.js)       |   ✓ ^3   |      (✓)* ^2   |    (✓)* 17+
 
-(✔️) = *devDependency*
+(✓) = *devDependency*
 
 ::: tip *
 only required to compile DCL files before running local tests. We are currently finishing a compiler in Javascript that will make these dependencies obsolete.
@@ -70,7 +70,7 @@ only required to compile DCL files before running local tests. We are currently 
 
 | Project Type | cloud-identity-authorizations-golang-library |
 |--------------|:--------------------------------------------:|
-| Go           |                    ✔️                        |
+| Go           |                    ✓                         |
 
 ## Samples
 For practical examples of how to set up and use the AMS client libraries, refer to the [Samples](/Samples) section. It contains sample applications demonstrating the necessary setup for authorization with AMS in various programming languages and frameworks.
