@@ -6,7 +6,37 @@ AMS supports authorization for technical communication for both *technical users
 
 The recommended strategy for authorizing technical communication requests in provider applications is to use SAP Cloud Identity Service [App-to-App Integration](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications). Here, the request of the caller is authorized by AMS policies in the provider application based on the consumed API permission groups. 
 
-The consumed API permission groups can be found in the the `ias_apis` claim of the SCI token. The claim is a list of API permission group names that the caller has requested and received during the token flow. Note that only applications for which an API dependency has been [configured](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-api-from-another-application) by an administrator of the SAP Cloud Identity Service tenant can fetch tokens for the specified API permission groups.
+The consumed API permission groups can be found in the the `ias_apis` claim of the SCI token:
+
+```json
+{
+  "ias_apis": [
+    "amsValueHelp"
+  ],
+  "sub": "eecd1df6-9ad9-4341-81e3-d123f392b79e",
+  "app_tid": "6898a89f-ad38-4a7f-9e7b-e89bd6bd7d40",
+  "iss": "https://customer.accounts.ondemand.com",
+  "given_name": "John",
+  "sid": "S-SP-41b6acac-2696-4950-9902-a49968b4da14",
+  "ias_iss": "https://customer.accounts.ondemand.com",
+  "aud": "64926a29-3a02-47e4-af9d-08d41614c467",
+  "scim_id": "eecd1df6-9ad9-4341-81e3-d123f392b79e",
+  "user_uuid": "eecd1df6-9ad9-4341-81e3-d123f392b79e",
+  "azp": "19e0fef0-9356-40e8-acb3-99346fc6abe4",
+  "cnf": {
+    "x5t#S256": "UHBKahftM5a85fsxFJMkkOKBE5RpmVr0oP_NmsFyrms"
+  },
+  "exp": 1748250699,
+  "iat": 1748247099,
+  "family_name": "Doe",
+  "jti": "a480e303-ad35-48b5-93f0-49bbde317901",
+  "email": "john.doe@example.org"
+}
+```
+
+The claim is a list of API permission group names that the caller has requested and received during the token flow. Note that only applications for which an API dependency has been [configured](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-api-from-another-application) by an administrator of the SAP Cloud Identity Service tenant can fetch tokens for the specified API permission groups.
+
+### Authorization via API Permission Groups
 
 For technical user requests, the resulting policy is used directly in subsequent authorization checks to determine the caller's privileges.
 
@@ -16,7 +46,7 @@ For principal propagation requests, the user's policies are used as a basis to d
 Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it does not need to distinguish between internal and external user requests.
 :::
 
-### API Permission Group Policies
+### API Policies
 
 For each API permission group that is provided by the application, it defines an *internal* policy, i.e. a policy that is not visible to administrators.
 
@@ -106,11 +136,11 @@ private PolicyAssignments mapApisToPolicyAssignments() {
 ### Mapping registration
 Finally, a bit of configuration is required to register the mapping functions, so that the AMS modules use the resulting policies in authorization checks for requests that are made to the API permission groups.
 
-If you use the standard `IdentityServiceAuthProvider` in Node.js applications, the mapping functions themselves can be registered directly via the API.\
+In Node.js applications that use the standard CAP plugin runtime or the `IdentityServiceAuthProvider` directly, the mapping functions themselves can be registered directly via the API.\
 In Java applications, the application needs to implement the [`AttributesProcessor`](/java/jakarta-ams/jakarta-ams#AttributesProcessor) interface, extract the token from the `SecurityContext`, check if the `ias_apis` claim is present and if so, build and register the `PolicyAssignments` object with the `Principal` object.
 
 ::: info
-The Node.js module includes special handling for the `principal-propagation` API permission group (see above). In Java, the `AttributesProcessor` implementation must be extended to check for this API permission group and skip the App-To-App logic, if desired.
+The Node.js module includes special handling for the `principal-propagation` API permission group (see above). In Java, the `AttributesProcessor` implementation below must be extended to check for this API permission group and skip the App-To-App logic, if desired.
 :::
 
 ::: code-group
