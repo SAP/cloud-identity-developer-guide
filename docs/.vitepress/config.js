@@ -4,6 +4,9 @@ export default defineConfig({
     title: 'AMS Client Libraries',
     description: 'Documentation for SAP Authorization Management Service (AMS) client libraries',
     themeConfig: {
+        search: {
+            provider: 'local'
+        },
         outline: {
             level: [2, 3], // Show both ## and ### headings in the TOC
         },
