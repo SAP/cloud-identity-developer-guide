@@ -3,6 +3,14 @@
   --vp-c-brand-2: var(--vp-c-green-2);
   --vp-c-brand-3: var(--vp-c-green-3);
   --vp-c-brand-soft: var(--vp-c-green-soft);
+
+  /* SAP Sapphire Blue color palette */
+  --sap-blue-2: #D1EFFF;
+  --sap-blue-4: #89D1FF;
+  --sap-blue-6: #1B90FF;
+  --sap-blue-7: #0070F2;
+  --sap-blue-10: #002A86;
+  --sap-blue-11: #00144A;
 }
 
 /* Feature highlighting for the Enforce card */
