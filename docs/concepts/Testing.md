@@ -174,7 +174,7 @@ https://github.wdf.sap.corp/CPSecurity/cloud-authorization-client-library-java/b
 To load the compiled DCN files, the AMS client library needs to be configured to do so before tests.
 
 ::: tip
-In CAP Node.js and Java projects, this is done automatically by the AMS modules when `requires.auth.kind = mocked` (Node.js) or when there are mocked users in the active profile (Java).
+In CAP Node.js projects, this is done automatically by the AMS modules if `requires.auth.kind = mocked`.
 :::
 
 ::: code-group
@@ -190,6 +190,16 @@ if (process.env.NODE_ENV === 'test') { // [!code ++:5]
     const identityService = require('./identityService');
     ams = AuthorizationManagementService.fromIdentityService(identityService);
 } // [!code ++]
+```
+
+```yaml [CAP Java]
+# application.yaml
+
+cds:
+  security:
+    authorization:
+      ams:
+        test-sources: "" # empty will use the default srv/target/dcl_opa
 ```
 
 ```xml{6} [Java]
