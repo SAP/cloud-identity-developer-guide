@@ -1,6 +1,6 @@
 # Deploying DCL
 
-Deploying DCL to your AMS instance has a lot of similarities to applying [DDL](https://de.wikipedia.org/wiki/Data_Definition_Language) to a database schema:
+Deploying DCL to your AMS instance has a lot of similarities to applying [DDL](https://en.wikipedia.org/wiki/Data_definition_language) to a database schema:
 - Its availability is a crucial precondition for the application to start up.
 - Changes in business logic may depend on changes in DCL.
 - Multiple microservices may depend on central DCL files.
