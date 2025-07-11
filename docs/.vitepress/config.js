@@ -23,7 +23,7 @@ export default defineConfig({
                     { text: 'Authorization Checks', link: '/concepts/AuthorizationChecks' },
                     { text: 'Testing', link: '/concepts/Testing' },
                     { text: 'Technical Communication', link: '/concepts/TechnicalCommunication' },
-                    { text: 'Deploying DCL Policies', link: '/concepts/DeployDCL' },
+                    { text: 'Deploying DCL', link: '/concepts/DeployDCL' },
                     { text: 'ValueHelp', link: '/concepts/ValueHelp' },
                     { text: 'Logging', link: '/concepts/Logging' },
                 ]
