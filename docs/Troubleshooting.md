@@ -65,4 +65,4 @@ If your application is experiencing errors related to no authorization data bein
 **Solution**: Ensure that all steps of the [Testing](/concepts/Testing.md) guide are followed correctly, including the setup of the DCL compiler and loading of the DCN bundle.
 
 - Missing startup check.\
-**Solution**: Ensure that you have correctly implemented a [startup check](/concepts/Setup#startup-check) in your application that is successful before your application starts processing requests.
+**Solution**: Ensure that you have correctly implemented a [startup check](/concepts/StartupCheck) in your application that is successful before your application starts processing requests.

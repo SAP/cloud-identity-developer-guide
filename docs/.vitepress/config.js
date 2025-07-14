@@ -20,6 +20,7 @@ export default defineConfig({
                 text: 'Concepts',
                 items: [
                     { text: 'Getting Started', link: '/concepts/GettingStarted' },
+                    { text: 'Startup Check', link: '/concepts/StartupCheck' },
                     { text: 'Authorization Checks', link: '/concepts/AuthorizationChecks' },
                     { text: 'Testing', link: '/concepts/Testing' },
                     { text: 'Technical Communication', link: '/concepts/TechnicalCommunication' },

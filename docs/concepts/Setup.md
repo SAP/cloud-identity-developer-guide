@@ -1,3 +1,0 @@
-# Setup
-
-## Startup Check
