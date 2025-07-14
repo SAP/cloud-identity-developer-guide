@@ -36,16 +36,6 @@ The consumed API permission groups can be found in the the `ias_apis` claim of t
 
 The claim is a list of API permission group names that the caller has requested and received during the token flow. Note that only applications for which an API dependency has been [configured](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-api-from-another-application) by an administrator of the SAP Cloud Identity Service tenant can fetch tokens for the specified API permission groups.
 
-### Authorization via API Permission Groups
-
-For technical user requests, the resulting policy is used directly in subsequent authorization checks to determine the caller's privileges.
-
-For principal propagation requests, the user's policies are used as a basis to determine the privileges and the policies derived from the consumed API permission groups are used to determine an upper limit for the privileges that are granted to the user during this request. This allows applications to restrict what external applications can do on behalf of the user, while also taking the user's policies into account for the decision.
-
-::: info
-Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it does not need to distinguish between internal and external user requests.
-:::
-
 ### API Policies
 
 For each API permission group that is provided by the application, it defines an *internal* policy, i.e. a policy that is not visible to administrators.
@@ -64,6 +54,18 @@ The policy's privileges are granted to **any** callers that can make requests fo
 
 ::: tip
 It is best practice to map policies separately for the *technical user* and *forwarded user* flows. This way, the mapping function can be used to control which API permission group should be consumable in which flow by exclusively mapping API permission groups that are intended for the respective flow (see examples below).
+
+If you want to define different privileges for technical und forwarded user tokens consuming the same API permission group, you can map the API permission group to different internal policies depending on the flow.
+:::
+
+### Authorization via API Permission Groups
+
+For technical user requests, the resulting policy is used directly in subsequent authorization checks to determine the caller's privileges.
+
+For principal propagation requests, the user's policies are used as a basis to determine the privileges and the policies derived from the consumed API permission groups are used to determine an upper limit for the privileges that are granted to the user during this request. This allows applications to restrict what external applications can do on behalf of the user, while also taking the user's policies into account for the decision.
+
+::: info
+Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it does not need to distinguish between internal and external user requests.
 :::
 
 ### Mapping implementation
