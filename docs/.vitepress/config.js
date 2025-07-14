@@ -62,6 +62,6 @@ export default defineConfig({
         ]
     },
     head: [
-        ['link', { rel: 'icon', href: 'favicon.png', type: 'image/png' }]
+        ['link', { rel: 'icon', href: '/favicon.png', type: 'image/png' }]
     ]
 });
