@@ -1,68 +1,69 @@
-# Troubleshooting
-This section describes a systematic approach to troubleshooting issues in applications using AMS modules, with a focus on unexpected authorization results.
+# Troubleshooting Guide
 
-## Analyzing Issues
-To analyze unexpected authorization behavior of your application, please follow these steps:
+This guide provides a systematic approach to troubleshooting authorization problems, such as unexpected authorization results in your application. Following these steps will help you identify the root cause of the issue efficiently.
 
-1. Rule out authentication issues:
-   - Ensure that the user is authenticated and that is is an authorization issue, not an authentication issue.
-1. Setup a reproducible test case in a safe environment:
-   - Make sure you can reproduce the issue in a safe environment, preferably in a local unit test setup that isolates the problem. If the error occurs in production, consider mocking a security context from the token's claims in a local test setup.
-1. Enable [Debug Logs](/concepts/Logging):
-   - Enable debug logs in the safe environment to get detailed information about the authorization process. This will help you identify the root cause of the issue.
-1. Reproduce the request that causes the issue in the safe environment.
-1. Understand the authorization check:
-    - Which **action** is checked on which **resource**?
-    - Which **policies** have been applied for the check?
-    - Does the authorization check depend on schema **attributes** and if so, which condition do you expect based on the assigned policies?
-    - Which **attribute inputs** have been used for the check and which attributes have not been grounded to a value (= *unknown* attributes)?
-    - What is the **DCN condition** returned by the DCN engine for the check?
-    - Has additional logic for **technical communication** been applied before the check, e.g. an upper authorization limit based on consumed API or an overwrite of the used policies based on consumed API?
-1. Find Root Cause:
-    - Based on the debug logs and your understanding of the authorization check, identify the root cause of the issue, e.g. *Incorrect mocked policy assignment*.\
-    For a list of common root causes, see the section below.
+## Step 1: Preparation
 
-## Solving Issues
-Try to solve the issue based on your analysis and double-checking the documentation for guidance on specific features or configurations that may be relevant to your issue.
+Before you start debugging, make sure you can reproduce the issue in an environment where one of two things are possible:
+- Enabling **[Debug Logs](/concepts/Logging#debug-logging)** without violating data protection regulations by logging sensitive information.
+- Debugging the application with a debugger attached to the process.
 
-If you cannot solve the problem on your own, there are two options:
+::: tip
+There are very few issues that occur only in production environments and require analysis in a deployed application.
 
-1. You believe you encountered a bug in the AMS modules (-> **Support ticket**)
-1. You believe your application setup is not correct and you need help fixing it (-> **Consulting**)
+Most issues can be reproduced and fixed **much faster** by writing a test for the failing authorization logic, even cross-application integration via technical communication.
+Refer to the **[Testing Guide](/concepts/Testing)** for guidance.
+:::
 
-For both of these options, we have documented the recommended steps to take in the [Support](/Support) guide.
+## Step 2: Analyze Authorization Check
 
-## Common Root Causes
+Reproduce the issue and check which part of the authorization check does not meet your expectations:
 
-### Unexpected 403
-If your application is returning a 403 Forbidden error unexpectedly, it may be due to one of the following reasons:
+- Which **action** is checked on which **resource**?
+- Which **principal**/**policies** was used?
+- Which **attribute input** was provided?
+- What was the resulting **DCN condition** from the authorization engine?
+- Has any customization logic been applied that influenced the check, such as technical communication logic?
 
-- Wrong or outdated AMS modules installed for the project setup.\
-**Solution**: Refer to the [Getting Started](/concepts/GettingStarted.md) guide to ensure you have the recommended (combination of) AMS modules installed for your project type and **update to the latest versions**.
+## Step 3: Check for Common Root Causes
 
-- Incorrect mocked policy assignment.\
-**Solution**: Double-check the mocked policy assignments for [syntactical correctness](/concepts/Testing#assigning-policies-to-mocked-users). Make sure that the policy names are **fully-qualified** names, i.e. they are prefixed with the DCL package in which the policy is defined, e.g. `cap.Reader`.
+The following are common root causes for authorization problems:
 
-- Incorrect API permission group -> Policy mapping.\
-**Solution**: Ensure that the API permission group are [correctly mapped](/concepts/TechnicalCommunication#mapping-implementation) to **fully-qualified policy names**, i.e. the resulting policy names are prefixed with the DCL package in which the policy is defined, e.g. `cap.Reader`.
+### Unexpected `403 Forbidden`
 
-- Cached policy assignments.\
-**Solution**: After changing policy assignments, give it some time before retrying the request. The policy assignments are cached and regularly refreshed. Typically, it takes about 15s for a change to take effect.
+- **Outdated Dependencies**: Ensure you are using the correct combination of the AMS modules for your project setup and in the latest versions as recommended in the **[Getting Started Guide](/concepts/GettingStarted.md)**.
+- **Caching Delays**: Policy assignment changes usually take up to 15 seconds to propagate due to caching (but can sometimes take longer). Wait a moment before retrying.
 
-### Unexpected access granted
-If your application is granting access to resources unexpectedly, consider the following:
+::: warning Missing policy assignments in Token
+The policies that are assigned to a user are **not** contained in his SCI user tokens. This is normal.
 
-- Multiple policies assigned.\
-**Solution**: When removing policies to manually check that access is no longer granted without the policy, make sure there are no other policies assigned to the user that grant the necessary privilege.
+A token refresh is **NOT** necessary after making changes to policy assignments. The AMS module retrieves the user policies separately from the token directly from the AMS server.
+:::
 
-- Cached policy assignments.\
-**Solution**: After changing policy assignments, give it some time before retrying the request. The policy assignments are cached and regularly refreshed. Typically, it takes about 15s for a change to take effect.
+- **Incorrect Policy Names**: Policies must be **fully-qualified**, including the DCL package name (e.g., `cap.Reader`). This applies to:
+   -   Mocked policy assignments in tests.
+   -   Policy mappings for technical communication.
 
-### No authorization data loaded/received errors
-If your application is experiencing errors related to no authorization data being loaded or received, consider the following:
+### Unexpected `Access Granted`
 
-- Incorrect test setup.\
-**Solution**: Ensure that all steps of the [Testing](/concepts/Testing.md) guide are followed correctly, including the setup of the DCL compiler and loading of the DCN bundle.
+- A user might have multiple policies assigned that grant the same privilege. Ensure you've unassigned all of them before testing that a specific policy does not grant access.
 
-- Missing startup check.\
-**Solution**: Ensure that you have correctly implemented a [startup check](/concepts/StartupCheck) in your application that is successful before your application starts processing requests.
+### Authorization bundle issues
+
+- **No authorization data loaded error**: The application must wait for the **[AMS Startup Check](/concepts/StartupCheck)** before making authorization checks.
+
+::: warning
+The startup check is also necessary before unit tests that perform authorization checks.
+:::
+
+- **Incorrect Test Setup**: Make sure to follow the **[Testing Guide](/concepts/Testing.md)** carefully by including all steps, such as DCN compilation and DCN loading.
+
+## Step 4: Solving the Issue
+
+If you've identified a misconfiguration or a setup issue in your application, try to resolve the issue based on your findings and the documentation.
+
+::: info Consulting
+If you need help with fixing your application setup, this is a **consulting** request.
+:::
+
+For both consulting and issues inside the AMS modules or services, such as bugs or outages, please refer to our **[Support Guide](/Support)** for how to get help.
