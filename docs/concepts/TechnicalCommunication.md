@@ -34,7 +34,13 @@ The consumed API permission groups can be found in the the `ias_apis` claim of t
 }
 ```
 
-The claim is a list of API permission group names that the caller has requested and received during the token flow. Note that only applications for which an API dependency has been [configured](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-api-from-another-application) by an administrator of the SAP Cloud Identity Service tenant can fetch tokens for the specified API permission groups.
+The claim is a list of API permission group names that the caller has requested and received during the token flow.
+
+The decision **which application** may consume which API permission group is made by the administrator of the SAP Cloud Identity Service tenant, not by the application itself (see [Consume API from another application](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-api-from-another-application)). The application itself only decides **which privileges** are granted to callers based on the API permission groups.
+
+::: tip
+The CAP authentication handlers use the list of `ias_apis` to automatically grant **cds roles** with the same name in case of **technical user** tokens. The strategy described below is only relevant outside CAP or if you want to use the API permission groups in the context of principal propagation requests.
+:::
 
 ### API Policies
 
