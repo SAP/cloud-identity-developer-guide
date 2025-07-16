@@ -62,13 +62,15 @@ export default defineConfig({
             {
                 text: 'Resources',
                 items: [
-                    { text: 'Imprint', link: '/resources/imprint' },
-                    { text: 'Terms of Use', link: 'https://www.sap.com/about/legal/terms-of-use.html' },
-                    { text: 'Privacy', link: '/resources/Privacy' }
+                    { text: 'Privacy', link: '/resources/Privacy' },
+                    { text: 'Imprint', link: 'https://www.sap.com/about/legal/impressum.html', target: '_blank' },
+                    { text: 'Terms of Use', link: 'https://www.sap.com/about/legal/terms-of-use.html', target: '_blank' },
+                    { text: 'Trademarks', link: 'https://www.sap.com/about/legal/trademark.html', target: '_blank' }
                 ]
             }
         ],
         footer: {
+            message: '<a href="/resources/Privacy">Privacy</a> | <a href="https://www.sap.com/about/legal/impressum.html" target="_blank">Imprint</a> | <a href="https://www.sap.com/about/legal/terms-of-use.html" target="_blank">Terms of Use</a> | <a href="https://www.sap.com/about/legal/trademark.html" target="_blank">Trademarks</a>',
             copyright: '© 2025-present SAP SE or an SAP affiliate company and cloud-identity-authorizations-libraries contributors'
         },
         socialLinks: [
