@@ -58,16 +58,21 @@ export default defineConfig({
                 items: [
                     { text: 'cloud-identity-authorizations-golang-library', link: '/go/go-ams' }
                 ]
+            },
+            {
+                text: 'Resources',
+                items: [
+                    { text: 'Imprint', link: '/resources/imprint' },
+                    { text: 'Terms of Use', link: 'https://www.sap.com/about/legal/terms-of-use.html' },
+                    { text: 'Privacy', link: '/resources/Privacy' }
+                ]
             }
         ],
         footer: {
-            message: 'Released under the Apache 2.0 License.',
             copyright: '© 2025-present SAP SE or an SAP affiliate company and cloud-identity-authorizations-libraries contributors'
         },
         socialLinks: [
             { icon: 'github', link: 'https://github.com/SAP/cloud-identity-authorizations-libraries' },
-            { text: 'Impressum', link: '/impressum' },
-            { text: 'Imprint', link: '/imprint' }
         ]
     },
     head: [
