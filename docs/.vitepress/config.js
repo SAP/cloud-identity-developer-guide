@@ -32,9 +32,9 @@ export default defineConfig({
             {
                 text: 'CAP Integration',
                 items: [
-                    { text: 'Role Policies', link: '/CAP/RolePolicies' },
+                    { text: 'Basics', link: '/CAP/Basics' },
                     { text: 'Instance-based Authorization', link: '/CAP/InstanceBasedAuthorization' },
-                    { text: 'DCL generation', link: '/CAP/DCLGeneration' }
+                    { text: 'cds Plugin', link: '/CAP/cds-plugin' }
                 ]
             },
             {

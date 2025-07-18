@@ -5,7 +5,7 @@ In this section, we will cover the basic concepts of authorization checks with t
 ::: tip
 In CAP applications, it is typically not necessary to implement authorization checks programmatically. Instead, authorization requirements are [declared](#declarative-authorization-checks) via [annotations](https://cap.cloud.sap/docs/guides/security/authorization#requires). The resulting authorization checks are performed dynamically for the application by the AMS modules.
 
-As CAP has role-based authorization, AMS policies and authorization checks in CAP follow a [*role-based*](/CAP/RolePolicies) paradigm instead of the standard *action*/*resource* paradigm documented below.
+As CAP has role-based authorization, AMS policies and authorization checks in CAP follow a [*role-based*](/CAP/Basics#role-policies) paradigm instead of the standard *action*/*resource* paradigm documented below.
 :::
 
 ## Actions and Resources
