@@ -1,4 +1,4 @@
-# ValueHelp
+# Value Help
 
 The IAS Administration Console provides a value help feature when creating restrictions of base policies. For example, given the following base policy:
 
