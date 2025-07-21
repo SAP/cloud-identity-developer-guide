@@ -5,7 +5,7 @@ Policies that assign roles can be extended with attribute filters for instance-b
 ## Motivation
 
 Let's imagine a scenario where we want to empower tenant administrators to be able to give users the `SalesRepresentative` role but only for a specific `Region` and `ProductCategory`.
-For example, the following policy grants the `SalesRepresentative` role only in the `EU` region and only for products in the `Electronics` category:
+For example, the following policy would grant the `SalesRepresentative` role only in the `EU` region and only for products in the `Electronics` category:
 
 ```SQL
 POLICY SalesRepresentativeEUElectronics {
@@ -35,19 +35,19 @@ SCHEMA {
 ```
 
 ::: tip Schema Generation
-The AMS Node.js module [`@sap/ams`](https://www.npmjs.com/package/@sap/ams) can be used to [generate](/CAP/cds-Plugin#base-policy-generation) the `schema.dcl` from `@ams.attributes` annotations in a cds model.
+The AMS Node.js module [`@sap/ams`](https://www.npmjs.com/package/@sap/ams) can be used to [generate](/CAP/cds-Plugin#base-policy-generation) the `schema.dcl` from [`@ams.attributes`](#annotating-the-cds-model) annotations in a cds model.
 :::
 
 
 ## Restricted Role Assignments
 
-To provide guard rails for runtime policies, it is possible to extend role assignments in the base policies with a `WHERE` condition. In that condition, the `IS RESTRICTED` and `IS NOT RESTRICTED` keywords can be used to list the attributes that can be restricted by the tenant administrator at runtime.
+To provide guard rails for runtime policies, it is possible to extend role assignments in the base policies with a `WHERE` condition. In that condition, the `IS NOT RESTRICTED` and `IS RESTRICTED` keywords can be used to list the attributes that can (must) be restricted by the tenant administrator at runtime.
 
 ##### IS RESTRICTED
-When assigning a base policy with an attribute that `IS RESTRICTED`, the attribute condition evaluates to `false` which typically means unfiltered access is not possible. To gain access, administrators **must** derive a runtime policy from this base policy that restricts the attribute to a specific value.
+When assigning a base policy with an attribute that `IS RESTRICTED`, the attribute condition evaluates to `false` which typically means access by assigning the base policy is not possible at all. To gain access, administrators **must** derive a runtime policy from this base policy that restricts the attribute to a specific value.
 
 ##### IS NOT RESTRICTED
-When assigning a base policy with an attribute that `IS NOT RESTRICTED`, the attribute condition evaluates to `true` which means the base policy can be used for unfiltered access in regards to this attribute. However, administrators **can** derive a runtime policy from this base policy to restrict the attribute to a specific value.
+When assigning a base policy with an attribute that `IS NOT RESTRICTED`, the attribute condition evaluates to `true` which means the base policy can be assigned for unfiltered access. However, administrators **can** derive a runtime policy from this base policy to restrict the attribute to a specific value.
 
 In our example, we want to allow (but not force) the tenant administrator to restrict the `Region` and `ProductCategory` attributes, so we extend the `SalesRepresentative` base policy as follows:
 
@@ -71,11 +71,26 @@ In either case, it is important to consider the effects of the `IS RESTRICTED` a
 For this reason, when using `IS NOT RESTRICTED`, we discourage the use of `OR` in the `WHERE` clause of role assignments because it can lead to unintended full access.
 :::
 
+## Runtime Policy Creation
+
+Once the previous steps are in place, the tenant administrator can use the `SCI admin cockpit` to create a runtime policy from the base policy that restricts the `Region` and `ProductCategory` attributes to specific values.
+
+::: tip
+For local tests, such a derived policy can be written in a DCL file inside the [`local`](/concepts/Testing#test-policies) DCL package.
+:::
+
+```SQL
+POLICY SalesRepresentativeEUElectronics {
+    USE cap.SalesRepresentative
+    RESTRICT Region = 'EU', ProductCategory = 'Electronics';
+}
+```
+
+This derived policy is equivalent to the policy defined in the [Motivation](#motivation) section. It can be assigned to users in the same tenant like any other policy.
+
 ## Annotating the CDS Model
 
-Finally, via `@ams.attributes` annotations, the AMS attributes are mapped to elements (or association paths) in the cds model. Whenever requests access the annotated resource, the result is filtered based on the attribute conditions computed by AMS.
-
-`ams.attributes` annotations are supported on *aspects*, *entities* and *actions/functions bound to a single entity* as those are the [cds resources that support *where* conditions](https://cap.cloud.sap/docs/guides/security/authorization#supported-combinations-with-cds-resources).
+Finally, via `@ams.attributes` annotations, the AMS attributes are mapped to elements (or association paths) in the cds model via compile-safe cds expressions. Whenever requests access the annotated resources, the result is filtered based on the attribute conditions computed by AMS.
 
 ```js
 annotate Product with @ams.attributes: { // [!code ++:8]
@@ -106,19 +121,38 @@ annotate SalesOrder with @restrict: [
 ];
 ```
 
-## Runtime Policy Creation
-
-Once the previous steps are in place, the tenant administrator can use the `SCI admin cockpit` to create a runtime policy from the base policy that restricts the `Region` and `ProductCategory` attributes to specific values.
-
 ::: tip
-For local tests, such a derived policy can be written in a DCL file inside the [`local`](/concepts/Testing#test-policies) DCL package.
+`ams.attributes` annotations are supported on *aspects*, *entities* and *actions/functions bound to a single entity* as those are the [cds resources that support *where* conditions](https://cap.cloud.sap/docs/guides/security/authorization#supported-combinations-with-cds-resources).
 :::
 
-```SQL
-POLICY SalesRepresentativeEUElectronics {
-    USE cap.SalesRepresentative
-    RESTRICT Region = 'EU', ProductCategory = 'Electronics';
-}
+## Effect of attribute filters
+
+When a user is assigned the `SalesRepresentativeEUElectronics` policy, the AMS CAP modules will dynamically adjust the cds `where` condition to inject the AMS attribute conditions.
+
+For example, when accessing the `SalesOrder` entity with this policy, the AMS module will add a `where` condition to the privilege for the `SalesRepresentative` role that looks like this:
+
+```js
+@restrict: [
+    {
+      grant: [ 'READ' ],
+      to: 'SalesRepresentative',
+      where: 'region = "EU" AND product.category = "Electronics"', // [!code ++]
+    },
+]
 ```
 
-This derived policy is equivalent to the policy defined in the [Motivation](#motivation) section. It can be assigned to users in the same tenant like any other policy.
+If a user has more than one cds role that grants access to a resource, the AMS module will combine the attribute conditions of all roles using `OR`. For example, if the user also has the `SalesManager` role assigned with unfiltered access, the resulting `where` condition on `Product` would effectively look like this (before being simplified by the AMS module):
+
+```js
+@restrict: [
+    {
+      grant: ['READ'],
+      to: [ 'SalesManager', 'SalesRepresentative' ],
+      where: 'true OR (region = "EU" AND product.category = "Electronics")', // [!code ++]
+    }
+]
+```
+
+::: tip
+When there is already a static *where* condition on a cds privilege, the AMS module will combine the static *where* condition with the attribute conditions from AMS by using `AND`.
+:::
