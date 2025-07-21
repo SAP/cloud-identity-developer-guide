@@ -46,7 +46,7 @@ The recommended modules and versions have changed over time (see [Historical Set
 (✓) = *devDependency in package.json*
 
 ::: tip *
-The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-plugin).
+The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
 
 :::
 
