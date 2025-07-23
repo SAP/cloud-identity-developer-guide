@@ -83,3 +83,7 @@ It supports the following properties with the following [`default`]:
 
 ### Node.js specific configuration
 - **authPushDcl** *true/false* [`false`]:  if enabled, uploads the base policies to the AMS server on application start (see [Hybrid Testing](https://cap.cloud.sap/docs/advanced/hybrid-testing))
+
+:::tip
+All AMS properties also work lowercased (for example `generatedcl`) and this casing has priority of the camelCase (for example `generateDcl`) version of properties. This means, all [cds env sources](https://cap.cloud.sap/docs/node.js/cds-env#sources-for-cds-env) including case-insensitive ones are supported such as setting properties via environment variables (`CDS_REQUIRES_AUTH_AMS_GENERATEDCL`) which gets mapped to lowercased versions of the property. 
+:::

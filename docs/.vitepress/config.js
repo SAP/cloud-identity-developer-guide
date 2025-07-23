@@ -50,7 +50,7 @@ export default defineConfig({
                 text: 'Node.js',
                 items: [
                     { text: '@sap/ams', link: '/nodejs/sap_ams/sap_ams' },
-                    { text: '@sap/ams-dev', link: '/nodejs/sap_ams-dev/sap_ams-dev' }
+                    { text: '@sap/ams-dev', link: 'https://www.npmjs.com/package/@sap/ams-dev' }
                 ]
             },
             {

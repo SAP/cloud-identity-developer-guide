@@ -162,12 +162,16 @@ POLICY OrderAccessory {
 }
 ```
 
-[Node.js Details](/nodejs/sap_ams/sap_ams.md) / [Java Details](/java/jakarta-ams/jakarta-ams.md)
+[Node.js Details](/nodejs/sap_ams/sap_ams.md#amsmiddleware) / [Java Spring Details](/java/spring-ams/spring-ams.md)
 
 :::
 
 ### Advantages
-The advantage of declarative instead of explicit authorization checks, is that they can typically be defined centrally. This gives a central overview of the required privileges per service endpoint and allows changing required privileges without touching the implementation of service handlers.
+Declarative authorization checks have several advantages:
+  - concise syntax
+  - provides central overview of required privileges for different parts of the application
+  - allows changing required privileges without touching the implementation of service handlers
+  - prevents accidental information leaks, for example by returning 404 instead of 403 while fetching database entities for the actual authorization check in the service handler
 
 ### Disadvantages
-However, this approach typically does not work well for *action*/*resource* pairs for which conditional access may be granted. The best we can do in this case, is to do a pre-check for the action and resource, and then let the service handler perform an additional check for the condition. This is because the condition check requires access to the entity attributes.
+However, this approach is not enough for *action*/*resource* pairs for which conditional access may be granted. The best we can do in this case, is to do a pre-check for the action and resource, and then let the service handler perform an additional check for the condition. This is because the condition check requires additional attribute input, typically involving the database.

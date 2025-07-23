@@ -154,13 +154,20 @@ The Node.js module includes special handling for the `principal-propagation` API
 ::: code-group
 ```js [CAP Node.js]
 const cds = require('@sap/cds');
-const {  TECHNICAL_USER_FLOW, PRINCIPAL_PROPAGATION_FLOW, amsCapPluginRuntime } = require("@sap/ams");
+const { amsCapPluginRuntime, CdsXssecAuthProvider, IdentityServiceAuthProvider, TECHNICAL_USER_FLOW, PRINCIPAL_PROPAGATION_FLOW  } = require("@sap/ams");
 const { mapTechnicalUserApi, mapPrincipalPropagationApi } = require('./apis'); // import mapping functions
 
 cds.on('bootstrap', () => {
     const cdsAuthProvider = amsCapPluginRuntime.authProvider;
-    cdsAuthProvider.xssecAuthProvider.withApiMapper(mapTechnicalUserApi, TECHNICAL_USER_FLOW);
-    cdsAuthProvider.xssecAuthProvider.withApiMapper(mapPrincipalPropagationApi, PRINCIPAL_PROPAGATION_FLOW);
+    const authProvider = cdsAuthProvider.xssecAuthProvider;
+    authProvider.withApiMapper(mapTechnicalUserApi, TECHNICAL_USER_FLOW);
+    authProvider.withApiMapper(mapPrincipalPropagationApi, PRINCIPAL_PROPAGATION_FLOW);
+
+    // or in typescript:
+    const cdsAuthProvider : CdsXssecAuthProvider = amsCapPluginRuntime.authProvider as CdsXssecAuthProvider;
+    const authProvider : IdentityServiceAuthProvider = cdsAuthProvider.xssecAuthProvider as IdentityServiceAuthProvider;
+    authProvider.withApiMapper(mapTechnicalUserApi, TECHNICAL_USER_FLOW);
+    authProvider.withApiMapper(mapPrincipalPropagationApi, PRINCIPAL_PROPAGATION_FLOW);
 })
 ```
 
