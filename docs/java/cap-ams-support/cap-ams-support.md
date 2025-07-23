@@ -131,30 +131,10 @@ in most entities of the CDS model. However, there might be cases where not all a
 For correct, consistent, and reasonable filter conditions, we need a way to distinguish the cases and
 the conditions.
 
-The first option is to use different attributes and structures as separation. For example,
-if we have entities that have a `BusinessSystemId` and a `CompanyId`, and some that have only the
-`BusinessSystemId`:
+#### Dedicated context attribute
 
-```SQL
-SCHEMA {
-   SystemOnly : {
-      BusinessSystemId : String
-   },
-   BusinessSystemId : String,
-   CompanyId : String
-}
-
-POLICY p1 {
-   ASSIGN ROLE CarbonAccountant WHERE CompanyId IS NOT RESTRICTED AND BusinessSystemId IS NOT RESTRICTED;
-   ASSIGN ROLE CarbonAccountant WHERE SystemOnly.BusinessSystemId IS NOT RESTRICTED;
-}
-```
-Entities that have both attributes use `BusinessSystemId` and `CompanyId`, entities that have only the `BusinessSystemId`
-use `SystemOnly.BusinessSystemId` for the mapping.
-A disadvantage of this approach is that the value for `BusinessSystemId` must be set in two places for admin policies.
-
-The second option is to add an attribute that indicates if the entity is system-only and
-add the attribute to the conditions. For example:
+The first option is to add an attribute that indicates if the entity is system-only and add the attribute 
+to the conditions. For example:
 ```SQL
 SCHEMA {
     hasSystemOnly : Boolean,
@@ -170,7 +150,9 @@ POLICY p1 {
 For entities with only the `BusinessSystemId` attribute, the `hasSystemOnly` attribute is set to `true`.
 Using the given context, the correct value can be set in an `AttributesProcessor` implementation.
 
-The third option is to use the roles. For example:
+#### Using dedicated roles
+
+The second option is to use the roles. For example:
 ```SQL
 SCHEMA {
     BusinessSystemId : String,
@@ -185,6 +167,125 @@ POLICY p1 {
 
 Entities that have both attributes use the `CarbonAccountant` role; entities that have only
 the `BusinessSystemId` use the `CarbonAccountantForSystemOnly` role in the `@restrict` annotation.
+
+#### Using `IS DEFINED|IS NOT DEFINED` (preferred)
+
+The third option is to use the `IS DEFINED` or `IS NOT DEFINED` operator to set the context in conditions. 
+The expression `<attribute> IS DEFINED` evaluates to `true` if the attribute name is listed in `$env.entity.attributes`.
+`$env.entity.attributes` is an array and filled by the AMS-CAP runtime integration but it can be overwritten by custom `AttributeProcessor` implementations.
+
+##### Details (for internal documentation)
+
+The AMS-CAP runtime already reads from the CDS model which AMS attributes are mapped for the current entity. The list is used to fill the `$env.entity.attributes` array and to the `UNKNOWN` attributes. 
+
+##### IS DEFINED Example
+
+To work correctly, the context condition must always contain all attributes that form the context. For example: If your application has three attributes:
+a1,a2 and a3. Your service has one entity with attributes a1 and a2, one that has only a1 and one that has only a2. In this case, the context condition must always contain a1 and a2. Now a concrete example:
+```SQL
+SCHEMA {
+    BusinessSystemId : String,
+    CompanyId : String
+}
+
+FUNCTION hasSystemOnly() {
+    RETURN BusinessSystemId IS DEFINED AND CompanyId IS NOT DEFINED;
+}
+
+FUNCTION hasSystemAndCompany() {
+    RETURN BusinessSystemId IS DEFINED AND CompanyId IS DEFINED;
+}
+
+POLICY p1 {
+    ASSIGN ROLE CarbonAccountant WHERE hasSystemAndCompany() AND CompanyId IS NOT RESTRICTED AND BusinessSystemId IS NOT RESTRICTED;
+    ASSIGN ROLE CarbonAccountant WHERE BusinessSystemId IS NOT RESTRICTED AND hasSystemOnly();
+}
+```
+Another example taken for a [Stack question](https://sap.stackenterprise.co/questions/75150):
+
+*AMS* 
+
+```TEXT
+SCHEMA {
+    Documents: {
+        attr1: String,
+        attr2: String
+    }
+}
+
+//base policy
+POLICY DocumentAdmin {
+    ASSIGN ROLE DocumentAdmin
+        WHERE Documents.attr1 IS NOT RESTRICTED
+        AND Documents.attr2 IS NOT RESTRICTED;
+}
+
+//admin policy
+POLICY InvoiceDocumentAdmin {
+    USE DocumentAI.DocumentAdmin RESTRICT Documents.attr1 = 'invoice';
+}
+```
+*cds* 
+```CDS
+//service 1
+annotate DocumentService1.Documents with @ams.attributes: {
+    Documents.attr1: (attr1)
+};
+annotate DocumentService1.Documents with @restrict: [{
+    grant: '*',
+    to: ['DocumentAdmin']
+};
+
+service DocumentService1 {
+  entity Documents {
+     attr1: string
+  }
+}
+
+//service 2
+annotate DocumentService2.Documents with @ams.attributes: {
+    Documents.attr2: (attr2)
+};
+annotate DocumentService2.Documents with @restrict: [{
+    grant: '*',
+    to: ['DocumentAdmin']    
+};
+
+service DocumentService2 {
+  entity Documents {
+     attr2: string
+  }
+}
+```
+
+The expected behavior is that users with the assigned policy `DocumentAdmin` can read all documents from both services. Users with the assigned policy `InvoiceDocumentAdmin` can read only documents with `attr1 = 'invoice'` from the first service and all documents from the second service.
+With both attributes in one condition users with the `InvoiceDocumentAdmin` don't get any access to the second service because the condition `attr1 = 'invoice'` evaluates to false. Splitting the conditions would not work either because the filter `attr1 = 'invoice'` stops working for service 1.
+So the solution is to use the `IS DEFINED` operator:
+
+```TEXT
+...
+
+FUNCTION hasOnlyAttr1() {
+    RETURN Documents.attr1 IS DEFINED AND Documents.attr2 IS NOT DEFINED;
+}
+
+FUNCTION hasOnlyAttr2() {
+    RETURN Documents.attr1 IS NOT DEFINED AND Documents.attr2 IS DEFINED;
+}
+
+
+//base policy
+POLICY DocumentAdmin {
+    ASSIGN ROLE DocumentAdmin WHERE hasOnlyAttr1() ANDDocuments.attr1 IS NOT RESTRICTED;
+    ASSIGN ROLE DocumentAdmin WHERE hasOnlyAttr2() AND Documents.attr2 IS NOT RESTRICTED;
+}
+
+//admin policy
+POLICY InvoiceDocumentAdmin {
+    USE DocumentAI.DocumentAdmin RESTRICT Documents.attr1 = 'invoice';
+}
+```
+
 
 ### Customize Attributes
 
