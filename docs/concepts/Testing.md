@@ -219,4 +219,4 @@ cds:
 
 The DCL package called `local` has a special semantic: it is intended for DCL files with policies only relevant for testing, not for production. Policies in the `local` package are ignored during base policy upload, even if present in the archive.
 
-This allows you to test policies that are restrictions of base policies without shipping them to customers. Typically, such policies would be created by an administrator at runtime in the SCI cockpit.
+This allows you to test policies that are restrictions of base policies without shipping them to customers. Typically, such policies would be created by an administrator at runtime in the `SCI admin cockpit`.

@@ -46,10 +46,8 @@ The recommended modules and versions have changed over time (see [Historical Set
 (✓) = *devDependency in package.json*
 
 ::: tip *
-The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide the following dev-time features as [cds build plugin](https://cap.cloud.sap/docs/guides/deployment/custom-builds#custom-build-plugins):
-- Validation of `@ams.attributes` annotations against `schema.dcl` during `cds build`
-- Generation of DCL during `cds build` (for monolithic CAP applications)
-- Generation of DCL policy deployer application during `cds build` (for monolithic CAP applications)
+The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
+
 :::
 
 ### Node.js
