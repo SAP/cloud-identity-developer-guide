@@ -201,7 +201,7 @@ POLICY p1 {
     ASSIGN ROLE CarbonAccountant WHERE BusinessSystemId IS NOT RESTRICTED AND hasSystemOnly();
 }
 ```
-Another example taken for a [Stack question](https://sap.stackenterprise.co/questions/75150):
+Another example taken from a [Stack question](https://sap.stackenterprise.co/questions/75150):
 
 *AMS* 
 
