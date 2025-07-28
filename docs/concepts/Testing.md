@@ -168,10 +168,6 @@ In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cd
         "@sap/ams-dev": "^2", // [!code ++]
 }
 ```
-
-``` [Java]
-https://github.wdf.sap.corp/CPSecurity/cloud-authorization-client-library-java/blob/3391eb3c4bd8ef9bf5c8a361d35379918571990e/docs/maven-plugins.md#-maven-dcl-compiler
-```
 :::
 
 #### Loading DCN
