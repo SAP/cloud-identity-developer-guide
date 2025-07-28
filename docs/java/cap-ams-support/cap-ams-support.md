@@ -22,7 +22,7 @@ When using this module, the usage of AMS in a CAP Java application works as foll
 
 ### AMS Schema and role policies
 
-```DCL
+```dcl
 SCHEMA {
   //defining attributes 
   @valueHelp { ... }  //configure application endpoint for value help
@@ -37,7 +37,7 @@ The `schema.dcl` must be located on the root level of your DCL folder (common pr
 Additional documentation for the value help annotation can be found [here](../../concepts/ValueHelp.md).
 The following is a set of role-policies that shows examples for both unrestricted and restricted role assignments. The latter contain a template condition with schema attributes that can be customized by customers for instance-based access by creating admin policies that restrict those attributes.
 
-```DCL
+```dcl
 //grant role with additional filter condition
 POLICY BusinessConfigurationExpert {
     ASSIGN ROLE BusinessConfigurationExpert WHERE CompanyId IS NOT RESTRICTED AND BusinessSystemType IS NOT RESTRICTED;
@@ -135,7 +135,7 @@ The first option is to use different attributes and structures as separation. Fo
 if we have entities that have a `BusinessSystemId` and a `CompanyId`, and some that have only the
 `BusinessSystemId`:
 
-```SQL
+```dcl
 SCHEMA {
    SystemOnly : {
       BusinessSystemId : String
@@ -155,7 +155,7 @@ A disadvantage of this approach is that the value for `BusinessSystemId` must be
 
 The second option is to add an attribute that indicates if the entity is system-only and
 add the attribute to the conditions. For example:
-```SQL
+```dcl
 SCHEMA {
     hasSystemOnly : Boolean,
     BusinessSystemId : String,
@@ -171,7 +171,7 @@ For entities with only the `BusinessSystemId` attribute, the `hasSystemOnly` att
 Using the given context, the correct value can be set in an `AttributesProcessor` implementation.
 
 The third option is to use the roles. For example:
-```SQL
+```dcl
 SCHEMA {
     BusinessSystemId : String,
     CompanyId : String
