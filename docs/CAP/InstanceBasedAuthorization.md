@@ -7,7 +7,7 @@ Policies that assign roles can be extended with attribute filters for instance-b
 Let's imagine a scenario where we want to empower tenant administrators to be able to give users the `SalesRepresentative` role but only for a specific `Region` and `ProductCategory`.
 For example, the following policy would grant the `SalesRepresentative` role only in the `EU` region and only for products in the `Electronics` category:
 
-```SQL
+```dcl
 POLICY SalesRepresentativeEUElectronics {
     ASSIGN ROLE SalesRepresentative 
     WHERE Region = 'EU' AND ProductCategory = 'Electronics'; -- [!code ++]
@@ -24,7 +24,7 @@ As a basis, attributes used in policies must be defined in a `schema.dcl` file. 
 
 In this file, the data type of the attributes is defined, and it can also contain additional metadata annotations, such as those for [Value Help](/concepts/ValueHelp).
 
-```sql
+```dcl
 SCHEMA {
   @valueHelp { ... }  // details omitted for brevity
   Region : String,
@@ -51,7 +51,7 @@ When assigning a base policy with an attribute that `IS NOT RESTRICTED`, the att
 
 In our example, we want to allow (but not force) the tenant administrator to restrict the `Region` and `ProductCategory` attributes, so we extend the `SalesRepresentative` base policy as follows:
 
-```SQL
+```dcl
 POLICY SalesRepresentative {
     ASSIGN ROLE SalesRepresentative
     WHERE Region IS NOT RESTRICTED AND ProductCategory IS NOT RESTRICTED; -- [!code ++]
@@ -79,7 +79,7 @@ Once the previous steps are in place, the tenant administrator can use the `SCI 
 For local tests, such a derived policy can be written in a DCL file inside the [`local`](/concepts/Testing#test-policies) DCL package.
 :::
 
-```SQL
+```dcl
 POLICY SalesRepresentativeEUElectronics {
     USE cap.SalesRepresentative
     RESTRICT Region = 'EU', ProductCategory = 'Electronics';

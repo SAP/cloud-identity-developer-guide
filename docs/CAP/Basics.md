@@ -12,7 +12,7 @@ It makes no sense to duplicate this information in *action*/*resource* based AMS
 
 For example, the following policy would grant the `SalesRepresentative` role when assigned to a user:
 
-```SQL
+```dcl
 POLICY SalesRepresentative {
     ASSIGN ROLE SalesRepresentative;
 }
@@ -24,7 +24,7 @@ The AMS Node.js module [`@sap/ams`](https://www.npmjs.com/package/@sap/ams) can 
 
 ### Role Policy Guidelines
 There is no technical requirement for the policy name to match the role name. For example, policies can also be used to define higher-level business roles that assign lower-level technical roles from the cds model:
-```SQL
+```dcl
 POLICY SalesRepresentative {
     ASSIGN ROLE SalesViewer;
     ASSIGN ROLE SalesCampaignViewer;
@@ -38,7 +38,7 @@ The `ASSIGN ROLE` keyword is CAP-specific syntactic sugar of DCL to abstract awa
 
 The policy above is equivalent to the following syntax:
 
-```SQL
+```dcl
 POLICY SalesRepresentative {
     GRANT SalesRepresentative ON $SCOPES;
 }

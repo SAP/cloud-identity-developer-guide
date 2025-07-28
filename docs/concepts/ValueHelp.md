@@ -2,7 +2,7 @@
 
 The IAS Administration Console provides a value help feature when creating restrictions of base policies. For example, given the following base policy:
 
-```SQL
+```dcl
 POLICY ReadProducts {
     GRANT read ON products WHERE category IS NOT RESTRICTED;
 }
@@ -10,7 +10,7 @@ POLICY ReadProducts {
 
 An administrator may use the IAS Administration Console to create a policy that is a restriction of the base policy for a specific category, such as "electronics":
 
-```SQL
+```dcl
 POLICY ReadElectronics {
     USE ReadProducts RESTRICT category = 'electronics';
 }

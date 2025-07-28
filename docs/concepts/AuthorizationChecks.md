@@ -12,7 +12,7 @@ As CAP has role-based authorization, AMS policies and authorization checks in CA
 
 Authorization policies grant the right for a one (or multiple) *actions* on one (or multiple) *resources*. For example:
 
-```SQL
+```dcl
 POLICY ReadProducts {
     GRANT read ON products;
 }
@@ -50,7 +50,7 @@ if(policyDecisionPoint.allow(attributes)) {
 
 Grants of authorization policies can be restricted by conditions to filter the entities of a resource on which the action is allowed. For example, a policy can grant the right to read products only if the product is in stock:
 
-```SQL
+```dcl
 POLICY ReadProducts {
     GRANT read ON products WHERE stock > 0;
 }
@@ -116,7 +116,7 @@ const accessibleLandscapes =
     });
 ```
 
-```sql [DCL]
+```dcl [DCL]
 POLICY AccessEUCanaryLandscapes {
     GRANT access ON landscape WHERE name LIKE '%canary' AND region = 'EU';
 }
@@ -148,7 +148,7 @@ app.post('/orders', amsMw.checkPrivilege('read', 'products'), amsMw.precheckPriv
 // Example for Spring request matcher coming soon
 ```
 
-```sql [DCL]
+```dcl [DCL]
 POLICY ReadProducts {
     GRANT read ON products;
 }

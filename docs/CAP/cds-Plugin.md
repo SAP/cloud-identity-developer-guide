@@ -26,7 +26,7 @@ The AMS build task generates base policies for roles that occur in the `@require
 entity Books as projection on my.Books { *,
 ```
 
-```sql [basePolicies.dcl]
+```dcl [basePolicies.dcl]
 POLICY "Reader" {
   ASSIGN ROLE "Reader";
 }
@@ -48,7 +48,7 @@ annotate SalesOrder with @ams.attributes: {
 };
 ```
 
-```sql [schema.dcl]
+```dcl [schema.dcl]
 SCHEMA {
   Region : String,
   Budget : Number
