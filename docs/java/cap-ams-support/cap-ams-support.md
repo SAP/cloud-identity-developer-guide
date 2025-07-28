@@ -135,6 +135,7 @@ the conditions.
 
 The first option is to add an attribute that indicates if the entity is system-only and add the attribute 
 to the conditions. For example:
+
 ```SQL
 SCHEMA {
     hasSystemOnly : Boolean,
@@ -168,40 +169,35 @@ POLICY p1 {
 Entities that have both attributes use the `CarbonAccountant` role; entities that have only
 the `BusinessSystemId` use the `CarbonAccountantForSystemOnly` role in the `@restrict` annotation.
 
-#### Using `IS DEFINED|IS NOT DEFINED` (preferred)
+#### Using `@cdsEntity` (preferred) <-- new
 
-The third option is to use the `IS DEFINED` or `IS NOT DEFINED` operator to set the context in conditions. 
-The expression `<attribute> IS DEFINED` evaluates to `true` if the attribute name is listed in `$env.entity.attributes`.
-`$env.entity.attributes` is an array and filled by the AMS-CAP runtime integration but it can be overwritten by custom `AttributeProcessor` implementations.
+The third option is to use the `@cdsEntity` annotation on rules to set the context. 
+The annotation `@cdsEntity:[a,b,c]` add a condition to the rule, similar to action and resource. The added condition is `AND $dcl.cdsEntity IN [a,b,c]` 
+and is evaluated by the AMS runtime. This enables the CAP application to define for which entities the rule is applicable. The annotation is hidden in the UI.  
 
 ##### Details (for internal documentation)
 
-The AMS-CAP runtime already reads from the CDS model which AMS attributes are mapped for the current entity. The list is used to fill the `$env.entity.attributes` array and to the `UNKNOWN` attributes. 
+The AMS-CAP runtime fills the `$dcl.cdsEntity` context variable with the name of the CDS entity. This can be overridden by the application in a custom `AttributeProvider` implementation, e.g. to introduce a different entity names or aliases. 
 
-##### IS DEFINED Example
-
-To work correctly, the context condition must always contain all attributes that form the context. For example: If your application has three attributes:
-a1,a2 and a3. Your service has one entity with attributes a1 and a2, one that has only a1 and one that has only a2. In this case, the context condition must always contain a1 and a2. Now a concrete example:
-```SQL
-SCHEMA {
-    BusinessSystemId : String,
-    CompanyId : String
-}
-
-FUNCTION hasSystemOnly() {
-    RETURN BusinessSystemId IS DEFINED AND CompanyId IS NOT DEFINED;
-}
-
-FUNCTION hasSystemAndCompany() {
-    RETURN BusinessSystemId IS DEFINED AND CompanyId IS DEFINED;
-}
-
+```TEXT
 POLICY p1 {
-    ASSIGN ROLE CarbonAccountant WHERE hasSystemAndCompany() AND CompanyId IS NOT RESTRICTED AND BusinessSystemId IS NOT RESTRICTED;
-    ASSIGN ROLE CarbonAccountant WHERE BusinessSystemId IS NOT RESTRICTED AND hasSystemOnly();
+    @cdsEntity: ['BusinessSystemService.BusinessSystem']
+    ASSIGN ROLE CarbonAccountant WHERE BusinessSystemId IS NOT RESTRICTED;
 }
+
+// tranlates to
+(AND
+    $dcl.action IN ['CarbonAccountant']
+    $dcl.resource IN ['$SCOPES']
+    $dcl.cdsEntity IN ['BusinessSystemService.BusinessSystem']
+    ...where clause...
+)
 ```
-Another example taken from a [Stack question](https://sap.stackenterprise.co/questions/75150):
+The additional condition `$dcl.cdsEntity IN ['BusinessSystemService.BusinessSystem']` can be added by the compiler into the where clause or implemented directly in the DCN engine. 
+
+##### `@cdsEntity` Example
+
+Example taken from a [Stack question](https://sap.stackenterprise.co/questions/75150):
 
 *AMS* 
 
@@ -260,24 +256,17 @@ service DocumentService2 {
 
 The expected behavior is that users with the assigned policy `DocumentAdmin` can read all documents from both services. Users with the assigned policy `InvoiceDocumentAdmin` can read only documents with `attr1 = 'invoice'` from the first service and all documents from the second service.
 With both attributes in one condition users with the `InvoiceDocumentAdmin` don't get any access to the second service because the condition `attr1 = 'invoice'` evaluates to false. Splitting the conditions would not work either because the filter `attr1 = 'invoice'` stops working for service 1.
-So the solution is to use the `IS DEFINED` operator:
+So the solution is to use the `@cdsEntity` annotation:
 
 ```TEXT
 ...
 
-FUNCTION hasOnlyAttr1() {
-    RETURN Documents.attr1 IS DEFINED AND Documents.attr2 IS NOT DEFINED;
-}
-
-FUNCTION hasOnlyAttr2() {
-    RETURN Documents.attr1 IS NOT DEFINED AND Documents.attr2 IS DEFINED;
-}
-
-
 //base policy
 POLICY DocumentAdmin {
-    ASSIGN ROLE DocumentAdmin WHERE hasOnlyAttr1() ANDDocuments.attr1 IS NOT RESTRICTED;
-    ASSIGN ROLE DocumentAdmin WHERE hasOnlyAttr2() AND Documents.attr2 IS NOT RESTRICTED;
+    @cdsEntity: ['DocumentService1.Documents']
+    ASSIGN ROLE DocumentAdmin WHERE Documents.attr1 IS NOT RESTRICTED;
+    @cdsEntity: ['DocumentService2.Documents']
+    ASSIGN ROLE DocumentAdmin WHERE Documents.attr2 IS NOT RESTRICTED;
 }
 
 //admin policy
@@ -285,7 +274,6 @@ POLICY InvoiceDocumentAdmin {
     USE DocumentAI.DocumentAdmin RESTRICT Documents.attr1 = 'invoice';
 }
 ```
-
 
 ### Customize Attributes
 
