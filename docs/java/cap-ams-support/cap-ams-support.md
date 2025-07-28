@@ -200,7 +200,7 @@ dynamic arguments are defined in the `AmsConstants` class.
 Here is a list of features and functionalities that can be switched on/off via configuration. The default
 of the configuration might change over time, or a toggle is deleted.
 
-#### Generate `existis` predicate
+#### Generate `exists` predicate
 
 By setting the property `cds.security.authorization.ams.features.generateExists` to `true`,
 the AMS runtime checks annotated paths for `1..*` associations. If such an association is found in a path,
