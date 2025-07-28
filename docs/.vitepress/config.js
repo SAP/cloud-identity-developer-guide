@@ -5,7 +5,10 @@ export default defineConfig({
     title: 'SCI Developer Guide',
     description: 'Application development with the SAP Cloud Identity Services client libraries',
     markdown: {
-        languages
+        languages,
+        languageAlias: {
+            cds: 'js'
+        }
     },
     themeConfig: {
         search: {
