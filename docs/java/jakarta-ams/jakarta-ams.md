@@ -271,7 +271,7 @@ In detail, `PolicyEvaluationSlf4jLogger` writes
 
 #### Audit Logging
 
-In order to enable that audit logging the application needs to configure and register this `PolicyEvaluationV2AuditLogger` as listener to the `PolicyDecisionPoint` implementation as done in the [jakarta-security-ams sample](https://github.wdf.sap.corp/CPSecurity/ams-samples-java/blob/main/jakarta-security-ams/src/main/java/com/sap/cloud/security/samples/filter/PolicyDecisionAuditLogFilter.java).<br>
+In order to enable that audit logging the application needs to configure and register this `PolicyEvaluationV2AuditLogger` as listener to the `PolicyDecisionPoint` implementation as done in the [jakarta-security-ams sample](https://github.com/SAP-samples/ams-samples-java/blob/main/jakarta-ams-sample/src/main/java/com/sap/cloud/security/samples/filter/PolicyDecisionAuditLogFilter.java).<br>
 In order to correlate this audit log message with logs written for the same request context `PolicyEvaluationV2AuditLogger` also fills `sap-passport` if provided with the Mapped Diagnostic Context (MDC) context. For that applications have to
 
 - leverage a slf4j implementation that supports MDC like [logback](http://logback.qos.ch/manual/mdc.html)
