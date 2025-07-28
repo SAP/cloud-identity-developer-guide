@@ -1,8 +1,8 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
-    title: 'AMS Client Libraries',
-    description: 'Documentation for SAP Authorization Management Service (AMS) client libraries',
+    title: 'SCI Developer Guide',
+    description: 'Application development with the SAP Cloud Identity Services client libraries',
     themeConfig: {
         search: {
             provider: 'local'
@@ -17,7 +17,7 @@ export default defineConfig({
         ],
         sidebar: [
             {
-                text: 'Concepts',
+                text: 'Authorization',
                 items: [
                     { text: 'Getting Started', link: '/concepts/GettingStarted' },
                     { text: 'Startup Check', link: '/concepts/StartupCheck' },
@@ -30,7 +30,7 @@ export default defineConfig({
                 ]
             },
             {
-                text: 'CAP Integration',
+                text: 'CAP Authorization',
                 items: [
                     { text: 'Basics', link: '/CAP/Basics' },
                     { text: 'Instance-based Authorization', link: '/CAP/InstanceBasedAuthorization' },
@@ -38,25 +38,33 @@ export default defineConfig({
                 ]
             },
             {
-                text: 'Java',
+                text: 'Library Modules',
                 items: [
-                    { text: 'jakarta-ams', link: '/java/jakarta-ams/jakarta-ams' },
-                    { text: 'spring-ams', link: '/java/spring-ams/spring-ams' },
-                    { text: 'cap-ams-support', link: '/java/cap-ams-support/cap-ams-support' },
-                    { text: 'cap-support (legacy)', link: '/java/cap-support/cap-support' }
-                ]
-            },
-            {
-                text: 'Node.js',
-                items: [
-                    { text: '@sap/ams', link: '/nodejs/sap_ams/sap_ams' },
-                    { text: '@sap/ams-dev', link: '/nodejs/sap_ams-dev/sap_ams-dev' }
-                ]
-            },
-            {
-                text: 'Go',
-                items: [
-                    { text: 'cloud-identity-authorizations-golang-library', link: '/go/go-ams' }
+                    {
+                        text: 'Java',
+                        collapsed: true,
+                        items: [
+                            { text: 'jakarta-ams', link: '/java/jakarta-ams/jakarta-ams' },
+                            { text: 'spring-ams', link: '/java/spring-ams/spring-ams' },
+                            { text: 'cap-ams-support', link: '/java/cap-ams-support/cap-ams-support' },
+                            { text: 'cap-support (legacy)', link: '/java/cap-support/cap-support' }
+                        ]
+                    },
+                    {
+                        text: 'Node.js',
+                        collapsed: true,
+                        items: [
+                            { text: '@sap/ams', link: '/nodejs/sap_ams/sap_ams' },
+                            { text: '@sap/ams-dev', link: 'https://www.npmjs.com/package/@sap/ams-dev' }
+                        ]
+                    },
+                    {
+                        text: 'Go',
+                        collapsed: true,
+                        items: [
+                            { text: 'cloud-identity-authorizations-golang-library', link: '/go/go-ams' }
+                        ]
+                    }
                 ]
             },
             {

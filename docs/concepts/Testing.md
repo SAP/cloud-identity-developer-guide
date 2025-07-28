@@ -16,6 +16,10 @@ Local tests also make it easy to use a debugger or analyze debug logs without pe
 Nothing is more frustrating—both for you and the AMS support team—than spending time on a cloud deployment with limited debuggability, only to find out that your authorization logic is not working as expected. Local tests help you avoid this pitfall.
 :::
 
+::: tip CAP Hybrid Testing
+In CAP projects, you can use [hybrid testing](https://cap.cloud.sap/docs/advanced/hybrid-testing) to run a local instance of the application with the AMS bundle from a productive landscape, allowing you to test with the same policies and assignments as in production.
+:::
+
 ## Mock Authentication, Not Authorization
 
 When testing your application's AMS integration, always mock authentication—not authorization. This way you test the same AMS code that runs in production which means, local authorization tests are generally very reliable. Avoid mocking internal authorization logic, e.g. AMS library functions, as it is complex and prone to API changes, making tests brittle and less reliable.

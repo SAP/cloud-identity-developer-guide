@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: "AMS Client Libraries"
-  text: "Documentation"
-  tagline: "SAP Cloud Identity Services Authorization"
+  name: "SAP Cloud Identity Services"
+  text: "Developer Guide"
+  tagline: "Implementing Authentication and Authorization with the SCI Client Libraries."
   actions:
     - theme: brand
       text: Getting Started
@@ -15,19 +15,19 @@ hero:
 
 features:
   - icon: 
-      src: /declare.svg
-      alt: Declare
-    title: Declare
-    details: Use Data Control Language (DCL) to declare the actions, resources and their attributes on which the authorization model of your business application should be based on. The result is a set of base policies for your business application.
+      src: /architecture.svg
+      alt: Architecture
+    title: Architecture (Coming Soon)
+    details: Learn about the architecture of the SAP Cloud Identity Services and the best practices for developing applications based on them.
   - icon: 
-      src: /enforce.svg
-      alt: Enforce
-    title: Enforce
+      src: /authentication.svg
+      alt: Authentication
+    title: Authentication (Coming Soon)
+    details: Use the IAS Client Libraries to implement authentication in your business application, both for users and external systems.
+  - icon: 
+      src: /authorization.svg
+      alt: Authorization
+    title: Authorization
     details: Use the AMS Client Libraries to perform authorization checks, so that the security relevant operations and resources of your business application are protected from unauthorized access.
     class: feature-highlight
-  - icon: 
-      src: /manage.svg
-      alt: Manage
-    title: Manage
-    details: Create administration policies from base policies and assign them to the users of your business application, so that they can only perform those actions on the resources for which they have been authorized for.
 ---

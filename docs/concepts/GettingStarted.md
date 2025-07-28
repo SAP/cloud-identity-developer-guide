@@ -14,7 +14,7 @@ The AMS client libraries consist of different modules for the following programm
     - [cap-ams-support](/java/cap-ams-support/cap-ams-support.md)
 - **JavaScript** (Node.js):
     - [@sap/ams](/nodejs/sap_ams/sap_ams.md)
-    - [@sap/ams-dev](/nodejs/sap_ams-dev/sap_ams-dev.md)
+    - [@sap/ams-dev](https://www.npmjs.com/package/@sap/ams-dev)
 - **Go**:
     - [cloud-identity-authorizations-golang-library](/go/go-ams.md)
 

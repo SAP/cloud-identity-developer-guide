@@ -12,6 +12,10 @@ Debug logging should not be enabled in production environments as it may expose 
 It is your responsibility to ensure that debug logs are not stored or transmitted in a way that could compromise security or violate data protection regulations.
 :::
 
+::: tip
+In CAP projects, you can use [hybrid testing](https://cap.cloud.sap/docs/advanced/hybrid-testing) to run a local instance of the application with the AMS bundle from a productive landscape where it is safe to enable debug logging.
+:::
+
 ### Local Debug Logging
 To enable debug logging when starting the application locally, run with the following environment variables:
 
