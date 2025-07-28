@@ -277,7 +277,7 @@ private PolicyDecisionPoint policyDecisionPoint;
     Attributes attributes=principal.getAttributes().setAction("read");
     boolean isReadAllowed=policyDecisionPoint.allow(attributes);
 ````
-See [here](../jakarta-ams/README.md) for ``PolicyDecisionPoint`` API documentation.
+See [here](../jakarta-ams/jakarta-ams#overview-policydecisionpoint-methods) for ``PolicyDecisionPoint`` API documentation.
 
 > :heavy_exclamation_mark: [Consider also limitation of api liability](#api-disclaimer).
 
