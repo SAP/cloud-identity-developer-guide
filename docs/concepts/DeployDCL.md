@@ -18,7 +18,7 @@ However, if your application consists of multiple microservices, it makes sense 
 
 ## AMS Policies Deployer App
 The official solution for deploying DCL files to an AMS instance is to do it with an *AMS Policies Deployer App*.
-It is a minimalistic Node.js application that uses the credentials for your *identity* service instance and the [deploy-dcl](https://github.wdf.sap.corp/CPSecurity/cloud-authorization-client-library-nodejs#deploy-dcl-script) script from the `@sap/ams` Node.js client library to upload the DCL files to the AMS server.
+It is a minimalistic Node.js application that uses the credentials for your *identity* service instance and the [deploy-dcl](#deploy-dcl-script) script from the `@sap/ams` Node.js client library to upload the DCL files to the AMS server.
 
 The deployer app is a minimalistic deployment artefact that is not part of your backend service.
 This separation of concerns allows you to deploy the DCL files independently from your backend service, typically as a pre-step, and to manage the DCL files in a dedicated repository in microservice architectures.
@@ -233,3 +233,46 @@ If you do not want to use git submodules, there are alternative solutions availa
 - [NPM Workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces)
 - [Maven Modules](https://maven.apache.org/guides/mini/guide-multiple-modules.html)
 :::
+
+## deploy-dcl script
+
+The `deploy-dcl` script from `@sap/ams` pushes a DCL bundle (including schema.dcl, DCL root package and all subpackages) to the Identity service instance from the environment (see `deploy-dcl --help`):
+
+```
+Usage: npx --package=@sap/ams deploy-dcl -d [DCL_ROOT_DIR] -c [CREDENTIALS_FILE] -n [DEPLOYER_APP_NAME]
+
+Options:
+      --help         Show help                                         [boolean]
+      --version      Show version number                               [boolean]
+  -d, --dcl          [optional] path to the directory that contains the DCL root
+                     package. If a path is provided via environment variable
+                     AMS_DCL_ROOT, it overrides this option.
+                                                       [string] [default: "dcl"]
+  -c, --credentials  [optional] path to a JSON file containing the credentials
+                     object of an Identity service binding. If omitted, will try
+                     to find and use an Identity service binding from the
+                     process environment.                               [string]
+  -n, --name         [optional] a descriptive name of this deployer application
+                     to trace back the currently deployed DCL bundle on the AMS
+                     server to its source when DCL is deployed from more than
+                     one source. If a name is provided directly via environment
+                     variable AMS_APP_NAME or indirectly as application_name via
+                     VCAP_APPLICATION on Cloud Foundry or the pod name on K8s,
+                     it overrides this option.
+                                   [string] [default: "@sap/ams:deploy-dcl"]
+
+Examples:
+  deploy-dcl                                Pushes the DCL content in ./dcl
+                                            (including schema.dcl, DCL root
+                                            package and all subpackages) to the
+                                            identity service instance from the
+                                            environment.
+  deploy-dcl -d src/dcl -c config/ias.json  Pushes the DCL content from
+  -n bookshop-dcl-deployer                  ./src/dcl using the SAP Cloud Identity Services
+                                            credentials in ./config/ias.json.
+                                            The deployer app name for this
+                                            upload will be set to
+                                            "bookshop-dcl-deployer" to be able
+                                            to trace back the upload source to
+                                            this deployer.
+```
