@@ -62,7 +62,7 @@ POLICY BusinessConfigurationExpert001 {
 CAP provides a standard [annotation syntax][01] for several use cases.
 The following example demonstrates the required CDS/AMS annotations:
 
-```CDS
+```cds
 // link the fields of the entity to the AMS schema attributes
 annotate Account with @ams.attributes: {
     CompanyId: (companyId),
