@@ -49,7 +49,7 @@ For each API permission group that is provided by the application, it defines an
 For example, if the application provides an API permission group named `ExternalOrder` that can be used by external applications to place small orders, it could define the following internal policy that grants the intended privileges to callers of the API permission group. The fully qualified name of the policy is `internal.ExternalOrder` as it is defined inside a file of the `internal` DCL package:
 
 :::code-group
-```sql [dcl/internal/apiPolicies.dcl]
+```dcl [dcl/internal/apiPolicies.dcl]
 INTERNAL POLICY ExternalOrder {
     USE shopping.CreateOrders RESTRICT order.total < 100;
 }
