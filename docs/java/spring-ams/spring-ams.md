@@ -18,22 +18,6 @@ Please check the [release notes](../releases.md) or the release notes to stay tu
 - Spring Boot 3.4.0-SNAPSHOT or later
 - Spring Security 6.0.0 or later
 
-## Table of Contents
-* [Setup](#setup)
-    + [Maven Dependencies](#maven-dependencies)
-    + [Base DCL](#base-dcl)
-* [Usage](#usage)
-    + [Authorization decision point readiness evaluation](#authorization-decision-point-readiness-evaluation)
-    + [Access control on request level](#access-control-on-request-level)
-    + [Access control on method level](#access-control-on-method-level)
-    + [Authorization hybrid mode - Xsuaa & AMS](#authorization-hybrid-mode---xsuaa-and-ams-authorization-checks)
-    + [Additional Information](#additional-information)
-+ [Audit Logging](#audit-logging)
-* [Testing](#testing)
-* [Troubleshooting](#troubleshooting)
-    + [Set debug log level](#set-debug-log-level)
-* [Samples](#sample)
-
 ## Setup
 
 ### Maven Dependencies
