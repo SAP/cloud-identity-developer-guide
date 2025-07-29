@@ -53,8 +53,7 @@ export default defineConfig({
                         items: [
                             { text: 'jakarta-ams', link: '/Libraries/java/jakarta-ams/jakarta-ams' },
                             { text: 'spring-ams', link: '/Libraries/java/spring-ams/spring-ams' },
-                            { text: 'cap-ams-support', link: '/Libraries/java/cap-ams-support/cap-ams-support' },
-                            { text: 'cap-support (legacy)', link: '/Libraries/java/cap-support/cap-support' }
+                            { text: 'cap-ams-support', link: '/Libraries/java/cap-ams-support/cap-ams-support' }
                         ]
                     },
                     {
