@@ -19,7 +19,7 @@ Please check the [release notes](../releases.md) to stay tuned about new feature
 
 ## Sample DCL
 
-Every business application has to describe its security model in [dcl language](../../Authorization/DeployDCL.md).<br>
+Every business application has to describe its security model in [dcl language](/Authorization/DeployDCL.md).<br>
 To describe the names and types of attributes, a file named `schema.dcl` and must be located in the root folder, for example in `src/main/resources`.
 
 ```

@@ -34,7 +34,7 @@ SCHEMA {
 ```
 This schema defines two attributes, `CompanyId` and `BusinessSystemType,` that can be used in role policies.
 The `schema.dcl` must be located on the root level of your DCL folder (common practice `src/main/resources/ams`).
-Additional documentation for the value help annotation can be found [here](../../Authorization/ValueHelp.md).
+Additional documentation for the value help annotation can be found [here](/Authorization/ValueHelp.md).
 The following is a set of role-policies that shows examples for both unrestricted and restricted role assignments. The latter contain a template condition with schema attributes that can be customized by customers for instance-based access by creating admin policies that restrict those attributes.
 
 ```dcl
@@ -208,7 +208,7 @@ the runtime generates the where-clause using the [CAP exists predicate][03].
 
 ## Help and Support
 
-Consult the [AMS documentation](../../index.md) or the documentation
+Consult the [AMS documentation](/index.md) or the documentation
 of the other AMS Client Library modules [e.g. jakarta-ams](../jakarta-ams/jakarta-ams.md) for more information.
 The [sample application][02] could also be useful.
 
