@@ -22,7 +22,7 @@ In the next sections, we will explain the necessary steps in the application to 
 
 As a basis, attributes used in policies must be defined in a `schema.dcl` file. This file must be located in the [DCL root folder](/CAP/Basics#dcl-root-folder) of the CAP application.
 
-In this file, the data type of the attributes is defined, and it can also contain additional metadata annotations, such as those for [Value Help](/concepts/ValueHelp).
+In this file, the data type of the attributes is defined, and it can also contain additional metadata annotations, such as those for [Value Help](/Authorization/ValueHelp).
 
 ```dcl
 SCHEMA {
@@ -76,7 +76,7 @@ For this reason, when using `IS NOT RESTRICTED`, we discourage the use of `OR` i
 Once the previous steps are in place, the tenant administrator can use the `SCI admin cockpit` to create a runtime policy from the base policy that restricts the `Region` and `ProductCategory` attributes to specific values.
 
 ::: tip
-For local tests, such a derived policy can be written in a DCL file inside the [`local`](/concepts/Testing#test-policies) DCL package.
+For local tests, such a derived policy can be written in a DCL file inside the [`local`](/Authorization/Testing#test-policies) DCL package.
 :::
 
 ```dcl

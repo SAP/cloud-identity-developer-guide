@@ -18,4 +18,4 @@ The [Node.js samples repository](https://github.com/SAP-samples/ams-samples-node
 - `Express.js`: [ams-express-shopping](https://github.com/SAP-samples/ams-samples-node/tree/main/ams-express-shopping)
 
 ### Go
-For Go, we currently do not have a sample available. However, you can refer to the Go client library [documentation](/go/go-ams) for more information on how to use the library.
+For Go, we currently do not have a sample available. However, you can refer to the Go client library [documentation](/Libraries/go/go-ams) for more information on how to use the library.

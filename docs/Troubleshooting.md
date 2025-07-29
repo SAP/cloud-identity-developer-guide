@@ -7,14 +7,14 @@ This guide provides a systematic approach to troubleshooting authorization probl
 ### Step 1: Preparation
 
 Before you start debugging, make sure you can reproduce the issue in an environment where one of two things are possible:
-- Enabling **[Debug Logs](/concepts/Logging#debug-logging)** without violating data protection regulations by logging sensitive information.
+- Enabling **[Debug Logs](/Authorization/Logging#debug-logging)** without violating data protection regulations by logging sensitive information.
 - Debugging the application with a debugger attached to the process.
 
 ::: tip
 There are very few issues that occur only in production environments and require analysis in a deployed application.
 
 Most issues can be reproduced and fixed **much faster** by writing a test for the failing authorization logic, even cross-application integration via technical communication.
-Refer to the **[Testing Guide](/concepts/Testing)** for guidance.
+Refer to the **[Testing Guide](/Authorization/Testing)** for guidance.
 :::
 
 ### Step 2: Analyze Authorization Check
@@ -33,7 +33,7 @@ The following are common root causes for authorization problems:
 
 ### Unexpected `403 Forbidden`
 
-- **Outdated Dependencies**: Ensure you are using the correct combination of the AMS modules for your project setup and in the latest versions as recommended in the **[Getting Started Guide](/concepts/GettingStarted.md)**.
+- **Outdated Dependencies**: Ensure you are using the correct combination of the AMS modules for your project setup and in the latest versions as recommended in the **[Getting Started Guide](/Authorization/GettingStarted.md)**.
 - **Caching Delays**: Policy assignment changes usually take up to 15 seconds to propagate due to caching (but can sometimes take longer). Wait a moment before retrying.
 
 ::: warning Missing policy assignments in Token
@@ -52,13 +52,13 @@ A token refresh is **NOT** necessary after making changes to policy assignments.
 
 #### Authorization bundle issues
 
-- **No authorization data loaded error**: The application must wait for the **[AMS Startup Check](/concepts/StartupCheck)** before making authorization checks.
+- **No authorization data loaded error**: The application must wait for the **[AMS Startup Check](/Authorization/StartupCheck)** before making authorization checks.
 
 ::: warning
 The startup check is also necessary before unit tests that perform authorization checks.
 :::
 
-- **Incorrect Test Setup**: Make sure to follow the **[Testing Guide](/concepts/Testing.md)** carefully by including all steps, such as DCN compilation and DCN loading.
+- **Incorrect Test Setup**: Make sure to follow the **[Testing Guide](/Authorization/Testing.md)** carefully by including all steps, such as DCN compilation and DCN loading.
 
 ### Step 4: Solving the Issue
 

@@ -145,7 +145,7 @@ private PolicyAssignments mapApisToPolicyAssignments() {
 Finally, a bit of configuration is required to register the mapping functions, so that the AMS modules use the resulting policies in authorization checks for requests that are made to the API permission groups.
 
 In Node.js applications that use the standard CAP plugin runtime or the `IdentityServiceAuthProvider` directly, the mapping functions themselves can be registered directly via the API.\
-In Java applications, the application needs to implement the [`AttributesProcessor`](/java/jakarta-ams/jakarta-ams#AttributesProcessor) interface, extract the token from the `SecurityContext`, check if the `ias_apis` claim is present and if so, build and register the `PolicyAssignments` object with the `Principal` object.
+In Java applications, the application needs to implement the [`AttributesProcessor`](/Libraries/java/jakarta-ams/jakarta-ams#AttributesProcessor) interface, extract the token from the `SecurityContext`, check if the `ias_apis` claim is present and if so, build and register the `PolicyAssignments` object with the `Principal` object.
 
 ::: info
 The Node.js module includes special handling for the `principal-propagation` API permission group (see above). In Java, the `AttributesProcessor` implementation below must be extended to check for this API permission group and skip the App-To-App logic, if desired.

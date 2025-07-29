@@ -35,7 +35,7 @@ for authentication in your Spring Boot application, you can leverage the provide
 
 ### Base DCL
 
-Every business application has to describe its security model in [dcl language](../../concepts/DeployDCL.md).<br>
+Every business application has to describe its security model in [dcl language](../../Authorization/DeployDCL.md).<br>
 To describe the names and types of attributes, a file named `schema.dcl` and must be located in the root folder, for example in ``src/main/resources``.
 
 ```

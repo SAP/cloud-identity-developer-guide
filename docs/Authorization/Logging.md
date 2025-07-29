@@ -96,7 +96,7 @@ public class AmsAuditLogger implements Consumer<PolicyEvaluationResult> {
 ```
 :::
 
-[Node.js Details](/nodejs/sap_ams/sap_ams.md#Logging) / [Java Details](/java/jakarta-ams/jakarta-ams.md#Logging)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#Logging) / [Java Details](/Libraries/java/jakarta-ams/jakarta-ams.md#Logging)
 
 
 ### Request correlation

@@ -26,14 +26,14 @@ export default defineConfig({
             {
                 text: 'Authorization',
                 items: [
-                    { text: 'Getting Started', link: '/concepts/GettingStarted' },
-                    { text: 'Startup Check', link: '/concepts/StartupCheck' },
-                    { text: 'Authorization Checks', link: '/concepts/AuthorizationChecks' },
-                    { text: 'Testing', link: '/concepts/Testing' },
-                    { text: 'Technical Communication', link: '/concepts/TechnicalCommunication' },
-                    { text: 'Deploying DCL', link: '/concepts/DeployDCL' },
-                    { text: 'ValueHelp', link: '/concepts/ValueHelp' },
-                    { text: 'Logging', link: '/concepts/Logging' },
+                    { text: 'Getting Started', link: '/Authorization/GettingStarted' },
+                    { text: 'Startup Check', link: '/Authorization/StartupCheck' },
+                    { text: 'Authorization Checks', link: '/Authorization/AuthorizationChecks' },
+                    { text: 'Testing', link: '/Authorization/Testing' },
+                    { text: 'Technical Communication', link: '/Authorization/TechnicalCommunication' },
+                    { text: 'Deploying DCL', link: '/Authorization/DeployDCL' },
+                    { text: 'ValueHelp', link: '/Authorization/ValueHelp' },
+                    { text: 'Logging', link: '/Authorization/Logging' },
                 ]
             },
             {
@@ -51,17 +51,17 @@ export default defineConfig({
                         text: 'Java',
                         collapsed: true,
                         items: [
-                            { text: 'jakarta-ams', link: '/java/jakarta-ams/jakarta-ams' },
-                            { text: 'spring-ams', link: '/java/spring-ams/spring-ams' },
-                            { text: 'cap-ams-support', link: '/java/cap-ams-support/cap-ams-support' },
-                            { text: 'cap-support (legacy)', link: '/java/cap-support/cap-support' }
+                            { text: 'jakarta-ams', link: '/Libraries/java/jakarta-ams/jakarta-ams' },
+                            { text: 'spring-ams', link: '/Libraries/java/spring-ams/spring-ams' },
+                            { text: 'cap-ams-support', link: '/Libraries/java/cap-ams-support/cap-ams-support' },
+                            { text: 'cap-support (legacy)', link: '/Libraries/java/cap-support/cap-support' }
                         ]
                     },
                     {
                         text: 'Node.js',
                         collapsed: true,
                         items: [
-                            { text: '@sap/ams', link: '/nodejs/sap_ams/sap_ams' },
+                            { text: '@sap/ams', link: '/Libraries/nodejs/sap_ams/sap_ams' },
                             { text: '@sap/ams-dev', link: 'https://www.npmjs.com/package/@sap/ams-dev' }
                         ]
                     },
@@ -69,7 +69,7 @@ export default defineConfig({
                         text: 'Go',
                         collapsed: true,
                         items: [
-                            { text: 'cloud-identity-authorizations-golang-library', link: '/go/go-ams' }
+                            { text: 'cloud-identity-authorizations-golang-library', link: '/Libraries/go/go-ams' }
                         ]
                     }
                 ]

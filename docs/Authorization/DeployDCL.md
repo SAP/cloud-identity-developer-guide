@@ -13,7 +13,7 @@ To help with this process, this document recommends best practices and showcases
 In CAP projects, `@sap/ams` registers a custom build task that automatically creates an `ams-policies-deployer` application during `cds build`.
 Additionally, the deployment artefacts below are automatically configured during `cds add ams` to deploy it.
 
-However, if your application consists of multiple microservices, it makes sense to [disable](/nodejs/sap_ams/sap_ams#configuration) the automatic creation of the deployer application and manually deploy from a [central repository](#microservice-applications).
+However, if your application consists of multiple microservices, it makes sense to [disable](/Libraries/nodejs/sap_ams/sap_ams#configuration) the automatic creation of the deployer application and manually deploy from a [central repository](#microservice-applications).
 :::
 
 ## AMS Policies Deployer App
@@ -44,7 +44,7 @@ Given this structure, you would typically replace the placeholders in the snippe
 
 ### package.json
 The `package.json` from the [ams-dcl-content-deployer](https://www.npmjs.com/package/@sap/ams?activeTab=code) folder of `@sap/ams` is ready to be used for the AMS deployer in your project, independent of the languages used in other parts of your project, e.g. Java, Javascript or Go.
-It defines a minimalistic Node.js module that simply executes the [deploy-dcl](/nodejs/sap_ams/sap_ams#deploy-dcl-script) script from the `@sap/ams` Node.js client library.  
+It defines a minimalistic Node.js module that simply executes the [deploy-dcl](/Libraries/nodejs/sap_ams/sap_ams#deploy-dcl-script) script from the `@sap/ams` Node.js client library.  
 
 ::: tip
 You do not need a local Node.js installation for development or deployment as the script does not have to be executed locally.
@@ -118,7 +118,7 @@ applications:
 ```
 
 ### Kubernetes
-A fitting resource on Kubernetes to do *one-off* tasks such as deploying static content, is a [Job](https://kubernetes.io/docs/concepts/workloads/controllers/job/). The snippets below help you define such a job but it needs a container image to run.
+A fitting resource on Kubernetes to do *one-off* tasks such as deploying static content, is a [Job](https://kubernetes.io/docs/Authorization/workloads/controllers/job/). The snippets below help you define such a job but it needs a container image to run.
 
 #### Kyma
 The following sections describe how to run a job on SAP BTP Kyma based on a policy deployer image. 

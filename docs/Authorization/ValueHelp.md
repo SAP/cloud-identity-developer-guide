@@ -27,12 +27,12 @@ This documentation describes how to annotate the DCL schema to enable value help
 
 ## Authorizing Value Help Requests
 
-The value help endpoints in your application MUST be protected because they return business data. To allow the application to authorize value help requests, the AMS server calls the application with an [App-To-App](/concepts/TechnicalCommunication#app-to-app) principal propagation token based on the administrator that is requesting value help in the IAS Administration Console.
+The value help endpoints in your application MUST be protected because they return business data. To allow the application to authorize value help requests, the AMS server calls the application with an [App-To-App](/Authorization/TechnicalCommunication#app-to-app) principal propagation token based on the administrator that is requesting value help in the IAS Administration Console.
 
 ### API Permission Group
 
 The API permission group consumed by the AMS server can be freely chosen in the service configuration of the AMS instance.
-Make sure to setup a policy for this API permission group that grants the necessary privileges for the value help endpoints as described in the [App-To-App](/concepts/TechnicalCommunication#app-to-app) documentation.
+Make sure to setup a policy for this API permission group that grants the necessary privileges for the value help endpoints as described in the [App-To-App](/Authorization/TechnicalCommunication#app-to-app) documentation.
 Note that the administrator using the IAS Administration Console must also have the necessary privileges to access the value help endpoints in your application.
 
 ::: tip

@@ -4,7 +4,7 @@
 
 Additionally, it is a cds plugin that provides [AMS CAP dev-time features](/CAP/cds-Plugin) for both Node.js and Java CAP applications.
 
-The module [@sap/ams-dev](https://www.npmjs.com/package/@sap/ams-dev) provides the corresponding tooling support for local [testing](/concepts/Testing) until a Node.js DCL compiler is available.
+The module [@sap/ams-dev](https://www.npmjs.com/package/@sap/ams-dev) provides the corresponding tooling support for local [testing](/Authorization/Testing) until a Node.js DCL compiler is available.
 
 ## Installation
 The module is available in the public [npmjs](https://www.npmjs.com/) repository:
@@ -49,7 +49,7 @@ CAP Node.js applications should **not** need to make changes when updating to ve
 
 ## Usage
 
-The following snippets give an example for the usage of the core API of the library. For more details on the concepts, see [Authorization Checks](/concepts/AuthorizationChecks).
+The following snippets give an example for the usage of the core API of the library. For more details on the concepts, see [Authorization Checks](/Authorization/AuthorizationChecks).
 
 ::: tip CAP applications
 For CAP Node.js applications, most of this section is irrelevant as the library setup and authorization checks are fully automated.
@@ -82,7 +82,7 @@ app.use(/^\/(?!health).*/i, authenticate, amsMw.authorize());
 ```
 
 ::: warning Important
-Implement a [startup check](/concepts/StartupCheck) to ensure that the `AuthorizationManagementService` instance is ready for authorization checks before serving authorized endpoints.
+Implement a [startup check](/Authorization/StartupCheck) to ensure that the `AuthorizationManagementService` instance is ready for authorization checks before serving authorized endpoints.
 :::
 
 ### Authorization checks
@@ -159,7 +159,7 @@ if(decision.isDenied()) {
 ```
 
 ### AmsMiddleware
-Besides [`authorize()`](#authorization-checks), the `AmsMiddleware` provides additional handlers to define [declarative](/concepts/AuthorizationChecks#declarative-authorization-checks) privilege (pre-)checks on the endpoint layer:
+Besides [`authorize()`](#authorization-checks), the `AmsMiddleware` provides additional handlers to define [declarative](/Authorization/AuthorizationChecks#declarative-authorization-checks) privilege (pre-)checks on the endpoint layer:
 
 ```js
 // returns 403 when no definitive (= no outstanding WHERE condition) GRANT delete ON orders is assigned to user
@@ -173,7 +173,7 @@ app.post('/orders', amsMw.checkPrivilege('read', 'products'), amsMw.precheckPriv
 ```
 
 ### Events/Logging
-[Debug Logs](/concepts/Logging#debug-logging) of `@sap/ams` can be enabled by including `ams` in the `DEBUG` environment variable:
+[Debug Logs](/Authorization/Logging#debug-logging) of `@sap/ams` can be enabled by including `ams` in the `DEBUG` environment variable:
 
 ```sh
 DEBUG=ams node server.js
@@ -221,10 +221,10 @@ ams.on("error", event => {
 ```
 
 ### Technical communication
-[Technical communication](/concepts/TechnicalCommunication) via SAP Cloud Identity Services is supported out-of-the-box by the [IdentityServiceAuthProvider](#identityserviceauthprovider).
+[Technical communication](/Authorization/TechnicalCommunication) via SAP Cloud Identity Services is supported out-of-the-box by the [IdentityServiceAuthProvider](#identityserviceauthprovider).
 
 ### Testing
-See the central [Testing](/concepts/Testing) documentation for details.
+See the central [Testing](/Authorization/Testing) documentation for details.
 
 ## API
 
