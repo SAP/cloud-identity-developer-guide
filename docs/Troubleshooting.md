@@ -1,8 +1,10 @@
 # Troubleshooting Guide
 
+## Authorization Problems
+
 This guide provides a systematic approach to troubleshooting authorization problems, such as unexpected authorization results in your application. Following these steps will help you identify the root cause of the issue efficiently.
 
-## Step 1: Preparation
+### Step 1: Preparation
 
 Before you start debugging, make sure you can reproduce the issue in an environment where one of two things are possible:
 - Enabling **[Debug Logs](/concepts/Logging#debug-logging)** without violating data protection regulations by logging sensitive information.
@@ -15,7 +17,7 @@ Most issues can be reproduced and fixed **much faster** by writing a test for th
 Refer to the **[Testing Guide](/concepts/Testing)** for guidance.
 :::
 
-## Step 2: Analyze Authorization Check
+### Step 2: Analyze Authorization Check
 
 Reproduce the issue and check which part of the authorization check does not meet your expectations:
 
@@ -25,7 +27,7 @@ Reproduce the issue and check which part of the authorization check does not mee
 - What was the resulting **DCN condition** from the authorization engine?
 - Has any customization logic been applied that influenced the check, such as technical communication logic?
 
-## Step 3: Check for Common Root Causes
+### Step 3: Check for Common Root Causes
 
 The following are common root causes for authorization problems:
 
@@ -44,11 +46,11 @@ A token refresh is **NOT** necessary after making changes to policy assignments.
    -   Mocked policy assignments in tests.
    -   Policy mappings for technical communication.
 
-### Unexpected `Access Granted`
+#### Unexpected `Access Granted`
 
 - A user might have multiple policies assigned that grant the same privilege. Ensure you've unassigned all of them before testing that a specific policy does not grant access.
 
-### Authorization bundle issues
+#### Authorization bundle issues
 
 - **No authorization data loaded error**: The application must wait for the **[AMS Startup Check](/concepts/StartupCheck)** before making authorization checks.
 
@@ -58,7 +60,7 @@ The startup check is also necessary before unit tests that perform authorization
 
 - **Incorrect Test Setup**: Make sure to follow the **[Testing Guide](/concepts/Testing.md)** carefully by including all steps, such as DCN compilation and DCN loading.
 
-## Step 4: Solving the Issue
+### Step 4: Solving the Issue
 
 If you've identified a misconfiguration or a setup issue in your application, try to resolve the issue based on your findings and the documentation.
 
