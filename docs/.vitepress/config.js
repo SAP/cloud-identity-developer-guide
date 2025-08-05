@@ -40,8 +40,8 @@ export default defineConfig({
                 text: 'CAP Authorization',
                 items: [
                     { text: 'Basics', link: '/CAP/Basics' },
-                    { text: 'Instance-based Authorization', link: '/CAP/InstanceBasedAuthorization' },
-                    { text: 'cds Plugin', link: '/CAP/cds-Plugin' }
+                    { text: 'Instance-Based Authorization', link: '/CAP/InstanceBasedAuthorization' },
+                    { text: 'CDS Plugin', link: '/CAP/cds-Plugin' }
                 ]
             },
             {
