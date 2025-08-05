@@ -245,7 +245,7 @@ There are 2 ways to enforce authorization in the hybrid mode:
    property `sap.security.hybrid.xsuaa.scope-check.enabled `to be set to false. Authorization is carried out
    through `PolicyDecisionPoint` and enforced
    by [AMS Spring Security Expressions](#overview-of-ams-spring-security-expressions). However, for this mode to work,
-   Xsuaa Scopes need to be converted into AMS policies. This can be done with the help of [AttributesProccessor](../jakarta-ams/jakarta-ams.md#customize-attributes), but
+   XSUAA Scopes must be converted into authorization policies. This can be done with the help of [AttributesProccessor](../jakarta-ams/jakarta-ams.md#customize-attributes), but
    please note this conversion process is not provided by this library.
 
 ### Additional Information
