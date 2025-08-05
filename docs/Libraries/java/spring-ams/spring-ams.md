@@ -269,7 +269,7 @@ See [here](../jakarta-ams/jakarta-ams#overview-policydecisionpoint-methods) for 
 You can simply create a ``Principal`` instance within the same thread. Use ``Principal.create()`` to derive the principal information from the OIDC token, which is stored in ``SecurityContextHolder``.
 
 > Alternatively, you can also build the ``Principal`` using the ``PrincipalBuilder``.   
-> E.g. `PrincipalBuilder.create("the-zone-id", "the-user-id").build();` 
+> Example: `PrincipalBuilder.create("the-zone-id", "the-user-id").build();` 
 
 
 ## Testing
