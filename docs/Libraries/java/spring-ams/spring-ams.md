@@ -266,7 +266,7 @@ See [here](../jakarta-ams/jakarta-ams#overview-policydecisionpoint-methods) for 
 > :heavy_exclamation_mark: [Consider also limitation of api liability](#api-disclaimer).
 
 #### Pre-fill user-attributes from OIDC token
-You can simply create a ``Principal`` instance within the same thread. Use ``Principal.create()`` to derive the principal information from the OIDC token, that is stored in ``SecurityContextHolder``.
+You can simply create a ``Principal`` instance within the same thread. Use ``Principal.create()`` to derive the principal information from the OIDC token, which is stored in ``SecurityContextHolder``.
 
 > Alternatively, you can also build the ``Principal`` using the ``PrincipalBuilder``.   
 > E.g. `PrincipalBuilder.create("the-zone-id", "the-user-id").build();` 
