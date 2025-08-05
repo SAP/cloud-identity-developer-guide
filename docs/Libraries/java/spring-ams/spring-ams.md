@@ -295,7 +295,7 @@ logging.level:
   org.springframework.web: DEBUG      # set to ERROR for production setup
 ```
 
-Then, in case you like to see what different filters are applied to particular request then set debug flag to true in `@EnableWebSecurity` annotation:
+Next, if you like to see what different filters are applied to particular request, set the debug flag to true in `@EnableWebSecurity` annotation:
 ```java
 @Configuration
 @EnableWebSecurity(debug = true) // TODO "debug" may include sensitive information. Do not use in a production system!
