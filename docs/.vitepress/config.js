@@ -32,7 +32,7 @@ export default defineConfig({
                     { text: 'Testing', link: '/Authorization/Testing' },
                     { text: 'Technical Communication', link: '/Authorization/TechnicalCommunication' },
                     { text: 'Deploying DCL', link: '/Authorization/DeployDCL' },
-                    { text: 'ValueHelp', link: '/Authorization/ValueHelp' },
+                    { text: 'Value Help', link: '/Authorization/ValueHelp' },
                     { text: 'Logging', link: '/Authorization/Logging' },
                 ]
             },
