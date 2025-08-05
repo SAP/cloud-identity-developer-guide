@@ -1,6 +1,6 @@
 # Authorization Checks
 
-In this section, we will cover the basic concepts of authorization checks with the Authorization Management Service (AMS).
+In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (AMS).
 
 ::: tip
 In CAP applications, it is typically not necessary to implement authorization checks programmatically. Instead, authorization requirements are [declared](#declarative-authorization-checks) via [annotations](https://cap.cloud.sap/docs/guides/security/authorization#requires). The resulting authorization checks are performed dynamically for the application by the AMS modules.
