@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress';
 
 export default defineConfig({
     title: 'SCI Developer Guide',
-    description: 'Application development with the SAP Cloud Identity Services client libraries',
+    description: 'Application development with the client libraries for SAP Cloud Identity Services',
     markdown: {
         languages,
         languageAlias: {
