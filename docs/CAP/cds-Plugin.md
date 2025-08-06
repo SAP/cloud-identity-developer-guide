@@ -1,6 +1,6 @@
 # The cds Plugin `@sap/ams`
 
-The AMS Nodejs module `@sap/ams` functions as a plugin for the [cds](https://cap.cloud.sap/docs/tools/cds-cli) CLI tool.
+The Authorization Management Service (**AMS**) Nodejs module `@sap/ams` functions as a plugin for the [cds](https://cap.cloud.sap/docs/tools/cds-cli) CLI tool.
 It adds a [custom build task](https://cap.cloud.sap/docs/guides/deployment/custom-builds#custom-build-plugins) for *ams* that automatically runs during `cds build` to provide the following features.
 
 ::: tip
@@ -14,14 +14,14 @@ Unless disabled, the AMS build task generates DCL files from the cds model.
 
 
 ::: tip
-DCL Files that have been modified manually will not be overridden during generation to allow manual changes of the schema and base policies. To force re-generation of a generated DCL file, delete it prior to the next DCL generation.
+DCL files that have been modified manually aren't overridden during generation. This allows manual changes of the schema and base policies. To force a repeated generation of a generated DCL file, delete it prior to the next DCL generation.
 :::
 
 ##### Base Policy Generation
-The AMS build task generates base policies for roles that occur in the `@requires` and `@restrict` annotations of the cds model:
+The *ams* build task generates base policies for roles that occur in the `@requires` and `@restrict` annotations of the cds model:
 
 ::: code-group
-```js [BookService.cds]
+```cds [BookService.cds]
 @restrict: [{ grant:['READ'], to: ['Reader', 'Inquisitor'] }]
 entity Books as projection on my.Books { *,
 ```
@@ -41,7 +41,7 @@ POLICY "Inquisitor" {
 It also generates a `schema.dcl` that defines AMS attributes with inferred types based on `@ams.attributes` annotations for [instance-based authorization](/CAP/InstanceBasedAuthorization):
 
 ::: code-group
-```js [SalesOrderService.cds]
+```cds [SalesOrderService.cds]
 annotate SalesOrder with @ams.attributes: {
     Region: (region),
     Budget: (total)
@@ -57,33 +57,33 @@ SCHEMA {
 :::
 
 ### Base Policy Upload
-Unless disabled, a policy deployer application will be generated in `<cds.build.target>/policies` which defaults to:
+Unless disabled, a policy deployer application is generated in `<cds.build.target>/policies` which defaults to:
 
 - [**Node.js**] `gen/policies`
 - [**Java**] `srv/src/gen/policies`
 
-During `cds add ams`, deployment descriptors like `mta.yaml` or `helm` charts are automatically configured to deploy the generated policies to the AMS service instance.
+During `cds add ams`, deployment descriptors like `mta.yaml` or `helm` charts are automatically configured to deploy the generated policies to AMS.
 
 ### Validation
 It validates `@ams.attributes` annotations for syntactic correctness and type coherence. This gives early feedback about the correctness of the annotations during development:
 
 - validates that `@ams.attributes` annotations map AMS attributes syntactically correct to cds elements via cds expressions.
-- if a generated `schema.dcl` is used, validates that the inferred type of each AMS attribute is coherent across all `@ams.attributes` mappings in which it is mapped to a cds element.
-- if a manually written/adjusted `schema.dcl` is used, validates that all AMS attributes mapped via `@ams.attributes` annotations exist and have a type that fits each cds element to which they are mapped.
+- if a generated `schema.dcl` is used, validates that the inferred type of each AMS attribute is coherent across all `@ams.attributes` mappings in which it's mapped to a cds element.
+- if a manually written/adjusted `schema.dcl` is used, validates that all AMS attributes mapped using `@ams.attributes` annotations exist and have a type that fits each cds element to which they are mapped.
 
 ## Configuration
-The AMS cds plugin is configured inside the `requires.auth.ams` property of the [cds env](https://cap.cloud.sap/docs/node.js/cds-env#project-settings).\
+The cds plugin for AMS is configured inside the `requires.auth.ams` property of the [cds env](https://cap.cloud.sap/docs/node.js/cds-env#project-settings).\
 It supports the following properties with the following [`default`]:
 
-- **generateDcl** *true/false* [`true`]: unless set to `false`, generates `basePolicies.dcl` and `schema.dcl` from the cds model (see [Base Policy Generaiton](#base-policy-generation))
+- **generateDcl** *true/false* [`true`]: unless set to `false`, generates `basePolicies.dcl` and `schema.dcl` from the cds model (see [Base Policy Generation](#base-policy-generation))
 - **dclRoot** *string* [`ams/dcl` / `srv/src/gen/ams` (Java)]: the root DCL folder (containing the `schema.dcl`) which is used for generating DCL, compiling DCL to DCN during development, uploading DCL etc.
 - **dclGenerationPackage** *string* [`cap`]: name of the DCL package to which basePolicies.dcl is generated
 - **dcnRoot** *string* [`gen/dcn` / `srv/src/gen/ams/dcn` (Java)]:  folder for DCL to DCN compilation results during development (see [Testing](/Authorization/Testing#compiling-dcl-to-dcn))
-- **policyDeployerRoot** *string* [`gen/policies` / `srv/src/gen/policies` (Java)]:  folder of the ams policy deployer application created during `cds build` (see [Base Policy Upload](#base-policy-upload))
+- **policyDeployerRoot** *string* [`gen/policies` / `srv/src/gen/policies` (Java)]:  folder of the AMS policy deployer application created during `cds build` (see [Base Policy Upload](#base-policy-upload))
 
 ### Node.js specific configuration
-- **authPushDcl** *true/false* [`false`]:  if enabled, uploads the base policies to the AMS server on application start (see [Hybrid Testing](https://cap.cloud.sap/docs/advanced/hybrid-testing))
+- **authPushDcl** *true/false* [`false`]:  if enabled, uploads the base policies to the AMS server on application start and after DCL changes (see [Hybrid Testing](https://cap.cloud.sap/docs/advanced/hybrid-testing)).
 
 :::tip
-All AMS properties also work lowercased (for example `generatedcl`) and this casing has priority of the camelCase (for example `generateDcl`) version of properties. This means, all [cds env sources](https://cap.cloud.sap/docs/node.js/cds-env#sources-for-cds-env) including case-insensitive ones are supported such as setting properties via environment variables (`CDS_REQUIRES_AUTH_AMS_GENERATEDCL`) which gets mapped to lowercased versions of the property. 
+All *requires.auth.ams* properties also work in lowercase (for example `generatedcl`), and lowercase has priority over the camel case version (for example `generateDcl`) of properties. This means that all [cds env sources](https://cap.cloud.sap/docs/node.js/cds-env#sources-for-cds-env) including the case-insensitive ones are supported, such as setting properties using environment variables (`CDS_REQUIRES_AUTH_AMS_GENERATEDCL`), which are mapped to lowercase versions of the property. 
 :::
