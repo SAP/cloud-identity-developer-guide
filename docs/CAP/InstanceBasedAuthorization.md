@@ -4,19 +4,19 @@ Policies that assign roles can be extended with attribute filters for instance-b
 
 ## Motivation
 
-Let's imagine a scenario where we want to empower tenant administrators to be able to give users the `SalesRepresentative` role but only for a specific `Region` and `ProductCategory`.
+Let's imagine a scenario where we want to enable tenant administrators to give users the `SalesRepresentative` role but only for a specific `Region` and `ProductCategory`.
 For example, the following policy would grant the `SalesRepresentative` role only in the `EU` region and only for products in the `Electronics` category:
 
 ```dcl
 POLICY SalesRepresentativeEUElectronics {
     ASSIGN ROLE SalesRepresentative 
-    WHERE Region = 'EU' AND ProductCategory = 'Electronics'; -- [!code ++]
+    WHERE Region = 'EU' AND ProductCategory = 'Electronics'; // [!code ++]
 }
 ```
 
-However, administrators cannot simply write arbitrary DCL policies as free-text because it is important that the application supports the conditions that are used in the policies. In this example, the application must understand how and where to apply the conditions for `Region` and `ProductCategory`.
+However, administrators can't simply write arbitrary DCL policies as free text because it's important that the application supports the conditions that are used in the policies. In this example, the application must understand how and where to apply the conditions for `Region` and `ProductCategory`.
 
-In the next sections, we will explain the necessary steps in the application to achieve this example.
+In the next sections, we explain the necessary steps in the application to achieve this example.
 
 ## Schema Definition
 
@@ -35,16 +35,16 @@ SCHEMA {
 ```
 
 ::: tip Schema Generation
-The AMS Node.js module [`@sap/ams`](https://www.npmjs.com/package/@sap/ams) can be used to [generate](/CAP/cds-Plugin#base-policy-generation) the `schema.dcl` from [`@ams.attributes`](#annotating-the-cds-model) annotations in a cds model.
+The Authorization Management Service (**AMS**) Node.js module [`@sap/ams`](https://www.npmjs.com/package/@sap/ams) can be used to [generate](/CAP/cds-Plugin#base-policy-generation) the `schema.dcl` from [`@ams.attributes`](#annotating-the-cds-model) annotations in a cds model.
 :::
 
 
 ## Restricted Role Assignments
 
-To provide guard rails for runtime policies, it is possible to extend role assignments in the base policies with a `WHERE` condition. In that condition, the `IS NOT RESTRICTED` and `IS RESTRICTED` keywords can be used to list the attributes that can (must) be restricted by the tenant administrator at runtime.
+To provide guardrails for runtime policies, it's possible to extend role assignments in the base policies with a `WHERE` condition. In that condition, the `IS NOT RESTRICTED` and `IS RESTRICTED` keywords can be used to list the attributes that can (must) be restricted by the tenant administrator at runtime.
 
 ##### IS RESTRICTED
-When assigning a base policy with an attribute that `IS RESTRICTED`, the attribute condition evaluates to `false` which typically means access by assigning the base policy is not possible at all. To gain access, administrators **must** derive a runtime policy from this base policy that restricts the attribute to a specific value.
+When assigning a base policy with an attribute that `IS RESTRICTED`, the attribute condition evaluates to `false`, which typically means access by assigning the base policy isn't possible at all. To gain access, administrators **must** derive a runtime policy from this base policy that restricts the attribute to a specific value.
 
 ##### IS NOT RESTRICTED
 When assigning a base policy with an attribute that `IS NOT RESTRICTED`, the attribute condition evaluates to `true` which means the base policy can be assigned for unfiltered access. However, administrators **can** derive a runtime policy from this base policy to restrict the attribute to a specific value.
@@ -54,19 +54,19 @@ In our example, we want to allow (but not force) the tenant administrator to res
 ```dcl
 POLICY SalesRepresentative {
     ASSIGN ROLE SalesRepresentative
-    WHERE Region IS NOT RESTRICTED AND ProductCategory IS NOT RESTRICTED; -- [!code ++]
+    WHERE Region IS NOT RESTRICTED AND ProductCategory IS NOT RESTRICTED; // [!code ++]
 }
 ```
 
 ::: warning
-In CAP, `WHERE` conditions behind role assignments must only be used to determine **what** users with the role are allowed to see. It must not be misunderstood as a means to control **if** the role is assigned or not based on attribute conditions.
+In CAP, `WHERE` conditions behind role assignments must only be used to determine **what** users with the role are allowed to see. Don't try to use it as a means to check **if** the role is assigned or not based on attribute conditions.
 :::
 
 ### Combining Attribute Conditions
-Usually, when there are multiple attributes in the `WHERE` condition of a rule, developers want to combine the filter conditions of all attributes using `AND`. However, it is also possible to use `OR` to combine attribute conditions.
+Usually, when there are multiple attributes in the `WHERE` condition of a rule, developers want to combine the filter conditions of all attributes using `AND`. However, it's also possible to use `OR` to combine attribute conditions.
 
 ::: tip Partial Restrictions
-In either case, it is important to consider the effects of the `IS RESTRICTED` and `IS NOT RESTRICTED` keywords. For example, administrators can decide to leave some attributes as `IS RESTRICTED` (`IS NOT RESTRICTED`) in a derived policy by restricting only a subset of attributes to specific conditions. The evaluation to `false` (`true`) of the `IS RESTRICTED` (`IS NOT RESTRICTED`) attributes will short-circuit the evaluation of the remaining attributes in the same `AND` (`OR`) clause.
+In both cases, it's important to consider the effects of the `IS RESTRICTED` and `IS NOT RESTRICTED` keywords. For example, administrators can decide to leave some attributes as `IS RESTRICTED` (`IS NOT RESTRICTED`) in a derived policy by restricting only a subset of attributes to specific conditions. The evaluation to `false` (`true`) of the `IS RESTRICTED` (`IS NOT RESTRICTED`) attributes will short-circuit the evaluation of the remaining attributes in the same `AND` (`OR`) clause.
 
 For this reason, when using `IS NOT RESTRICTED`, we discourage the use of `OR` in the `WHERE` clause of role assignments because it can lead to unintended full access.
 :::
@@ -90,7 +90,7 @@ This derived policy is equivalent to the policy defined in the [Motivation](#mot
 
 ## Annotating the CDS Model
 
-Finally, via `@ams.attributes` annotations, the AMS attributes are mapped to elements (or association paths) in the cds model via compile-safe cds expressions. Whenever requests access the annotated resources, the result is filtered based on the attribute conditions computed by AMS.
+Finally, via `@ams.attributes` annotations, the AMS attributes are mapped to elements (or association paths) in the cds model using compile-safe cds expressions. Whenever requests access the annotated resources, the result is filtered based on the attribute conditions computed by AMS.
 
 ```js
 annotate Product with @ams.attributes: { // [!code ++:8]
@@ -122,12 +122,12 @@ annotate SalesOrder with @restrict: [
 ```
 
 ::: tip
-`ams.attributes` annotations are supported on *aspects*, *entities* and *actions/functions bound to a single entity* as those are the [cds resources that support *where* conditions](https://cap.cloud.sap/docs/guides/security/authorization#supported-combinations-with-cds-resources).
+`ams.attributes` annotations are supported on *aspects*, *entities*, and *actions/functions bound to a single entity*. They are the [cds resources that support *where* conditions](https://cap.cloud.sap/docs/guides/security/authorization#supported-combinations-with-cds-resources).
 :::
 
-## Effect of attribute filters
+## Effect of Attribute Filters
 
-When a user is assigned the `SalesRepresentativeEUElectronics` policy, the AMS CAP modules will dynamically adjust the cds `where` condition to inject the AMS attribute conditions.
+When the `SalesRepresentativeEUElectronics` policy is assigned to a user, the CAP modules for AMS dynamically adjusts the cds `where` condition to inject the attribute conditions from authorization policies.
 
 For example, when accessing the `SalesOrder` entity with this policy, the AMS module will add a `where` condition to the privilege for the `SalesRepresentative` role that looks like this:
 
@@ -136,23 +136,23 @@ For example, when accessing the `SalesOrder` entity with this policy, the AMS mo
     {
       grant: [ 'READ' ],
       to: 'SalesRepresentative',
-      where: 'region = "EU" AND product.category = "Electronics"', // [!code ++]
+      where: "region = 'EU' AND product.category = 'Electronics'", // [!code ++]
     },
 ]
 ```
 
-If a user has more than one cds role that grants access to a resource, the AMS module will combine the attribute conditions of all roles using `OR`. For example, if the user also has the `SalesManager` role assigned with unfiltered access, the resulting `where` condition on `Product` would effectively look like this (before being simplified by the AMS module):
+If a user has more than one cds role that grants access to a resource, the AMS module combines the attribute conditions of all roles using `OR`. For example, if the user also has the `SalesManager` role assigned with unfiltered access, the resulting `where` condition on `Product` would effectively look like this (before being simplified by the AMS module):
 
 ```js
 @restrict: [
     {
       grant: ['READ'],
       to: [ 'SalesManager', 'SalesRepresentative' ],
-      where: 'true OR (region = "EU" AND product.category = "Electronics")', // [!code ++]
+      where: "true OR (region = 'EU' AND product.category = 'Electronics')", // [!code ++]
     }
 ]
 ```
 
 ::: tip
-When there is already a static *where* condition on a cds privilege, the AMS module will combine the static *where* condition with the attribute conditions from AMS by using `AND`.
+When there is already a static *where* condition on a cds privilege, the AMS module combines the static *where* condition with the attribute conditions from authorization policies by using `AND`.
 :::
