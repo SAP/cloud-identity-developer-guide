@@ -395,7 +395,7 @@
       "name": "support.class.cds"
     },
     {
-      "comment": "Matches the \"prototype\" keyword.  Even though it is not a valid keyword, it is a special constant of sorts.",
+      "comment": "Matches the \"prototype\" keyword.  Even though it is not a valid keyword, it's a special constant of sorts.",
       "match": "(?i)(?<=\\.)(prototype)\\b",
       "name": "keyword.other.cds"
     },
@@ -945,7 +945,7 @@
 
     "atAnnoNoParen": {
       "begin": "(@)(?!\\s*\\()",
-      "comment": "'end' uses lookahead, since end of annotation value itself cannot be safely determined currently",
+      "comment": "'end' uses lookahead, since the end of annotation value itself can't currently be determined safely",
       "end": "(?<=[}\\]'`])(?=\\s*($|[@;]))|(?<![@:])(?!\\s*:)(?=$|[\\s@,;(){}\\[\\]'`/\"!]|\\b[$_a-zA-Z])",
       "captures": {
         "1": {
