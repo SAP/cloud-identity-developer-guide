@@ -2,7 +2,7 @@
 
 ## Authorization Problems
 
-This guide provides a systematic approach to troubleshooting authorization problems, such as unexpected authorization results in your application. Following these steps will help you identify the root cause of the issue efficiently.
+This guide provides a systematic approach to troubleshooting authorization problems, such as unexpected authorization results in your application. By following these steps, the guide helps you to efficiently identify the root cause of the issue.
 
 ### Step 1: Preparation
 
@@ -19,7 +19,7 @@ Refer to the **[Testing Guide](/Authorization/Testing)** for guidance.
 
 ### Step 2: Analyze Authorization Check
 
-Reproduce the issue and check which part of the authorization check does not meet your expectations:
+Reproduce the issue and check which part of the authorization check doesn't meet your expectations:
 
 - Which **action** is checked on which **resource**?
 - Which **principal**/**policies** was used?
@@ -33,7 +33,7 @@ The following are common root causes for authorization problems:
 
 ### Unexpected `403 Forbidden`
 
-- **Outdated Dependencies**: Ensure you are using the correct combination of the AMS modules for your project setup and in the latest versions as recommended in the **[Getting Started Guide](/Authorization/GettingStarted.md)**.
+- **Outdated Dependencies**: Ensure that you are using the correct combination of the Authorization Management Service (**AMS**) modules for your project setup and in the latest versions as recommended in the **[Getting Started Guide](/Authorization/GettingStarted.md)**.
 - **Caching Delays**: Policy assignment changes usually take up to 15 seconds to propagate due to caching (but can sometimes take longer). Wait a moment before retrying.
 
 ::: warning Missing policy assignments in Token
@@ -42,13 +42,13 @@ The policies that are assigned to a user are **not** contained in his SCI user t
 A token refresh is **NOT** necessary after making changes to policy assignments. The AMS module retrieves the user policies separately from the token directly from the AMS server.
 :::
 
-- **Incorrect Policy Names**: Policies must be **fully-qualified**, including the DCL package name (e.g., `cap.Reader`). This applies to:
+- **Incorrect Policy Names**: Policies must be **fully-qualified**, including the DCL package name (for example, `cap.Reader`). This applies to:
    -   Mocked policy assignments in tests.
    -   Policy mappings for technical communication.
 
 #### Unexpected `Access Granted`
 
-- A user might have multiple policies assigned that grant the same privilege. Ensure you've unassigned all of them before testing that a specific policy does not grant access.
+- A user might have multiple policies assigned that grant the same privilege. Ensure you've unassigned all of them before testing that a specific policy doesn't grant access.
 
 #### Authorization bundle issues
 
