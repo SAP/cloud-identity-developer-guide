@@ -1,12 +1,11 @@
 # Getting Started
 
-This document provides the basic information required to use AMS for authorization checks in your application. It provides an overview of the available library modules, their features, and how to integrate them into your projects.
-
+This document provides the basic information required to use Authorization Management Service (**AMS**) for authorization checks in your application. It provides an overview of the available library modules, their features, and how to integrate them into your projects.
 
 
 ## Supported Languages and Frameworks
 
-The AMS client libraries consist of different modules for the following programming languages and frameworks:
+The client libraries of AMS consist of different modules for the following programming languages and frameworks:
 
 - **Java** (Maven):
     - [jakarta-ams](/Libraries/java/jakarta-ams/jakarta-ams.md)
@@ -23,7 +22,7 @@ The next section lists the required module dependencies for different applicatio
 ## Dependency Setup
 
 ::: tip
-In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli) to add the correct dependencies automatically.
+In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli). It automatically adds the correct dependencies.
 :::
 
 The following tables give an overview of the required AMS module dependencies for different application setups.
@@ -75,7 +74,7 @@ For practical examples of how to set up and use the AMS client libraries, refer 
 
 ## Historical Setups
 
-If you operate productive applications with a dependency setup different from the recommended one, you can usually continue using the modules you already have installed for some time, but we recommend migrating to the new modules and major versions eventually in discussion with us.
+If you operate productive applications with a dependency setup different from the recommended one, you can usually continue using the modules you already have installed for some time. However, we recommend migrating to the new modules and major versions eventually in discussion with us.
 
 ### JDK < 17
 For Java versions < 17, the modules `java-ams` and `java-ams-test` are a drop-in replacement for `jakarta-ams` and `jakarta-ams-test`.
