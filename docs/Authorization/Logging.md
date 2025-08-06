@@ -3,13 +3,13 @@
 This section describes how to log results of authorization checks for both [debugging](#debug-logging) and [auditing](#audit-logging) purposes.
 
 ## Debug Logging
-Debug Logs for the AMS modules can be enabled via environment variables to analyze unexpected authorization results of the application.
+Debug Logs for the Authorization Management Service (**AMS**) modules can be enabled via environment variables to analyze unexpected authorization results of the application.
 They can also be used to understand and verify the behavior of the AMS modules in early stages of development.
 
 ::: danger Warning
-Debug logging should not be enabled in production environments as it may expose sensitive information and impact performance.
+Debug logging shouldn't be enabled in production environments. It might expose sensitive information and impact performance.
 
-It is your responsibility to ensure that debug logs are not stored or transmitted in a way that could compromise security or violate data protection regulations.
+It's your responsibility to ensure that debug logs aren't stored or transmitted in a way that could compromise security or violate data protection regulations.
 :::
 
 ::: tip
@@ -55,7 +55,7 @@ LOGGING_LEVEL_COM_SAP_CLOUD_SECURITY_AMS=DEBUG
 When the application is running in a cloud environment, you can enable debug logging by setting the corresponding environment variables in the application's cloud environment configuration.
 
 ::: tip SAP BTP Cloud Foundry
-In the SAP BTP Cloud Foundry environment, you can manage [user-provided variables](https://help.sap.com/docs/btp/sap-business-technology-platform/manage-environment-variables#loio9984a29f721e4981ad6a0b0b0cb6b868__section_wgl_w3f_32c) and restart the application to enable debug logging.
+In the Cloud Foundry environment of SAP BTP, you can manage [user-provided variables](https://help.sap.com/docs/btp/sap-business-technology-platform/manage-environment-variables#loio9984a29f721e4981ad6a0b0b0cb6b868__section_wgl_w3f_32c) and restart the application to enable debug logging.
 :::
 
 ## Audit Logging
@@ -96,7 +96,7 @@ public class AmsAuditLogger implements Consumer<PolicyEvaluationResult> {
 ```
 :::
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#Logging) / [Java Details](/Libraries/java/jakarta-ams/jakarta-ams.md#Logging)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#events-logging) / [Java Details](/Libraries/java/jakarta-ams/jakarta-ams.md#logging)
 
 
 ### Request correlation
