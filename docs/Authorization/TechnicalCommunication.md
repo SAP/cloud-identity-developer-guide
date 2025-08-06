@@ -1,12 +1,12 @@
 # Technical Communication
 
-AMS supports authorization for technical communication for both *technical users*, i.e. systems and *principal propagation*, i.e. forwarded user requests, as documented below.
+The Authorization Management Service (**AMS**) supports authorization of technical communication for both *technical users* (systems) and *principal propagation*. In principle propagation, user requests are forwarded, as documented below.
 
 ## App-to-App
 
-The recommended strategy for authorizing technical communication requests in provider applications is to use SAP Cloud Identity Service [App-to-App Integration](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications). Here, the request of the caller is authorized by AMS policies in the provider application based on the consumed API permission groups. 
+The recommended strategy for authorizing technical communication requests in provider applications is to use SAP Cloud Identity Services [App-to-App Integration](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications). Here, the request of the caller is authorized by authorization policies in the provider application based on the consumed API permission groups. 
 
-The consumed API permission groups can be found in the the `ias_apis` claim of the SCI token:
+The consumed API permission groups can be found in the the `ias_apis` claim of the tokens from SAP Cloud Identity Services:
 
 ```json
 {
@@ -36,7 +36,7 @@ The consumed API permission groups can be found in the the `ias_apis` claim of t
 
 The claim is a list of API permission group names that the caller has requested and received during the token flow.
 
-The decision **which application** may consume which API permission group is made by the administrator of the SAP Cloud Identity Service tenant, not by the application itself (see [Consume API from another application](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-api-from-another-application)). The application itself only decides **which privileges** are granted to callers based on the API permission groups.
+The decision **which application** may consume which API permission group is made by the administrator of the SAP Cloud Identity Services tenant, not by the application itself (see [Consume API from another application](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-api-from-another-application)). The application itself only decides **which privileges** are granted to callers based on the API permission groups.
 
 ::: tip
 The CAP authentication handlers use the list of `ias_apis` to automatically grant **cds roles** with the same name in case of **technical user** tokens. The strategy described below is only relevant outside CAP or if you want to use the API permission groups in the context of principal propagation requests.
@@ -44,7 +44,7 @@ The CAP authentication handlers use the list of `ias_apis` to automatically gran
 
 ### API Policies
 
-For each API permission group that is provided by the application, it defines an *internal* policy, i.e. a policy that is not visible to administrators.
+For each API permission group that is provided by the application, it defines an *internal* policy. This is a policy that is not visible to administrators.
 
 For example, if the application provides an API permission group named `ExternalOrder` that can be used by external applications to place small orders, it could define the following internal policy that grants the intended privileges to callers of the API permission group. The fully qualified name of the policy is `internal.ExternalOrder` as it is defined inside a file of the `internal` DCL package:
 
@@ -56,10 +56,10 @@ INTERNAL POLICY ExternalOrder {
 ```
 :::
 
-The policy's privileges are granted to **any** callers that can make requests for that API permission group. A distinction between different caller identities is not made.
+The policy's privileges are granted to **any** callers that can make requests for that API permission group. A distinction between different caller identities isn't made.
 
 ::: tip
-It is best practice to map policies separately for the *technical user* and *forwarded user* flows. This way, the mapping function can be used to control which API permission group should be consumable in which flow by exclusively mapping API permission groups that are intended for the respective flow (see examples below).
+It's best practice to map policies separately for the *technical user* and *forwarded user* flows. This way, the mapping function can be used to control which API permission group should be consumable in which flow by exclusively mapping API permission groups that are intended for the respective flow (see examples below).
 
 If you want to define different privileges for technical und forwarded user tokens consuming the same API permission group, you can map the API permission group to different internal policies depending on the flow.
 :::
@@ -71,7 +71,7 @@ For technical user requests, the resulting policy is used directly in subsequent
 For principal propagation requests, the user's policies are used as a basis to determine the privileges and the policies derived from the consumed API permission groups are used to determine an upper limit for the privileges that are granted to the user during this request. This allows applications to restrict what external applications can do on behalf of the user, while also taking the user's policies into account for the decision.
 
 ::: info
-Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it does not need to distinguish between internal and external user requests.
+Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it's not necessary to distinguish between internal and external user requests.
 :::
 
 ### Mapping implementation
@@ -144,11 +144,11 @@ private PolicyAssignments mapApisToPolicyAssignments() {
 ### Mapping registration
 Finally, a bit of configuration is required to register the mapping functions, so that the AMS modules use the resulting policies in authorization checks for requests that are made to the API permission groups.
 
-In Node.js applications that use the standard CAP plugin runtime or the `IdentityServiceAuthProvider` directly, the mapping functions themselves can be registered directly via the API.\
+In Node.js applications that use the standard CAP plugin runtime or the `IdentityServiceAuthProvider` directly the mapping functions themselves can directly be registered via the API.\
 In Java applications, the application needs to implement the [`AttributesProcessor`](/Libraries/java/jakarta-ams/jakarta-ams#AttributesProcessor) interface, extract the token from the `SecurityContext`, check if the `ias_apis` claim is present and if so, build and register the `PolicyAssignments` object with the `Principal` object.
 
 ::: info
-The Node.js module includes special handling for the `principal-propagation` API permission group (see above). In Java, the `AttributesProcessor` implementation below must be extended to check for this API permission group and skip the App-To-App logic, if desired.
+The Node.js module includes special handling for the `principal-propagation` API permission group (see above). In Java, the `AttributesProcessor` implementation below must be extended to check for this API permission group and skip the app-to-app logic, if desired.
 :::
 
 ::: code-group
