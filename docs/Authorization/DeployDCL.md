@@ -1,13 +1,13 @@
 # Deploying DCL
 
-Deploying DCL to your AMS instance has a lot of similarities to applying [DDL](https://en.wikipedia.org/wiki/Data_definition_language) to a database schema:
+Deploying DCL to your Authorization Management Service (**AMS**) instance is similar to applying [DDL](https://en.wikipedia.org/wiki/Data_definition_language) to a database schema:
 - Its availability is a crucial precondition for the application to start up.
-- Changes in business logic may depend on changes in DCL.
-- Multiple microservices may depend on central DCL files.
-- Changes need to be backward compatible to not break existing applications.
+- Changes in the business logic may depend on changes in DCL.
+- Multiple microservices may depend on a central schema.
+- Changes must be backward compatible so that they don't break existing applications.
 - You need a reliable mechanism to get migrations right the first time
 
-To help with this process, this document recommends best practices and showcases the official DCL deployment solution that is available for different platforms and scenarios.
+This document recommends best practices and showcases the official DCL deployment solution that is available for different platforms and scenarios.
 
 ::: tip CAP
 In CAP projects, `@sap/ams` registers a custom build task that automatically creates an `ams-policies-deployer` application during `cds build`.
@@ -17,13 +17,13 @@ However, if your application consists of multiple microservices, it makes sense 
 :::
 
 ## AMS Policies Deployer App
-The official solution for deploying DCL files to an AMS instance is to do it with an *AMS Policies Deployer App*.
-It is a minimalistic Node.js application that uses the credentials for your *identity* service instance and the [deploy-dcl](#deploy-dcl-script) script from the `@sap/ams` Node.js client library to upload the DCL files to the AMS server.
+The official solution for deploying DCL files to an AMS instance is the *AMS Policies Deployer App*.
+It's a minimalistic Node.js application that uses the credentials for your *identity* service instance and the [deploy-dcl](#deploy-dcl-script) script from the `@sap/ams` Node.js client library to upload the DCL files to AMS.
 
 The deployer app is a minimalistic deployment artefact that is not part of your backend service.
 This separation of concerns allows you to deploy the DCL files independently from your backend service, typically as a pre-step, and to manage the DCL files in a dedicated repository in microservice architectures.
 
-For example, in a monorepo, assuming `bookshop` is your backend service, a typical project structure could look like this:
+For example, in a monorepo, a typical project structure could look like this, assuming that `bookshop` is your backend service, 
 
 ```text title="Procurement"
 ├─ bookshop
@@ -43,27 +43,25 @@ Given this structure, you would typically replace the placeholders in the snippe
 <code v-pre>`{{dclDeployerAppFolder}}`</code>: **ams-policies-deployer**
 
 ### package.json
-The `package.json` from the [ams-dcl-content-deployer](https://www.npmjs.com/package/@sap/ams?activeTab=code) folder of `@sap/ams` is ready to be used for the AMS deployer in your project, independent of the languages used in other parts of your project, e.g. Java, Javascript or Go.
-It defines a minimalistic Node.js module that simply executes the [deploy-dcl](/Libraries/nodejs/sap_ams/sap_ams#deploy-dcl-script) script from the `@sap/ams` Node.js client library.  
+The `package.json` from the [ams-dcl-content-deployer](https://www.npmjs.com/package/@sap/ams?activeTab=code) folder of `@sap/ams` is ready to be used for the AMS Policies Deployer App in your project, independently from the languages used in other parts of your project, for example, Java, Javascript or Go.
 
 ::: tip
-You do not need a local Node.js installation for development or deployment as the script does not have to be executed locally.
+You don't need a local Node.js installation for development or deployment because it's not necessary to execute the script locally.
 :::
 
 ### DCL Files
-While the deployer needs to contain your DCL files, you should not commit additional copies of the DCL files to version control for the deployer if they are already contained in your microservices. In the [Microservice Applications](#microservice-applications) section we give recommendations for avoiding that.
+The deployer must contain your DCL files. Do not commit additional copies of the DCL files to version control for the deployer if they are already included in your microservices. In the [Microservice Applications](#microservice-applications) section, we give recommendations for avoiding that.
 
 In monolithic applications, we recommend to place the DCL files in your application folder and copy them to the `ams-policies-deployer` folder during a build step before deployment.
 
 ## Platforms
-The following section describes how to deploy an AMS policy deployer application to different cloud platforms.
-Those platforms provide different mechanisms for deploying static content that are discussed in the next sections.
+The following section describes how to deploy an AMS Policy Deployer App to different cloud platforms.
 
 ### Cloud Foundry
-In Cloud Foundry, [Tasks](https://docs.cloudfoundry.org/devguide/using-tasks.html) are the recommended mechanism for running *one-off* tasks such as deploying DCL files.
+In Cloud Foundry, [Tasks](https://docs.cloudfoundry.org/devguide/using-tasks.html) are the recommended mechanisms for running *one-off* tasks such as deploying DCL files.
 
 For [MTA](#mta) based deployments, you can use the provided snippet to automatically execute a task at the beginning of the deployment.
-Unfortunately, this is not possible when deploying via a [CF Manifest](#cf-manifest). As manual task registration is documented poorly, we show an alternative that uses an *app* deployment instead.
+Unfortunately, this isn't possible when you deploy via a [CF Manifest](#cf-manifest). Since manual task registration is documented poorly, we show an alternative that uses an *app* deployment instead.
 
 #### MTA
 ```yaml title=mta.yaml
@@ -98,7 +96,7 @@ modules:
 ```
 
 #### CF Manifest
-Unlike MTAs, CF Manifests do not support the scripted registration of CF tasks and their manual registration is poorly documented. Therefore, the proposed manifest snippet defines another *application* instead of a task. As CF considers applications whose process exits as crashed (even with status code 0), the deployer application needs to idle to prevent constant restarts. It can be manually stopped after the DCL deployment to free resources. It will report about success or failure in its logs.
+Unlike MTAs, CF manifests don't support the scripted registration of CF tasks and their manual registration is poorly documented. Therefore, the proposed manifest snippet defines another *application* instead of a task. Since CF considers applications whose process exits as crashed (even with status code 0), the deployer application must idle to prevent constant restarts. It can be stopped manually after the DCL deployment to free resources. It logs success or failure.
 
 ```yaml title="manifest.yml"
 applications:
@@ -109,7 +107,7 @@ applications:
     memory: 256M
     instances: 1
     buildpack: nodejs_buildpack
-    command: (npm start && echo "This application may now be stopped to free resources." || echo "AMS Policy Deployment unsuccessful.") && sleep infinity
+    command: (npm start && echo "This application may now be stopped to free resources." || echo "Authorization policy deployment unsuccessful.") && sleep infinity
     services:
       - name: {{identityServiceInstanceName}}
         parameters:
@@ -118,28 +116,28 @@ applications:
 ```
 
 ### Kubernetes
-A fitting resource on Kubernetes to do *one-off* tasks such as deploying static content, is a [Job](https://kubernetes.io/docs/Authorization/workloads/controllers/job/). The snippets below help you define such a job but it needs a container image to run.
+[Job](https://kubernetes.io/docs/Authorization/workloads/controllers/job/) is a suitable resource on Kubernetes to do *one-off* tasks such as deploying static content. The snippets below help you define such a job but it needs a container image to run.
 
 #### Kyma
-The following sections describe how to run a job on SAP BTP Kyma based on a policy deployer image. 
+The following sections describe how to run a job on the Kyma environment of SAP BTP based on a policy deployer image. 
 
 ::: info Outside Kyma
-Plain (i.e. non-Kyma) Kubernetes clusters should be able to use the strategies below but additional steps might be necessary, e.g.
+Plain (non-Kyma) Kubernetes clusters should be able to use the strategies below but additional steps might be necessary, for example
 - installing the BTP service operator
 - making sure the service bindings format implements the SAP Kubernetes Service Bindings Spec
 :::
 
 #### Build Deployer Image
-To build the deployer image, you can use this provided `Dockerfile` from the the [ams-dcl-content-deployer](https://www.npmjs.com/package/@sap/ams?activeTab=code) folder of `@sap/ams` which is based on a distro-less [Chainguard](https://edu.chainguard.dev/chainguard/chainguard-images/getting-started/node/) base image for Node with 0 known vulnerabilities at the time of writing.
+To build the deployer image, you can use this provided `Dockerfile` from the the [ams-dcl-content-deployer](https://www.npmjs.com/package/@sap/ams?activeTab=code) folder of `@sap/ams`, which is based on a distro-less [Chainguard](https://edu.chainguard.dev/chainguard/chainguard-images/getting-started/node/) base image for Node.js with 0 known vulnerabilities at the time of writing.
 
 Adjust the `Dockerfile` as follows to fit it to your project structure:
-1. Set the correct source path to the `package.json` of the policy deployer that gets copied in line `COPY ./package.json /app/package.json`
+1. Set the correct source path to the `package.json` of the policy deployer, which is copied in line `COPY ./package.json /app/package.json`
 1. Add an additional `COPY` step in the next line to copy your base policies into `/app/dcl`.
 1. (Optional) Adjust the version of `@sap/ams` in the `package.json` of the policy deployer to a specific version.
 
-Alternatively, you might also be able to write a custom `Dockerfile` that builds on top of our pre-built image and inserts your DCL policy files similar to step 2.
+Alternatively, you can also write a custom `Dockerfile` that builds on top of our pre-built image and inserts your DCL policy files in a similar way to step 2.
 
-When a new version of `@sap/ams` is released that contains changes for the base policy upload, you need to build a new deployer image for that version to benefit from those changes.
+When a new version of `@sap/ams` is released that contains changes for the base policy upload, you must build a new deployer image for that version to benefit from those changes.
 Usually, this should not happen frequently, as the deploy script is stable by now.
 
 ::: warning Cache Warning
@@ -147,7 +145,7 @@ Usually, this should not happen frequently, as the deploy script is stable by no
 :::
 
 ##### Job for self-built image
-To run an AMS Deployer Image built and deployed by yourself, you can use the following Job descriptor:
+To run an AMS Deployer image built and deployed by yourself, you can use the following Job descriptor:
 
 ```yml title="amsDclDeployer.yml"
 apiVersion: batch/v1
@@ -191,7 +189,7 @@ spec:
 ## Microservice Applications
 
 ::: tip
-The information in this section is our recommendation to the best of our knowledge and experience. It is not a requirement to follow it.
+The information in this section is what we recommend to the best of our knowledge and experience. It's not mandatory.
 
 If you'd like to challenge our reasoning, we would love to get feedback via the Support channels to improve the experience for all customers.
 :::
@@ -203,31 +201,27 @@ Subsequent DCL deployments will override each other on the AMS server because AM
 :::
 
 ### Motivation for central authorization model
-Given the nature of deploying base policies being similar to database schema migrations, there are good reasons against a distributed authorization model.
+Since the deployment of base policies is similar to database schema migrations, there are good reasons against a distributed authorization model.
 
-Typically, the microservices share at least **some** parts of their authorization model, e.g. for modeling business central roles like `auditor`. There are two ways to deal with this requirement.
+Typically, the microservices share at least **some** parts of their authorization model, for example, for modeling business central roles like `auditor`. There are two ways to deal with this requirement.
 
-If each microservice should have its own, independent model, the common aspects of the model would lead to redundancy in the models. However, redundancy must be avoided at all costs - not just for development, but also because it will be visible to customer administrators. Imagine the same privilege being defined in multiple policies of individual microservices. That privilege would need to be assigned in *all* microservice DCL packages that are pushed with a redundant policy independently. This results in a terrible user experience for the customer.
-
-::: tip
-In addition, the microservice architecture should be abstracted away from customer administrators. A grouping of policies by microservices may not always feel like a coherent application.
-:::
+If each microservice should have its own, independent model, the common aspects of the model would lead to redundancy in the models. However, redundancy must be avoided at all costs - not just for development, but also because it will be visible to customer administrators. Imagine the same privilege being defined in multiple policies of individual microservices. That privilege would need to be assigned in *all* microservice DCL packages that are pushed with a redundant policy independently. This results in a terrible user experience for the customer. The microservice architecture should be abstracted away from customer administrators. A grouping of policies by microservices may not always feel like a coherent application.
 
 Alternatively, one could decide to share certain aspects of the model, by not splitting microservices up into completely different DCL packages.\
 But that raises the question: *why not share everything centrally?*\
 Is it really worth the trouble of having to solve both problems simultaneously: distributing shared base policies and schema attributes across microservices **and** merging individual base policies and schemata? We think not.
 
 ### Accessing central DCL files
-If you maintain DCL files (and the policy deployer) in a dedicated, central repository, it is best practice to place your DCL files a `dcl` folder at root level and make the files available to your microservice repositories by including the central DCL repository as a git submodule for local tests and validation.
+If you maintain DCL files (and the policy deployer) in a dedicated, central repository, it is best practice to place your DCL files in a `dcl` folder at root level and make the files available to your microservice repositories by including the central DCL repository as a git submodule for local tests and validation.
 
 There are techniques to only use the relevant files from the central repository:
 
 - [git sparse checkout](https://git-scm.com/docs/git-sparse-checkout) in cone mode allows you to only check out the `dcl` folder of the submodule
 - `symbolic links` allow you to link specifically the `dcl` folder of the submodule into specific paths of your microservice repository
-- The AMS CAP plugins can be configured to look for DCL files in a different root folder, e.g. in your submodule folder
+- The CAP plugins for AMS can be configured to look for DCL files in a different root folder, for example, in your submodule folder
 
 ::: info Alternative Solutions
-If you do not want to use git submodules, there are alternative solutions available on different levels of the tech stack to distribute common files across microservices:
+If you don't want to use git submodules, there are alternative solutions available on different levels of the tech stack to distribute common files across microservices:
 
 - [Git Monorepo](https://www.atlassian.com/git/tutorials/monorepos)
 - [NPM Workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces)
@@ -236,7 +230,7 @@ If you do not want to use git submodules, there are alternative solutions availa
 
 ## deploy-dcl script
 
-The `deploy-dcl` script from `@sap/ams` pushes a DCL bundle (including schema.dcl, DCL root package and all subpackages) to the Identity service instance from the environment (see `deploy-dcl --help`):
+The `deploy-dcl` script from `@sap/ams` pushes a DCL bundle (including schema.dcl, DCL root package, and all subpackages) to the Identity service instance from the environment (see `deploy-dcl --help`):
 
 ```
 Usage: npx --package=@sap/ams deploy-dcl -d [DCL_ROOT_DIR] -c [CREDENTIALS_FILE] -n [DEPLOYER_APP_NAME]
