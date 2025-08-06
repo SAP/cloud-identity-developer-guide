@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "SAP Cloud Identity Services"
   text: "Developer Guide"
-  tagline: "Implementing Authentication and Authorization with the SCI Client Libraries."
+  tagline: "Implementing Authentication and Authorization with the Client Libraries for SAP Cloud Identity Services."
   actions:
     - theme: brand
       text: Getting Started
@@ -23,7 +23,7 @@ features:
       src: /authentication.svg
       alt: Authentication
     title: Authentication (Coming Soon)
-    details: Use the IAS Client Libraries to implement authentication in your business application, both for users and external systems.
+    details: Use the client libraries for SAP Cloud Identity Services to implement authentication in your business application, both for users and external systems.
   - icon: 
       src: /authorization.svg
       alt: Authorization
