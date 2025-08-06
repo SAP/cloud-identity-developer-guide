@@ -28,15 +28,15 @@ To check which version of the module is installed, run:
 ```bash
 npm list @sap/ams
 ```
-This will print a dependency tree that shows which versions of the module are installed, including transitive dependencies.
+This prints a dependency tree that shows which versions of the module are installed, including transitive dependencies.
 :::
 
 ## Version 3
-Version 3 drastically changes the core API. Instead of checking privileges on a `PolicyDecisionPoint` with an `Attributes` object, an `AuthProvider` prepares an `Authorizations` object for the same purpose. This separates *what* to check from *how* to check it. The necessary configuration for advanced authorization scenarios, such as principal propagation or non-standard authorization strategies, are configured once during application start. As a result, the authorization checks themselves remain straight-forward in version 3, with a focus on the application domain.
+Version 3 drastically changes the core API. Instead of checking privileges on a `PolicyDecisionPoint` with an `Attributes` object, an `AuthProvider` prepares an `Authorizations` object for the same purpose. This separates *what* to check from *how* to check it. The necessary configuration for advanced authorization scenarios, such as principal propagation or non-standard authorization strategies, are configured once during application start. As a result, the authorization checks themselves remain straightforward in version 3, with a focus on the application domain.
 
 New features:
 
-- Out-of-the-box support for technical communication scenarios via SAP Cloud Identity Services
+- Out-of-the-box support for technical communication scenarios using SAP Cloud Identity Services
 - Flexible configuration and extensibility for non-standard authorization strategies, for example when authenticating both via XSUAA and SAP Cloud Identity Services tokens
 - Exports Typescript Types for a better development experience
 - Improved events that allow correlating authorization checks with requests for logging and auditing
@@ -49,26 +49,26 @@ CAP Node.js applications should **not** need to make changes when updating to ve
 
 ## Usage
 
-The following snippets give an example for the usage of the core API of the library. For more details on the concepts, see [Authorization Checks](/Authorization/AuthorizationChecks).
+The following snippets show you how to use the core API of the library. For more details on the concepts, see [Authorization Checks](/Authorization/AuthorizationChecks).
 
 ::: tip CAP applications
-For CAP Node.js applications, most of this section is irrelevant as the library setup and authorization checks are fully automated.
+For CAP Node.js applications, most of this section is irrelevant because the library setup and authorization checks are fully automated.
 :::
 
 ### Set-up
-The following code snippets shows the setup of the `@sap/ams` library in a Node.js application. We recommend to carve out the AMS setup into a separate module, for example to `ams.js`, and import the AMS objects in your `server.js`.
+The following code snippets show the setup of the `@sap/ams` library in a Node.js application. We recommend to carve out the Authorization Management Service (**AMS**) setup into a separate module, for example, to `ams.js`, and import the AMS-related objects in your `server.js`.
 
 ```js
 const { AuthorizationManagementService, IdentityServiceAuthProvider, AmsError } = require("@sap/ams");
 
 let ams;
 if (process.env.NODE_ENV === 'test') {
-  // For local tests, init AMS with a locally compiled policy bundle and mocked policy assignments
+  // For local tests, initialize AMS with a locally compiled policy bundle and mocked policy assignments
   ams = AuthorizationManagementService.fromLocalDcn("./test/dcn", { // your compile target directory of the @sap/ams-dev compile-dcl script
     assignments: "./test/mockPolicyAssignments.json" // a file path of your choice or an in-memory structure
   });
 } else {
-  // For production, init AMS with the cloud policy and assignment bundle from the AMS server
+  // For production, initialize AMS with the cloud policy and assignment bundle from the AMS server
   const identityService = ... // your @sap/xssec 4 IdentityService instance used for authentication
   ams = AuthorizationManagementService.fromIdentityService(identityService);
 }
@@ -121,7 +121,7 @@ const decision = authorizations.checkPrivilege('create', 'orders', input);
 ``` 
 
 ### Handling Decisions
-An authorization check will return a `Decision` object. A decision can be in one of three states:
+An authorization check returns a `Decision` object. A decision can be in one of three states:
 
 - `granted`: the checked privilege is unconditionally granted
 - `denied`: the checked privilege is unconditionally denied
@@ -165,7 +165,7 @@ Besides [`authorize()`](#authorization-checks), the `AmsMiddleware` provides add
 // returns 403 when no definitive (= no outstanding WHERE condition) GRANT delete ON orders is assigned to user
 app.delete('/orders/:id', amsMw.checkPrivilege('delete', 'orders'), deleteOrder);
 
-// returns 403 when no GRANT read ON orders is assigned to user. A potential WHERE condition for the GRANT is acceptable which needs to be evaluated in the service handler.
+// returns 403 when no GRANT read ON orders is assigned to user. A potential WHERE condition for the GRANT is acceptable. It must be evaluated in the service handler.
 app.get('/orders', amsMw.precheckPrivilege('read', 'orders'), getOrders);
 
 // returns 403 when no definitive GRANT read ON products or no (definitive or conditional) GRANT create ON orders is assigned to user
@@ -196,7 +196,7 @@ ams.on("authorizationCheck", event => {
 
 ### Error Handling
 
-If necessary, you can identify Errors from @sap/ams via instanceof, for example in the express error handler:
+If necessary, you can identify errors from @sap/ams via instanceof, for example, in the express error handler:
 
 ```js
 app.use((err, req, res, next) => {
@@ -210,7 +210,7 @@ app.use((err, req, res, next) => {
 });
 ```
 
-Additionally, the AMS bundle loader which refreshes the current policies and assignments bundle independent of incoming requests, emits errors when those requests to the AMS server fail. You can log these events like so:
+Additionally, the AMS bundle loader, which refreshes the current policies and assignments bundle independently of incoming requests, emits errors when those requests to the AMS server fail. You can log these events as follows:
 
 ```js
 ams.on("error", event => {
@@ -244,7 +244,7 @@ See the central [Testing](/Authorization/Testing) documentation for details.
     - `debounceDelay` (number, default: `1000`): Debounce delay in ms for changes of local DCL files.  
     - `start` (boolean, default: `true`): Control whether to immediately start downloading the AMS bundle.
 
-If an instance has been constructed with `config.start=false`, the loading of the AMS bundle must be started manually. This is useful when ZTIS is used and the credentials do not yet contain a certificate when the instance is created:
+If an instance has been constructed with `config.start=false`, the loading of the AMS bundle must be started manually. This is useful when ZTIS is used, and the credentials do not yet contain a certificate when the instance is created:
 
 ```js
 const ams = AuthorizationManagementService.fromIdentityService(identityService, { start: false });
@@ -257,8 +257,8 @@ getCertificateFromZTIS().then((cert, key) => {
 
 #### Readiness Checks
 - **`whenReady(timeoutSeconds = 0): Promise<void>`**  
-  Returns a Promise that resolves once the instance is ready for authorization checks. If it has not received policies and assignments after the specified timeout interval, the Promise is rejected.  
-  - `timeoutSeconds` (number): Max wait time in seconds.  
+  Returns a Promise that resolves once the instance is ready for authorization checks. If it hasn't received policies and assignments after the specified timeout interval, the Promise is rejected.  
+  - `timeoutSeconds` (number): Maximum waiting time in seconds.  
 
 - **`isReady(): boolean`**  
   Synchronously checks if the instance is ready for authorization checks.  
@@ -275,8 +275,8 @@ An abstract representation of authorizations determined by the strategy of the [
 
 - **`checkPrivilege(action: string, resource: string, input?: AttributeInput): Decision`**  
   Checks if the action is allowed on the resource.  
-  - `input` (AttributeInput, optional): A flat input object that grounds attribute names to values, for example `{ "product.category" : "accessory" }`.
-  Attributes that are not grounded in the input are considered *unknown* and may result in a conditional Decision.
+  - `input` (AttributeInput, optional): A flat input object that grounds attribute names to values, for example, `{ "product.category" : "accessory" }`.
+  Attributes that are not grounded in the input are interpreted as *unknowns* and may result in a conditional decision.
 
 - **`getPotentialResources(): Set<string>`**  
   Collects all resources for which at least one action is potentially granted, ignoring conditions.  
@@ -289,16 +289,16 @@ An abstract representation of authorizations determined by the strategy of the [
 
 - **`withDefaultInput(input: AttributeInput): Authorizations`**  
   Sets default input used for all authorization checks.  
-  - `input` (AttributeInput, optional): A flat input object that grounds fully-qualified attribute names to values, for example `{ "$env.$user.origin" : "EU" }`
+  - `input` (AttributeInput, optional): A flat input object that grounds fully-qualified attribute names to values, for example, `{ "$env.$user.origin" : "EU" }`
 
 - **`limitedTo(other: Authorizations): Authorizations`**  
-  Limits the authorizations of this instance to the authorizations of another instance. Subsequent authorization checks on this instance will use the logical intersection of its authorizations and those of the other Authorization instances.
+  Limits the authorizations of this instance to the authorizations of another instance. Subsequent authorization checks on this instance use the logical intersection of its authorizations and those of the other Authorization instances.
 
 ---
 
 ### Decision
 
-Represents the result of an authorization check. A decision can be in one of three states: *granted*, *denied*, or *conditional*.
+Represents the result of an authorization check. A decision can have one of three states: *granted*, *denied*, or *conditional*.
 
 #### Methods
 
@@ -309,9 +309,9 @@ Represents the result of an authorization check. A decision can be in one of thr
   Returns true if the authorization check resulted in a definitive DENY with no outstanding conditions.
 
 - **`<T,V>visit(visitCall: CallVisitor, visitValue: ValueVisitor) : T`**
-  This method can be used to visit the condition tree bottom-up. The visitor calls `visitValue` whenever it encounters a value (attribute reference or literal) or `visitCall` when it encounters a function call in the condition, for example a call to the "EQ" function to compare two arguments for equality.
-    - `visitCall` ((call : string, args : (DcnReference|DcnValue|V)[]) => T): A function that visits the given call and its arguments, for example to transform `("EQ", args)` => `"args[0] = args[1]"`. The call names are the constants from `DclConstants.operators`.
-    - `transformValue` ((value : DcnReference|DcnValue) => DcnReference|DcnValue|V): A function that visits the given attribute reference or literal, for example to translate AMS references to database field names.
+  This method can be used to visit the condition tree bottom-up. The visitor calls `visitValue` whenever it encounters a value (attribute reference or literal) or `visitCall` when it encounters a function call in the condition, for example, a call to the "EQ" function to compare two arguments for equality.
+    - `visitCall` ((call : string, args : (DcnReference|DcnValue|V)[]) => T): A function that visits the given call and its arguments, for example, to transform `("EQ", args)` => `"args[0] = args[1]"`. The call names are the constants from `DclConstants.operators`.
+    - `transformValue` ((value : DcnReference|DcnValue) => DcnReference|DcnValue|V): A function that visits the given attribute reference or literal, for example, to translate AMS references to database field names.
     - {ref:string} `DcnReference`
     - {number|string|boolean|number[]|string[]|boolean[]} `DcnValue`
 
@@ -330,7 +330,7 @@ Represents the result of an authorization check. A decision can be in one of thr
    
 ### Events
 
-Instances of `AuthorizationManagementService` emit the following events to which consumers can subscribe via the `on(eventName: string, function(event: AmsEvent) : void)` method.
+Instances of `AuthorizationManagementService` emit the following events to which consumers can subscribe using the `on(eventName: string, function(event: AmsEvent) : void)` method.
 
 - **`authorizationCheck`**: Emitted during various authorization operations by the methods of [Authorizations](#authorizations). The event object contains the following properties based on the type of operation:
   - **`type`**: The type of the event. Possible values are:
@@ -353,7 +353,7 @@ Instances of `AuthorizationManagementService` emit the following events to which
 
 - **`error`**: Emitted when an error occurs in a background operation. The event object contains the following properties:
   - **`type`**: The type of the event. Possible values are:
-    - `"bundleRefreshError"`: Emitted when the BundleLoader fails to refresh the current policies and assignments bundle, for example due to a failed request to the AMS server. This event is not emitted when the initial loading fails. Use the `whenReady` method instead to check for the initial readiness of AMS.
+    - `"bundleRefreshError"`: Emitted when the BundleLoader fails to refresh the current policies and assignments bundle, for example, due to a failed request to the AMS server. This event is not emitted when the initial loading fails. Use the `whenReady` method instead to check for the initial readiness of AMS.
   - **`error`**: The `AmsError` instance that describes the error.
 
 
@@ -373,7 +373,7 @@ It is possible to replace the following defaults in the runtime of the plugin to
 
 #### Custom SAP Cloud Identity Services credential location
 
-If the SAP Cloud Identity Services credentials are not available under the default location (`cds.env.requires.auth.credentials`), you need to manually provide them:
+If the SAP Cloud Identity Services credentials aren't available under the default location (`cds.env.requires.auth.credentials`), you must provide provide them manually:
 
 ::: code-group
 
@@ -386,7 +386,7 @@ amsCapPluginRuntime.credentials = { ... } // manually provide the SAP Cloud Iden
 
 #### Custom XssecAuthProvider
 
-It is possible to override the `XssecAuthProvider` implementation used by the default `CdsAuthProvider` internally to a different implementation.
+It's possible to override the `XssecAuthProvider` implementation used inside the default `CdsAuthProvider` with a different implementation.
 
 For example, the following snippet shows how it can be replaced in projects where the authentication middleware provides either an `IdentityServiceSecurityContext` or an `XsuaaSecurityContext` and both shall be authorized based on policies.
 
@@ -408,7 +408,7 @@ const mapScope = (scope, securityContext) => scope; // your custom scope to poli
 
 ##### Custom CdsAuthProvider
 
-If your CAP project does not use the `@sap/xssec` library for authentication, you can provide a custom implementation of the `CdsAuthProvider` interface that derives the user's `Authorizations` with a custom strategy from the `cds.context` object:
+If your CAP project doesn't use the `@sap/xssec` library for authentication, you can provide a custom implementation of the `CdsAuthProvider` interface that derives the user's `Authorizations` with a custom strategy from the `cds.context` object:
 
 ::: code-group
 ```js [server.js]
@@ -421,7 +421,7 @@ amsCapPluginRuntime.authProvider = new MyCustomCdsAuthProvider();
 ### Debug Logging
 `@sap/ams` logs to namespace `ams` in CAP. 
 
-To see cds debug logs, [turn them on](https://cap.cloud.sap/docs/node.js/cds-log#debug-env-variable) for this namespace, for example via
+To see CDS debug logs, [turn them on](https://cap.cloud.sap/docs/node.js/cds-log#debug-env-variable) for this namespace, for example, using
 
 ```shell
 DEBUG=ams cds watch
