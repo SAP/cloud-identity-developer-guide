@@ -1,0 +1,114 @@
+{
+    "name": "Data Control Language",
+    "scopeName": "text.dcl",
+    "fileTypes": [
+        "dcl"
+    ],
+    "repository": {
+        "general": {
+            "patterns": [
+                {
+                    "include": "#linecomment"
+                },
+                {
+                    "include": "#blockcomment"
+                },
+                {
+                    "include": "#types"
+                },
+                {
+                    "include": "#values"
+                },
+                {
+                    "include": "#operator"
+                },
+                {
+                    "include": "#punctuation"
+                },
+                {
+                    "include": "#paren-expression"
+                },
+                {
+                    "include": "#number"
+                },
+                {
+                    "include": "#singlequotedstrings"
+                },
+                {
+                    "include": "#keyword"
+                },
+                {
+                    "include": "#identifier"
+                }
+            ]
+        },
+        "linecomment": {
+            "name": "comment.line.double-slash.dcl",
+            "begin": "(^[ \\t]+)?(?=//)",
+            "end": "(?=$)"
+        },
+        "blockcomment": {
+            "name": "comment.block.dcl",
+            "begin": "/\\*(\\*)?(?!/)",
+            "end": "\\*/"
+        },
+        "types": {
+            "name": "keyword.type.dcl",
+            "match": "(?i)\\b(Boolean|Number|String)\\b"
+        },
+        "values": {
+            "name": "values.dcl",
+            "match": "(?i)\\b(FALSE|NULL|TRUE)\\b"
+        },
+        "operator": {
+            "name": "operator.dcl",
+            "match": "(<|<=|<>|=|>|>=)"
+        },
+        "punctuation": {
+            "name": "punctuation.dcl",
+            "match": ",|\\.|:|;"
+        },
+        "paren-expression": {
+            "begin": "\\(|\\[|\\{",
+            "end": "\\)|\\]|\\}",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.paren.open"
+                }
+            },
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.paren.close"
+                }
+            },
+            "name": "expression.group",
+            "patterns": [
+                {
+                    "include": "#general"
+                }
+            ]
+        },
+        "singlequotedstrings": {
+            "name": "string.quoted.single.dcl",
+            "match": "'[^']*'"
+        },
+        "number": {
+            "name": "number.dcl",
+            "match": "\\b\\d\\d*\\b"
+        },
+        "keyword": {
+            "name": "keyword.control.dcl",
+            "match": "(?i)\\b(AND|BETWEEN|DEFAULT|DENY|ESCAPE|EXPECT|FOR|FUNCTION|GRANT|IGNORE|IN|INPUT|INTERNAL|IS|LIKE|NOT|ON|OR|POLICY|RESTRICT|RESTRICTED|RETURN|SCHEMA|SCOPEFILTER|TENANT|TEST|UNKNOWN|USE|WHERE)\\b"
+        },
+        "identifier": {
+            "name": "variable.dcl",
+            "match": "\"?\\b\\w\\w*\\b\"?"
+        }
+    },
+    "patterns": [
+        {
+            "include": "#general"
+        }
+    ],
+    "uuid": "8383e49a-fa0d-4bb5-827b-10e8abc294ca"
+}
