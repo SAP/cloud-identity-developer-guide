@@ -15,7 +15,7 @@ The client libraries of AMS consist of different modules for the following progr
     - [@sap/ams](/Libraries/nodejs/sap_ams/sap_ams.md)
     - [@sap/ams-dev](https://www.npmjs.com/package/@sap/ams-dev)
 - **Go**:
-    - [cloud-identity-authorizations-golang-library](/Libraries/go/go-ams.md)
+    - [cloud-identity-authorizations-golang-library](https://github.com/SAP/cloud-identity-authorizations-golang-library)
 
 The next section lists the required module dependencies for different application setups, depending on the programming language and framework you are using.
 
