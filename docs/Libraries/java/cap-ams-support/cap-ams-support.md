@@ -1,26 +1,26 @@
 # Authorization Management Service Support for CAP Java Applications
-A general description of Authorization Management Service (AMS) and its functionality can be found [here](../jakarta-ams/jakarta-ams.md).
+A general description of Authorization Management Service (**AMS**) and its functionality can be found [here](../jakarta-ams/jakarta-ams.md).
 Integrating AMS into applications that use the Cloud Application Programming Model (CAP) is already possible. This can be done
 by using, for example, the API provided by `jakarta-ams` and calling it in all required CAP event handlers.
-This support module attempts to make the integration of AMS into CAP more convenient.
+This support module tries to make the integration of AMS into CAP more convenient.
 
 There is a previous, **deprecated** approach to integrating AMS into CAP Java applications using the `cds2dcl` tool.
-The deprecated implementation will continue to work, but using the new approach described in this document is recommended.
+The deprecated implementation still works, but we recommend to use the new approach, which is described in this document.
 A guide for a transition to the new approach can be found [here][1].
 
 ## <a id="api-disclaimer"></a>Disclaimer on API Usage
-This documentation provides information that might be useful in using Authorization Management Service. We will try to ensure that future versions of the APIs are backwards compatible to the immediately preceding version. This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.  
-Please check the [release notes](../releases.md) to stay tuned about new features and API modifications.
+This documentation provides information that might be useful in using AMS. We try to ensure that future versions of the APIs are backwards compatible with the immediately preceding version. This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.  
+Please check the [release notes](../releases.md) for updates about new features and API modifications.
 
 ## Integration Process
 When using this module, the usage of AMS in a CAP Java application works as follows:
 
-1. The application defines its authorization model in terms of roles (e.g. `Admin`, `Specialist`, etc.) and attributes relevant for instance based authorizations.
-2. The application developer creates AMS role-policies and an AMS schema with authorization attributes.
+1. The application defines its authorization model concerning roles (for example, `Admin`, `Specialist`, etc.) and attributes relevant for instance based authorizations.
+2. The application developer creates role policies and a schema with authorization attributes for AMS.
 3. In the CDS model the application developer annotates the service entities with privileges for the defined roles.
 4. The customer assigns the predefined or customized role-policies in which the `RESTRICTED` attributes of the base-policies can be redefined.
 
-### AMS Schema and role policies
+### AMS schema and role policies
 
 ```dcl
 SCHEMA {
@@ -35,7 +35,7 @@ SCHEMA {
 This schema defines two attributes, `CompanyId` and `BusinessSystemType,` that can be used in role policies.
 The `schema.dcl` must be located on the root level of your DCL folder (common practice `src/main/resources/ams`).
 Additional documentation for the value help annotation can be found [here](/Authorization/ValueHelp.md).
-The following is a set of role-policies that shows examples for both unrestricted and restricted role assignments. The latter contain a template condition with schema attributes that can be customized by customers for instance-based access by creating admin policies that restrict those attributes.
+The following is a set of role policies that offers you examples for both unrestricted and restricted role assignments. The latter contain a template condition with schema attributes that can be customized by customers for instance-based access by creating admin policies that restrict those attributes.
 
 ```dcl
 //grant role with additional filter condition
@@ -60,10 +60,10 @@ POLICY BusinessConfigurationExpert001 {
 ### AMS annotations in CDS
 
 CAP provides a standard [annotation syntax][01] for several use cases.
-The following example demonstrates the required CDS/AMS annotations:
+The following example demonstrates the required CDS annotations for AMS:
 
 ```cds
-// link the fields of the entity to the AMS schema attributes
+// link the fields of the entity to the schema attributes for AMS
 annotate Account with @ams.attributes: {
     CompanyId: (companyId),
     BusinessSystemType: (businessSystemType),
@@ -116,9 +116,9 @@ By declaring a dependency to the module in the `pom.xml` of the service
 </dependency>
 ```
 two extensions are integrated into the CAP runtime. The `AmsUserInfoProvider` adds CAP roles to the user
-assigned via particular grant statements in AMS policies (`...ASSIGN ROLE <roles>...`).
+assigned via particular grant statements in authorization policies (`...ASSIGN ROLE <roles>...`).
 The `AmsAuthorzationHandler` is a regular CAP event handler called whenever CAP performs an authorization check.
-For entities annotated for AMS, this handler enforces the assigned AMS policies by attaching conditions to the database query of the current request. 
+For entities annotated for AMS, this handler enforces the assigned authorization policies by attaching conditions to the database query of the current request. 
 If the CAP entity is not annotated for AMS, nothing is executed.
 
 If you're transitioning from the previous approach, you activate the new implementation by deleting
@@ -126,34 +126,14 @@ the `_dcl_.cap` metadata file which was generated by the `cds2dcl` tool.
 
 ### Handling of entities where not all AMS attributes are applicable
 
-One of the main ideas for the AMS-CAP integration is that the attributes defined in AMS have an equivalent
+One of the main ideas for the CAP integration of AMS is that the attributes defined in AMS have an equivalent
 in most entities of the CDS model. However, there might be cases where not all attributes are applicable.
 For correct, consistent, and reasonable filter conditions, we need a way to distinguish the cases and
-the conditions.
+the conditions, for example with one of the following options.
 
-The first option is to use different attributes and structures as separation. For example,
-if we have entities that have a `BusinessSystemId` and a `CompanyId`, and some that have only the
-`BusinessSystemId`:
 
-```dcl
-SCHEMA {
-   SystemOnly : {
-      BusinessSystemId : String
-   },
-   BusinessSystemId : String,
-   CompanyId : String
-}
-
-POLICY p1 {
-   ASSIGN ROLE CarbonAccountant WHERE CompanyId IS NOT RESTRICTED AND BusinessSystemId IS NOT RESTRICTED;
-   ASSIGN ROLE CarbonAccountant WHERE SystemOnly.BusinessSystemId IS NOT RESTRICTED;
-}
-```
-Entities that have both attributes use `BusinessSystemId` and `CompanyId`, entities that have only the `BusinessSystemId`
-use `SystemOnly.BusinessSystemId` for the mapping.
-A disadvantage of this approach is that the value for `BusinessSystemId` must be set in two places for admin policies.
-
-The second option is to add an attribute that indicates if the entity is system-only and
+#### Context Attribute
+The first option is to add an attribute that indicates if the entity is system-only and
 add the attribute to the conditions. For example:
 ```dcl
 SCHEMA {
@@ -170,7 +150,9 @@ POLICY p1 {
 For entities with only the `BusinessSystemId` attribute, the `hasSystemOnly` attribute is set to `true`.
 Using the given context, the correct value can be set in an `AttributesProcessor` implementation.
 
-The third option is to use the roles. For example:
+#### Contextual Role Names
+
+The second option is to use different role names. For example:
 ```dcl
 SCHEMA {
     BusinessSystemId : String,
@@ -186,7 +168,7 @@ POLICY p1 {
 Entities that have both attributes use the `CarbonAccountant` role; entities that have only
 the `BusinessSystemId` use the `CarbonAccountantForSystemOnly` role in the `@restrict` annotation.
 
-### Customize Attributes
+### Customize Attributes object
 
 The `AmsUserInfoProvider` and `AmsAuthorizationHandler` also support the request customization
 going to the `PolicyDecisionPoint` (PDP) by providing an `AttributeProvider` implementation. The
@@ -204,16 +186,16 @@ of the configuration might change over time, or a toggle is deleted.
 
 By setting the property `cds.security.authorization.ams.features.generateExists` to `true`,
 the AMS runtime checks annotated paths for `1..*` associations. If such an association is found in a path,
-the runtime generates the where-clause using the [CAP exists predicate][03].
+the runtime generates the 'where' clause using the [CAP exists predicate][03].
 
 ## Help and Support
 
-Consult the [AMS documentation](/index.md) or the documentation
-of the other AMS Client Library modules [e.g. jakarta-ams](../jakarta-ams/jakarta-ams.md) for more information.
+See the [SAP Cloud Identity Services Developer Guide documentation](/index.md) or the documentation
+of the other AMS client library modules [for example jakarta-ams](../jakarta-ams/jakarta-ams.md) for more information.
 The [sample application][02] could also be useful.
 
 If you have an issue of type "My user has assigned policy X and I expect Y but get Z", please follow 
-the these steps:
+these steps:
 
 ### Activate log
 Activate the debug log for `com.sap.cloud.security.ams` in your `application.yaml`:
@@ -223,7 +205,7 @@ logging:
         com.sap.cloud.security.ams: DEBUG
         com.sap.cloud.security.ams.dcl.capsupport: DEBUG
 ```
-Make sure to add it to all relevant profiles(e.g. `cloud`, `default`). You should now see log entries like:
+Make sure to add it to all relevant profiles (for example `cloud`, `default`). You should now see log entries like:
 ```TEXT
 2025-03-18T14:31:05.926+01:00  WARN 64495 --- [nio-8080-exec-4] c.s.c.s.a.l.PolicyEvaluationSlf4jLogger  : Policy evaluation result: {"operation":"dcr._default_.allowPartial","kind":"FILTER","ignores":"[$env, $app]","unknowns":"[$dcl.action]","$dcl.resource":"$SCOPES","$dcl.principal2policies":"[null, mock/admin]","$dcl.tenant":"null","access":"deny","accessResult":"false"}.
 ```
@@ -236,14 +218,14 @@ flowchart TD
    id1("`Is cap-ams-support active?`")
    id1a("`Is the cap-ams-support version compatible?`")
    id1b(["`Update the *cap-ams-support* version to the latest stable release`"])
-   id2(["`Add *cap-ams-support* to your project and check for conditionals (e.g. profiles) **(1)**`"])
+   id2(["`Add *cap-ams-support* to your project and check for conditionals (for example profiles) **(1)**`"])
    id3("`Are the expected policies assigned?`")
    id4("`Check policy assignments for the mock user in *application.yaml*`")
    id5(["`Add *dcl-compiler-plugin* to your project`"])
-   id6("`Check assignment in SCI Cockpit *(Hint: Check the user for all assigned policies, not the policy for assigned users.)*`")
+   id6("`Check assignment in administration console of SAP Cloud Identity Services *(Hint: Check the user for all assigned policies, not the policy for assigned users.)*`")
    id7("`Do the roles in the policies and *@restrict* annotations match?`")
    id8(["`Update the policy assignments in relevant profiles of *application.yaml*`"])
-   id9(["`Update assignments in SCI Cockpit`"])
+   id9(["`Update assignments in the administration console of SAP Cloud Identity Services`"])
    id10("`Are the policies dynamically set in an *AttributesProcessor* implementation? **(2)**`")
    id11(["`Remove or adjust the *AttributesProcessor* implementation`"])
    id12(["`Update the roles in the policies or *@restrict* annotations`"])
@@ -299,7 +281,7 @@ flowchart TD
 ```TEXT
 2025-03-18T14:31:05.926+01:00  WARN 64495 --- [nio-8080-exec-4] c.s.c.s.a.l.PolicyEvaluationSlf4jLogger  : Policy evaluation result: {"operation":"dcr._default_.allowPartial",...,"$dcl.policies":"["local..."]",...,"access":"deny","accessResult":"false"}.
 ```
-3. If the entity has not all attributes, check the [Handling of entities where not all AMS attributes are applicable](#handling-of-entities-where-not-all-ams-attributes-are-applicable) section for possible solutions.
+3. If the entity hasn't all attributes, check the [Handling of entities where not all AMS attributes are applicable](#handling-of-entities-where-not-all-ams-attributes-are-applicable) section for possible solutions.
 
 [01]: https://cap.cloud.sap/docs/cds/cdl#annotation-syntax
 [02]: https://github.com/SAP-samples/ams-samples-java/tree/main/ams-cap-sample
