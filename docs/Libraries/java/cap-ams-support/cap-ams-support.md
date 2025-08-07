@@ -1,4 +1,7 @@
-# Authorization Management Service Support for CAP Java Applications
+# cap-ams-support
+
+**Authorization Management Service Support for CAP Java Applications**
+
 A general description of Authorization Management Service (**AMS**) and its functionality can be found [here](../jakarta-ams/jakarta-ams.md).
 Integrating AMS into applications that use the Cloud Application Programming Model (CAP) is already possible. This can be done
 by using, for example, the API provided by `jakarta-ams` and calling it in all required CAP event handlers.

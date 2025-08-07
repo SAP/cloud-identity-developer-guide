@@ -1,15 +1,15 @@
 # jakarta-ams
 
-# Authorization Management Service Client Library for Jakarta EE Applications
+**Client Library of the Authorization Management Service for Jakarta EE Applications**
 
-The client library for the Authorization Management Service (AMS) enables Jakarta EE applications to make authorization decisions based on user policies.
-Users are identified using JWT bearer tokens provided by either the SAP Business Technology Platform `xsuaa` or `identity` service.
+The client library for the Authorization Management Service (**AMS**) enables Jakarta EE applications to make authorization decisions based on user policies.
+Users are identified using JWT bearer tokens provided by either the SAP Business Technology Platform `xsuaa` or the `identity` service.
 To specify these policies, the application must use a Data Control Language (DCL). Administrators can customize and combine policies and assign them to users.
 The library also supports controlling access to specific actions and resources, and allows for easy implementation of instance-based access control by specifying resource-specific attributes such as "cost center" or "country code".
 
 ## <a id="api-disclaimer"></a>Disclaimer on API Usage
 
-This documentation provides information that might be useful in using Authorization Management Service. We will try to ensure that future versions of the APIs are backwards compatible to the immediately preceding version. This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.\
+This documentation provides information that might be useful when you use the Authorization Management Service. We try to ensure that future versions of the APIs are backwards compatible to the immediately preceding version. This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.\
 Please check the [release notes](../releases.md) to stay tuned about new features and API modifications.
 
 ## Requirements
@@ -22,7 +22,7 @@ Please check the [release notes](../releases.md) to stay tuned about new feature
 Every business application has to describe its security model in [dcl language](/Authorization/DeployDCL.md).<br>
 To describe the names and types of attributes, a file named `schema.dcl` and must be located in the root folder, for example in `src/main/resources`.
 
-```
+```cds
 SCHEMA {
     salesOrder: {
             type: number
@@ -33,7 +33,7 @@ SCHEMA {
 
 Furthermore, the security model comprises rules and policies that can be used or enriched by the administrator to grant users permissions. They can be organized in packages.
 
-```
+```cds
 POLICY readAll {
     GRANT read ON * WHERE CountryCode IS NOT RESTRICTED;
 }
@@ -59,7 +59,7 @@ POLICY readAllOwnItems {
 }
 ```
 
-**Note:** As of version `0.9.0` the DCL compiler adds this `$user` default attributes, in case there is no `$user` present:
+**Note:** With version `0.9.0` or higher, the DCL compiler adds this `$user` default attributes, if no `$user` is present:
 
 ```TEXT
 SCHEMA {
@@ -73,12 +73,12 @@ SCHEMA {
 }
 ```
 
-The client libraries then will map the token claims of the same name to the respective attributes for the Policy Decision Point request.
+The client libraries then map the token claims of the same name to the respective attributes for the policy decision point request.
 Consequently, the attribute like `$user.user_uuid` is prefilled and can be overwritten with a custom `AttributesProcessor` as described [here](./jakarta-ams.md#customize-attributes).
 
 ## Configuration
 
-### Maven Dependencies
+### Maven dependencies
 
 ```xml
 <dependency>
@@ -98,18 +98,18 @@ PolicyDecisionPoint policyDecisionPoint = PolicyDecisionPoint.create(DEFAULT); /
 
 ### Initial application startup check
 
-Initial startup check will check if the bundle containing the defined policies are accessible to the application at the application initialization step.
-This functionality is provided by `PolicyDecisionPoint` and upon application startup it will perform periodical health checks until `OK` state is reached or until the `startupHealthCheckTimeout` has elapsed, then it will throw a `PolicyEngineCommunicationException`.
+The initial startup check checks if the bundle containing the defined policies are accessible to the application at the application initialization step.
+This functionality is provided by `PolicyDecisionPoint` and, upon application startup, it performs periodical health checks until the `OK` state is reached or until the `startupHealthCheckTimeout` has elapsed. It then throws a `PolicyEngineCommunicationException`.
 
 Startup check behaviour can be configured by the following 2 parameters:
 
-- `STARTUP_HEALTH_CHECK_TIMEOUT` - max wait time for startup check in seconds. 0 or negative values disable the startup check. :bulb: If left unset uses default value of 30 seconds
-- `FAIL_ON_STARTUP_HEALTH_CHECK` - boolean whether the application should start, if policies are not available i.e. `PolicyEngineCommunicationException` won't be thrown. :bulb: If left unset uses default value of `true`
+- `STARTUP_HEALTH_CHECK_TIMEOUT` - Maximum waiting time for startup check in seconds. 0 or negative values disable the startup check. :bulb: If left unset, it uses default value of 30 seconds
+- `FAIL_ON_STARTUP_HEALTH_CHECK` - Boolean whether the application should start if policies are not available, this means, `PolicyEngineCommunicationException` isn't thrown. :bulb: If left unset, it uses default value of `true`
 
 like so:
 
 ```java
-//Sets the max health check wait time to 10 seconds and disables error throwing if OK state isn't reached
+//Sets the maximum health check waiting time to 10 seconds and disables error throwing if the OK state isn't reached
 PolicyDecisionPoint policyDecisionPoint = PolicyDecisionPoint.create(DEFAULT, 
         STARTUP_HEALTH_CHECK_TIMEOUT, 10L, // use PolicyDecisionPoint.Parameters.STARTUP_HEALTH_CHECK_TIMEOUT and PolicyDecisionPoint.Parameters.FAIL_ON_STARTUP_HEALTH_CHECK to configure PolicyDecisionPoint with startup check parameters
         FAIL_ON_STARTUP_HEALTH_CHECK, false
@@ -133,10 +133,10 @@ The `PolicyDecisionPoint` raises the following unchecked `RuntimeException`s:
 - `IllegalArgumentException` or `NullpointerException`:\
   if the policy decision point is parameterized wrongly.
 - `PolicyEvaluationException`:\
-  represents all kind of issues that occurs during policy evaluation and interaction with the policy engine, e.g. misconfiguration, unknown dcl package or lack of information provided to perform the policy evaluation.
-- `PolicyEngineCommunicationException` can be thrown at the application startup indicating that the `PolicyDecisionPoint` bundles are not ready to be used for authorization evaluation. This exception will be thrown only if the `PolicyDecisionPoint` startup check is enabled (`STARTUP_HEALTH_CHECK_TIMEOUT` < 0) and if the `FAIL_ON_STARTUP_HEALTH_CHECK` == `true`
+  represents all kinds of issues that occur during policy evaluation and interaction with the policy engine, for example, misconfiguration, unknown dcl package, or lack of information provided to perform the policy evaluation.
+- `PolicyEngineCommunicationException` can be thrown at the application startup indicating that the `PolicyDecisionPoint` bundles are not ready to be used for authorization evaluation. This exception is only thrown if the `PolicyDecisionPoint` startup check is enabled (`STARTUP_HEALTH_CHECK_TIMEOUT` < 0) and if the `FAIL_ON_STARTUP_HEALTH_CHECK` == `true`
 
-### Is Policy Engine in healthy state?
+### Is the policy engine in healthy state?
 
 ```java
 if (policyDecisionPoint.getHealthStatus().getHealthState() == HealthState.OK) {
@@ -148,14 +148,14 @@ if (policyDecisionPoint.getHealthStatus().getHealthState() == HealthState.OK) {
 
 #### Pre-fill user-attributes from OIDC token
 
-In case you use `com.sap.cloud.security:java-api` or `com.sap.cloud.security:java-security` for token validation you can simply create a `Principal` instance within the same thread. It derives the principal information from the OIDC token, that is stored in `SecurityContext`:
+If you use `com.sap.cloud.security:java-api` or `com.sap.cloud.security:java-security` for token validation, you can simply create a `Principal` instance within the same thread. It derives the principal information from the OIDC token, that is stored in `SecurityContext`:
 
 ```java
 Principal principal = Principal.create();
 ```
 
-> Alternatively you can also build the `Principal` using the `PrincipalBuilder`.\
-> E.g. `PrincipalBuilder.create("the-zone-id", "the-user-id").build();`
+> Alternatively, you can also build the `Principal` using the `PrincipalBuilder`.\
+> **Example** `PrincipalBuilder.create("the-zone-id", "the-user-id").build();`
 
 #### Has user from OIDC token `read` access to any resources?
 
@@ -189,20 +189,20 @@ Attributes attributes = principal.getAttributes()
 boolean isUserAuthorized = policyDecisionPoint.allow(attributes);
 ```
 
-> In case the Attribute is of type `number` its relevant that you pass the value as Integer or Double but NOT as String object.
+> If the attribute is of type `number`, it's relevant that you pass the value as Integer or Double but NOT as String object.
 
 ### Customize Attributes
 
-It is possible to modify the `Attributes` that are sent as request to the `PolicyDecisionPoint`, by implementing the `AttributesProcessor`
+It's possible to modify the `Attributes` that are sent as request to the `PolicyDecisionPoint` by implementing the `AttributesProcessor`
 interface whose `processAttributes` method is called _each_ time when the `Principal` object is built to fill its' field `attributes`.
-The attributes can be later accessed by calling `Principal.getAttributes()` method.
+The attributes can be accessed later by calling the `Principal.getAttributes()` method.
 
 For example, this can be used to explicitly specify the list of policies that are used during evaluations for the given `Principal`.
 
 Implementations of `AttributesProcessor` can be registered using Java's `ServiceLoader` mechanism as follows:
 
 - Create an SPI configuration file with name `com.sap.cloud.security.ams.api.AttributesProcessor` in the `src/main/resources/META-INF/services` directory.
-- Enter the fully qualified name of your `AttributesProcessor` implementation class, e.g. `com.mypackage.MyCustomAttributesProcessor`.
+- Enter the fully qualified name of your `AttributesProcessor` implementation class, for example `com.mypackage.MyCustomAttributesProcessor`.
 - The implementation could look like this:
 
 ```java
@@ -230,10 +230,12 @@ Note that more than one evaluation may be performed for the same Principle, so t
 
 If multiple `AttributesProcessor` implementations are loaded, the optional `getPriority` method can be implemented to take control over the order in which the implementations are called.
 
-> :heavy_exclamation_mark: [Consider also limitation of API liability](#api-disclaimer).
->
-> :warning: It is not possible to use `AttributesProcessor` with classes managed by Spring dependency injection mechanism(e.g. Autowired beans),
-> as the lifecycle of the ServiceLoader and Spring DI mechanisms are different.
+:::warning
+:heavy_exclamation_mark: [Consider also limitation of API liability](#api-disclaimer).
+
+:warning: It's not possible to use `AttributesProcessor` with classes managed by Spring dependency injection mechanism (for example, Autowired beans),
+because the lifecycle of the ServiceLoader and Spring DI mechanisms are different.
+:::
 
 ## Test utilities
 
@@ -248,51 +250,51 @@ Additionally `jakarta-ams` client library provides these two predefined loggers:
    default `PolicyDecisionPoint implementations such as "default" and "test-server".
 2. `PolicyEvaluationV2AuditLogger` writes audit logs for all policy evaluation results
    using SAP internal `com.sap.xs.auditlog:audit-java-client-api` client library (version 2).
-   <br>The purpose of that data access audit message is to complement application's audit logs with
+   <br>The purpose of that data access audit message is to complement the audit logs of the application with
    the policy evaluation result documenting "WHETHER" and "WHY" the policy engine has granted or denied access.
 
-#### Application Logging
+#### Application logging
 
 This library uses [slf4j](http://www.slf4j.org/) for logging. It only ships the [slf4j-api module](https://mvnrepository.com/artifact/org.slf4j/slf4j-api) and no actual logger implementation.
-For the logging to work `slf4j` needs to find a valid logger implementation at runtime.
-If your application is deployed via SAP Java buildpack then you will have one available and logging should just work.
+For the logging to work, `slf4j` must find a valid logger implementation at runtime.
+If your application is deployed using the SAP Java buildpack, one log is available, and logging should just work.
 
-Otherwise, you need to add a logger implementation dependency to your application.
+Otherwise, you must add a logger implementation dependency to your application.
 See the slf4j [documentation](http://www.slf4j.org/codes.html#StaticLoggerBinder)
-for more information and a [list](http://www.slf4j.org/manual.html#swapping) of available logger options.
+for more information, and a [list](http://www.slf4j.org/manual.html#swapping) of available logger options.
 
 In detail, `PolicyEvaluationSlf4jLogger` writes
 
-- `ERROR` messages only in exceptional cases, e.g. unavailability of the policy engine
+- `ERROR` messages only in exceptional cases, for example, unavailability of the policy engine
 - `WARN` messages in case of denied policy evaluations
 - `INFO` messages for all other non-technical policy evaluation results.
 
-> :bulb: It's recommended to accept messages of severity `INFO` for this logger `com.sap.cloud.security.ams.logging.*`.
+> :bulb: It's recommended to accept messages of the `INFO` severity for the logger `com.sap.cloud.security.ams.logging.*`.
 
 #### Audit Logging
 
-In order to enable that audit logging the application needs to configure and register this `PolicyEvaluationV2AuditLogger` as listener to the `PolicyDecisionPoint` implementation as done in the [jakarta-security-ams sample](https://github.com/SAP-samples/ams-samples-java/blob/main/jakarta-ams-sample/src/main/java/com/sap/cloud/security/samples/filter/PolicyDecisionAuditLogFilter.java).<br>
-In order to correlate this audit log message with logs written for the same request context `PolicyEvaluationV2AuditLogger` also fills `sap-passport` if provided with the Mapped Diagnostic Context (MDC) context. For that applications have to
+To enable that audit logging of the application must configure and register this `PolicyEvaluationV2AuditLogger` as listener to the `PolicyDecisionPoint` implementation as done in the [jakarta-security-ams sample](https://github.com/SAP-samples/ams-samples-java/blob/main/jakarta-ams-sample/src/main/java/com/sap/cloud/security/samples/filter/PolicyDecisionAuditLogFilter.java).<br>
+To correlate this audit log message with logs written for the same request context `PolicyEvaluationV2AuditLogger` also fills `sap-passport` if provided with the mapped diagnostic context (MDC) context. These applications must 
 
 - leverage a slf4j implementation that supports MDC like [logback](http://logback.qos.ch/manual/mdc.html)
 - provide dependencies to [Audit Log Service Java Client](https://github.wdf.sap.corp/xs-audit-log/audit-java-client)
-- fetch `sap_passport e.g. from http header
+- fetch `sap_passport, for example, from the http header
 - enrich the MDC as following:<br>
 
 ```java
 MDC.put("sap-passport", ((HttpServletRequest) request).getHeader("sap_passport"));
 ```
 
-Finally, your application needs to be bound to an audit log service instance:<br>
+Finally, your application must be bound to an audit log service instance:<br>
 
+```bash
+cf create-service auditlog standard <my-service-instance>
+cf bind-service <my-application> <my-service-instance>
 ```
-cf create-service auditlog standard <the-service-instance>
-cf bind-service <the-application> <the-service-instance>
-```
 
-## Common Pitfalls
+## Common pitfalls
 
-#### The `PolicyDecisionPoint.allowFilterClause()` returns a `FilterClause` with 'false' as Condition:
+#### The `PolicyDecisionPoint.allowFilterClause()` returns a `FilterClause` with 'false' as condition:
 
 ```
 Unknowns:
@@ -303,7 +305,7 @@ Condition:
   false
 ```
 
-... instead of the expected `Call` object, that can be mixed into SQL statement:
+... instead of the expected `Call` object, which can be mixed into an SQL statement:
 
 ```
 Unknowns:
@@ -317,9 +319,9 @@ Condition:
   )
 ```
 
-#### The `PolicyDecisionPoint.allowFilterClause()` returns a `FilterClause` with 'true' as Condition instead of the expected `Call` object.
+#### The `PolicyDecisionPoint.allowFilterClause()` returns a `FilterClause` with 'true' as condition instead of the expected `Call` object.
 
-This is not an error, in that case the access is not limited by a condition.
+This is not an error. In this case, access is not limited by a condition.
 
 ## Samples
 
