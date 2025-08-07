@@ -1,17 +1,20 @@
-# Authorization Management Service Client Library for Spring Boot Applications
-The client library for the Authorization Management Service (AMS) enables Spring Boot 3 applications to make authorization decisions based on user policies.
+# spring-ams
+
+**Authorization Management Service Client Library for Spring Boot Applications**
+
+The client library for the Authorization Management Service (**AMS**) enables Spring Boot 3 applications to make authorization decisions based on user policies.
 Users are identified using JWT bearer tokens provided by either the SAP Business Technology Platform `xsuaa` or `identity` service.
 To specify these policies, the application must use a Data Control Language (DCL). Administrators can customize and combine policies and assign them to users.
 The library also supports controlling access to specific actions and resources, and allows for easy implementation of instance-based access control by specifying resource-specific attributes such as "cost center" or "country code".
 
-### Supported Environments
+### Supported environments
 - Cloud Foundry
-- Kubernetes/Kyma
+- Kyma
 
-## <a id="api-disclaimer"></a>Disclaimer on API Usage
-This documentation provides information that might be useful in using Authorization Management Service. We will try to ensure that future versions of the APIs are backwards compatible to the immediately preceding version. 
+## <a id="api-disclaimer"></a>Disclaimer on API usage
+This documentation provides information that might be useful when you use the Authorization Management Service. We try to ensure that future versions of the APIs are backwards compatible with the immediately preceding version. 
 This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.  
-Please check the [release notes](../releases.md) or the release notes to stay tuned about new features and API modifications.
+Check the [release notes](../releases.md) or the release notes for updates about new features and API modifications.
 
 ## Requirements
 - Java 17
@@ -20,7 +23,7 @@ Please check the [release notes](../releases.md) or the release notes to stay tu
 
 ## Setup
 
-### Maven Dependencies
+### Maven dependencies
 When using [Spring Security OAuth 2.0 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html) 
 for authentication in your Spring Boot application, you can leverage the provided Spring Boot Starter:
 
@@ -35,8 +38,8 @@ for authentication in your Spring Boot application, you can leverage the provide
 
 ### Base DCL
 
-Every business application has to describe its security model in [dcl language](/Authorization/DeployDCL.md).<br>
-To describe the names and types of attributes, a file named `schema.dcl` and must be located in the root folder, for example in ``src/main/resources``.
+Every business application must describe its security model in [dcl language](/Authorization/DeployDCL.md).<br>
+To describe the names and types of attributes, a file named `schema.dcl` and must be located in the root folder, for example, in ``src/main/resources``.
 
 ```
 SCHEMA {
@@ -78,17 +81,17 @@ This section explains how to configure the health check and how to enforce autho
 
 #### Initial application startup check
 
-Initial startup check will check if the bundle containing the defined policies are accessible to the application at the application initialization step.
+Initial startup check checks whether the bundle containing the defined policies is accessible by the application during the application initialization step.
 This functionality is provided by `PolicyDecisionPoint` and upon application startup will 
 perform a periodical health checks until `OK` state is reached or 
 until health check times out with the max default timeout of 30s, then it will throw an `PolicyEngineCommunicationException` error.
-Startup check behaviour can be configured by the following 2 parameters:
-- `com.sap.dcl.client.startupHealthCheckTimeout` - max wait time for startup check in seconds
-- `com.sap.dcl.client.failOnStartupCheck` - boolean whether the application should start, if policies are not available i.e. `PolicyEngineCommunicationException` won't be thrown
+Startup check behavior can be configured by the following parameters:
+- `com.sap.dcl.client.startupHealthCheckTimeout` - maximum waiting time for startup check in seconds
+- `com.sap.dcl.client.failOnStartupCheck` - Boolean whether the application should start, if policies are not available. This means that `PolicyEngineCommunicationException` won't be thrown
 
 These parameters can be configured as:
 - system properties: `System.setProperty("com.sap.dcl.client.startupHealthCheckTimeout", "0")`
-- spring properties: `com.sap.dcl.client.startupHealthCheckTimeout:0` :bulb: spring properties will only work with autoconfiguration enabled
+- spring properties: `com.sap.dcl.client.startupHealthCheckTimeout:0` :bulb: spring properties only works with autoconfiguration enabled
 - maven command line argument: `-Dcom.sap.dcl.client.startupHealthCheckTimeout=0`
 - environment variable
 
@@ -119,7 +122,7 @@ public class DemoApplication {
         if (policyDecisionPoint.getHealthStatus.getHealthState == HealthState.OK){
             return "{\"status\":\"UP\"}";
         }
-        throw new HttpServerErrorException(SERVICE_UNAVAILABLE, "Policy engine is not reachable.");
+        throw new HttpServerErrorException(SERVICE_UNAVAILABLE, "Policy engine isn't reachable.");
     }
 }
 ````
@@ -144,7 +147,7 @@ public class DemoApplication {
             {
                 if (b.getValue().hasBundleError()) {
                     //Process the failing bundle update ...
-                    LOG.error("{} bundle does not contain latest updates, last successful bundle activation was at {}", b.getKey, b.getValue().getLastSuccessfulActivation());
+                    LOG.error("{} bundle doesn't contain latest updates The last successful bundle activation was at {}", b.getKey, b.getValue().getLastSuccessfulActivation());
                 }
             });
         }
@@ -155,9 +158,9 @@ public class DemoApplication {
 ### Access control on request level
 
 This section explains how to configure authentication and authorization checks for REST APIs 
-exposed by your Servlet based Spring application. You are going to configure the ``SecurityFilterChain`` for ``HttpServletRequest``.
+exposed by your servlet based Spring application. You are going to configure the ``SecurityFilterChain`` for ``HttpServletRequest``.
 
-By default, Spring Security’s authorization will require all requests to be authenticated. 
+By default, Spring Security’s authorization requires all requests to be authenticated. 
 We can configure Spring Security to have different rules by adding more rules in order of precedence.
 
 In addition to the [common built-in Spring Security authorization rules](https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html#authorize-requests) like ``hasAuthority(String authority)`` this library provides another one, namely: ``hasBaseAuthority(String action, String resource)``. 
@@ -166,7 +169,7 @@ For instance, you can validate if the user's principal has the necessary authori
 execute a specific ``action`` on a certain ``resource``. It's also allowed to use a ``'*'`` to 
 be less restrictive. In case the authorization check fails, an exception of type ``AccessDeniedException`` is thrown.
 
-> :information_source: If a user only has limited access to a resource, for example, the user can only _'read'_ _'sales orders'_ within their own country, this restriction is not accounted for with ``hasBaseAuthority('read', 'salesOrders')``.
+> :information_source: If a user only has limited access to a resource, for example, the user can only _'read'_ _'sales orders'_ within their own country, this restriction isn't accounted for with ``hasBaseAuthority('read', 'salesOrders')``.
 
 > :information_source: ``.access("hasBaseAuthority('read', '*')")`` is different from the ``.hasAuthority("read")`` policy. While both allow _'read'_ access, the ``.hasAuthority("read")`` policy may currently contain or could in the future have attribute-level constraints.
 
@@ -207,41 +210,41 @@ See [Spring Authorization Documentation](https://docs.spring.io/spring-security/
 
 ### Access control on method level
 
-`PolicyDecisionPointSecurityExpression` extends the [common built-in Spring Security Expressions](https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html#authorize-requests). 
+`PolicyDecisionPointSecurityExpression` extends the [common built-in Spring Security expressions](https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html#authorize-requests). 
 This can be used to control access on method level using [Method Security](https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html).
 
-> :heavy_exclamation_mark: In Spring Boot versions `>= 6.1`, the Java compiler needs to be configured with the [-parameters flag](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.1-Release-Notes#parameter-name-retention) to use the expressions below that refer to method parameters.
+> :heavy_exclamation_mark: In Spring Boot versions `>= 6.1`, the Java compiler must be configured with the [-parameters flag](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.1-Release-Notes#parameter-name-retention) to use the expressions below that refer to method parameters.
 
-#### Overview of AMS Spring Security Expressions
+#### Overview of Spring Security expressions for Authorization Management
 
 | method                                                                            | Description                                                                                                                                                                                                                                                                                                                                                | Example                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 |-----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `boolean hasAuthority(String action)`                                             | returns `true` if the authenticated user has the permission to perform the given ``action``. This check can only be applied for very trivial policies, e.g. `POLICY myPolicy { GRANT action ON *; }`.                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `boolean hasAuthority(String action)`                                             | returns `true` if the authenticated user has the permission to perform the given ``action``. This check can only be applied for very trivial policies, for example, `POLICY myPolicy { GRANT action ON *; }`.                                                                                                                                                      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | `boolean hasBaseAuthority(String action, String resource)`                        | returns `true` if the authenticated user has in principal the permission to perform a given ``action`` on a given ``resource``. It's also allowed to use a ``'*'`` to be less restrictive.                                                                                                                                                                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 
-| `boolean forAction(String action, String... attributes)`                          | returns `true` if the user is authorized to perform a dedicated `action`. The `resource` in the DCL rules needs to be declared as `*` for this case. If the DCL rules depend on attributes that are not automatically filled (either by default or an `AttributesProvider`) then their values need to be provided as `attributes` arguments.<sup>`*`</sup> | Has user `read` access to any resources?<br/>`@PreAuthorize("forAction('read')")`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 
-| `boolean forResource(String resource, String... attributes)`                      | returns `true` if the user is authorized to access the given `resource`. The `action` in the DCL rules needs to be declared as `*` for this case. If the DCL rules depend on attributes that are not automatically filled (either by default or an `AttributesProvider`) then their values need to be provided as `attributes` arguments.<sup>`*`</sup>    | Has user any access to `salesOrder` resource?<br/>`@PreAuthorize("forResource('salesOrders')")`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| `boolean forResourceAction(String resource, String action, String... attributes)` | returns `true` if the user is authorized to perform a dedicated `action` on the given `resource`. If the DCL rules depend on attributes that are not automatically filled (either by default or an `AttributesProvider`) then their values need to be provided as `attributes` arguments. <sup>`*`</sup>                                                   | Has user `read` access to `salesOrders` resource?<br/>`@PreAuthorize("forResourceAction('salesOrders', 'read')")` <br/><br/>Has user `read` access to `salesOrders` resource with `CountryCode` = "DE" and `salesOrder.type` = 247?<br/><br/>Consider a RESTful application that looks up a salesOrder by country and type from the URL path in the format, e.g. ``/readByCountryAndType/{countryCode}/{type}``. <br/>You are able to refer to path variables within a URL:<br/><pre>@PreAuthorize("forResourceAction('salesOrders', 'read', 'CountryCode:string=' + #countryCode, 'salesOrder.type:number=' + #type)")<br/>@GetMapping(value = "/readByCountryAndType/{countryCode}/{type}")<br/>public String readSelectedSalesOrder(@PathVariable String countryCode, @PathVariable String type){}</pre> |
+| `boolean forAction(String action, String... attributes)`                          | returns `true` if the user is authorized to perform a dedicated `action`. The `resource` in the DCL rules must be declared as `*` for this case. If the DCL rules depend on attributes that aren't automatically filled (either by default or an `AttributesProvider`) then their values need to be provided as `attributes` arguments.<sup>`*`</sup> | Has user `read` access to any resources?<br/>`@PreAuthorize("forAction('read')")`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 
+| `boolean forResource(String resource, String... attributes)`                      | returns `true` if the user is authorized to access the given `resource`. The `action` in the DCL rules must be declared as `*` for this case. If the DCL rules depend on attributes that aren't automatically filled (either by default or an `AttributesProvider`) then their values must be provided as `attributes` arguments.<sup>`*`</sup>    | Has user any access to `salesOrder` resource?<br/>`@PreAuthorize("forResource('salesOrders')")`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `boolean forResourceAction(String resource, String action, String... attributes)` | returns `true` if the user is authorized to perform a dedicated `action` on the given `resource`. If the DCL rules depend on attributes that aren't automatically filled (either by default or an `AttributesProvider`), their values must be provided as `attributes` arguments. <sup>`*`</sup>                                                   | Has user `read` access to `salesOrders` resource?<br/>`@PreAuthorize("forResourceAction('salesOrders', 'read')")` <br/><br/>Has user `read` access to `salesOrders` resource with `CountryCode` = "DE" and `salesOrder.type` = 247?<br/><br/>Consider a RESTful application that looks up a salesOrder by country and type from the URL path in the format, for example, ``/readByCountryAndType/{countryCode}/{type}``. <br/>You are able to refer to path variables within a URL:<br/><pre>@PreAuthorize("forResourceAction('salesOrders', 'read', 'CountryCode:string=' + #countryCode, 'salesOrder.type:number=' + #type)")<br/>@GetMapping(value = "/readByCountryAndType/{countryCode}/{type}")<br/>public String readSelectedSalesOrder(@PathVariable String countryCode, @PathVariable String type){}</pre> |
 
 > :bulb: <sup>`*`</sup>
 > the `attributes` [varargs](https://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html) shall have the
 > format: `<attribute name>:<string|number| boolean>=<attribute value>`. Currently, these data types are
 > supported: `string`, `number` and `boolean`.
 
-### Authorization hybrid mode - Xsuaa and AMS authorization checks
+### Authorization hybrid mode - XSUAA and Authorization Management authorization checks
 
-The hybrid authorization mode provides a way to use Xsuaa tokens and their scopes, as well as IAS tokens with AMS policies.
+The hybrid authorization mode provides a way to use XSUAA tokens and their scopes, as well as SAP Cloud Identity Services tokens with authorization policies.
 
 There are 2 ways to enforce authorization in the hybrid mode:
 
-1. **Xsuaa scope check**: this option performs as before for Xsuaa issued tokens and authorizations are defined with a
+1. **Xsuaa scope check**: this option performs as before for XSUAA issued tokens and authorizations are defined with a
    help
    of `hasAuthority("Role")`
    method provided
    by [Spring Security](https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html#authorizing-endpoints).
    This option is enabled by default within
    an *autoconfiguration* `ResourceServerAuthConverterAutoConfiguration.java` ,
-   if the service configuration has an Xsuaa binding.
-2. **AMS Policy Authorization**: this option disables the Xsuaa scope check, requiring the Spring
+   if the service configuration has an XSUAA binding.
+2. **AMS Policy Authorization**: this option disables the XSUAA scope check, requiring the Spring
    property `sap.security.hybrid.xsuaa.scope-check.enabled `to be set to false. Authorization is carried out
    through `PolicyDecisionPoint` and enforced
    by [AMS Spring Security Expressions](#overview-of-ams-spring-security-expressions). However, for this mode to work,
