@@ -179,7 +179,31 @@ const authProvider = new IdentityServiceAuthProvider(ams)
     .withApiMapper(mapPrincipalPropagationApi, PRINCIPAL_PROPAGATION_FLOW);
 ```
 
-```java [CAP Java + Java]
+```java [CAP Java]
+import com.sap.cloud.security.ams.api.AttributesProcessor;
+import com.sap.cloud.security.ams.api.PolicyAssignments;
+import com.sap.cloud.security.token.TokenClaims;
+import org.springframework.security.core.Authentication;
+import com.sap.cds.services.request.UserInfo;
+
+public class App2appAttributesProcessor implements AttributesProcessor {
+
+    @Override
+    public void processAttributes(Principal principal) {
+        var args = principal.getDynamicArguments();
+        if (args.containsKey(AmsConstants.AP_ARGS_KEY_PREVIOUS_USER_INFO)) {
+            var userInfo = (UserInfo) args.get(AmsConstants.AP_ARGS_KEY_PREVIOUS_USER_INFO);
+            List<String> ias_apis = userInfo.getAttribute(TokenClaims.IAS_APIS);
+            if (ias_apis != null) {
+                PolicyAssignments pas = this.mapApisToPolicyAssignments(); // see example above
+                principal.setPolicyAssignments(pas);
+            }
+        }
+    }
+}
+```
+
+```java [Java]
 import com.sap.cloud.security.ams.api.AttributesProcessor;
 import com.sap.cloud.security.ams.api.PolicyAssignments;
 import com.sap.cloud.security.ams.api.Principal;
