@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress';
 import { withMermaid } from "vitepress-plugin-mermaid";
 
 export default defineConfig(withMermaid({
+    base: '/cloud-identity-developer-guide/',
     title: 'SCI Developer Guide',
     description: 'Application development with the client libraries for SAP Cloud Identity Services',
     markdown: {
@@ -88,6 +89,6 @@ export default defineConfig(withMermaid({
         ]
     },
     head: [
-        ['link', { rel: 'icon', href: '/favicon.png', type: 'image/png' }]
+        ['link', { rel: 'icon', href: 'favicon.png', type: 'image/png' }]
     ]
 }));
