@@ -3,6 +3,22 @@
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - 'README.md'
+      - 'REUSE.toml'
+      - 'LICENSE'
+      - 'CONTRIBUTING.md'
+      - '.gitignore'
+      - 'LICENSES/**'
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - 'README.md'
+      - 'REUSE.toml'
+      - 'LICENSE'
+      - 'CONTRIBUTING.md'
+      - '.gitignore'
+      - 'LICENSES/**'
   workflow_dispatch: # allows manual execution of the workflow
 
 permissions:
@@ -30,6 +46,7 @@ jobs:
           path: docs/.vitepress/dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
