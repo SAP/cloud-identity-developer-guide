@@ -215,7 +215,7 @@ app.use((err, req, res, next) => {
 AMS uses a bundle loader internally to manage the policies and assignments bundle in the background, independently of incoming requests. Instances of `AuthorizationManagementService` emit two distinct error event types when bundle loading requests fail:
 
 - **`bundleInitializationError`**: Emitted when the initial bundle download fails and the instance is not yet ready for use.
-- **`bundleRefreshError`**: Emitted when a bundle refresh request fails (includes time since last successful refresh). Since the library continuously polls, this doesn't necessarily mean the data is outdated, just that the polling attempt failed. The instance remains ready but if there have been recent policy or assignment changes, it cannot not take them into account.
+- **`bundleRefreshError`**: Emitted when a bundle refresh request fails (includes time since last successful refresh). Since the library continuously polls, this doesn't necessarily mean the data is outdated, just that the polling attempt failed. The instance remains ready but if there have been recent policy or assignment changes, it cannot take them into account.
 
 You can distinguish between these event types using the `type` property and handle them according to your requirements:
 
