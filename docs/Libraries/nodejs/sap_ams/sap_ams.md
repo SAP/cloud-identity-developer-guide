@@ -210,18 +210,36 @@ app.use((err, req, res, next) => {
 });
 ```
 
-Additionally, the AMS bundle loader, which refreshes the current policies and assignments bundle independently of incoming requests, emits errors when those requests to the AMS server fail. You can log these events as follows:
+#### Bundle Loading Errors
+
+AMS uses a bundle loader internally to manage the policies and assignments bundle in the background, independently of incoming requests. Instances of `AuthorizationManagementService` emit two distinct error event types when bundle loading requests fail:
+
+- **`bundleInitializationError`**: Emitted when the initial bundle download fails and the instance is not yet ready for use.
+- **`bundleRefreshError`**: Emitted when a bundle refresh request fails (includes time since last successful refresh). Since the library continuously polls, this doesn't necessarily mean the data is outdated, just that the polling attempt failed. The instance remains ready but if there have been recent policy or assignment changes, it cannot take them into account.
+
+You can distinguish between these event types using the `type` property and handle them according to your requirements:
 
 ```js
 ams.on("error", event => {
-  if(event.type === "bundleRefreshError") {
-    console.error("AMS bundle refresh failed", event.error);
+  if (event.type === "bundleInitializationError") {
+    console.error("AMS bundle initialization failed - service not ready:", event.error);
+    // Eventually the separate startup check calling the whenReady function will reject,
+    // so typically no action besides logging is required here
+  } else if (event.type === "bundleRefreshError") {
+    console.warn(`AMS bundle refresh failed (current bundle age: ${event.secondsSinceLastRefresh} seconds):`,event.error);
+    // Consider taking action such as logging an error instead of a warning when the bundle is stale for
+    // extended periods of time
   }
 });
 ```
 
-### Technical communication
-[Technical communication](/Authorization/TechnicalCommunication) via SAP Cloud Identity Services is supported out-of-the-box by the [IdentityServiceAuthProvider](#identityserviceauthprovider).
+::: info Automatic Error Logging
+If your application does not subscribe to the "error" event, these bundle events will be automatically logged to the console. This is due to Node.js's special handling of events with the name "error".
+:::
+
+::: tip Handling Initial Bundle Load Errors
+Refer to the [Startup Check](/Authorization/StartupCheck) documentation for guidance on how to react when AMS fails to initialize the bundle. The error events emitted for this case are only intended to provide information about the failed requests.
+:::
 
 ### Testing
 See the central [Testing](/Authorization/Testing) documentation for details.
@@ -353,8 +371,10 @@ Instances of `AuthorizationManagementService` emit the following events to which
 
 - **`error`**: Emitted when an error occurs in a background operation. The event object contains the following properties:
   - **`type`**: The type of the event. Possible values are:
-    - `"bundleRefreshError"`: Emitted when the BundleLoader fails to refresh the current policies and assignments bundle, for example, due to a failed request to the AMS server. This event is not emitted when the initial loading fails. Use the `whenReady` method instead to check for the initial readiness of AMS.
-  - **`error`**: The `AmsError` instance that describes the error.
+    - `"bundleInitializationError"`: Emitted when the initial bundle download fails and the instance is not yet ready.
+    - `"bundleRefreshError"`: Emitted when the bundle loader fails to refresh the current policies and assignments bundle, for example, due to a failed request to the AMS server. Since the library continuously polls, this doesn't necessarily mean the data is outdated. Additional payload:
+      - **`secondsSinceLastRefresh`**: Time in seconds since the last successful bundle refresh.
+  - **`error`**: The `AmsError` instance that describes the refresh error.
 
 
 
