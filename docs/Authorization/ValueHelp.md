@@ -20,7 +20,22 @@ The value help feature allows the administrator to select the "electronics" cate
 
 ## Value Help Requests
 
-To retrieve the list of available values for a specific attribute, the Authorization Management Service (**AMS**) sends a value help request to the application. In the response, AMS receives a list of valid values for the requested attribute from the application, which it can then present to the administrator in the administration console.
+To retrieve the list of available values for a specific attribute, the Authorization Management Service (**AMS**) can be configured to send value help requests to the application. In the response, AMS receives a list of valid values for the requested attribute from the application, which it can then present to the administrator in the administration console.
+
+```mermaid
+sequenceDiagram
+    actor TenantAdmin as Tenant Admin
+    participant AdminConsole as Administration Console
+    participant AMS as AMS
+    participant Application as Application
+    
+    TenantAdmin->>+AdminConsole: Request value help
+    AdminConsole->>+AMS: Request value help
+    AMS->>+Application: Request value help
+    Application-->>-AMS: Value help
+    AMS-->>-AdminConsole: Value help
+    AdminConsole-->>-TenantAdmin: Show attribute values
+```
 
 ## Authorizing Value Help Requests
 
