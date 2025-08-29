@@ -88,6 +88,18 @@ Consequently, the attribute like `$user.user_uuid` is prefilled and can be overw
 </dependency>
 ```
 
+### Bundle Gateway Updater
+
+The `BundleGatewayUpdater` periodically updates authorization data.  
+Since sporadic failures (e.g. due to short network issues) are expected, you can configure the updater to only log
+errors after a certain number of **consecutive failures**.
+
+This threshold can be set via the `ams.properties` file in the `src/main/resources` folder of your application:
+
+```properties
+bundleGatewayUpdater.maxFailedUpdates=3
+````
+
 ## Usage
 
 ### Setup PolicyDecisionPoint
