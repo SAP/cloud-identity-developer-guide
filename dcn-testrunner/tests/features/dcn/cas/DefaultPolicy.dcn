@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "DefaultPolicy"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "default",
+            "test",
+            "DefaultAction"
+          ],
+          "resources": [
+            "DefaultResource"
+          ]
+        }
+      ],
+      "default": true
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "DefaultPolicyTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "default",
+            "test",
+            "DefaultAction"
+          ],
+          "resources": [
+            "DefaultResource"
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "write",
+            "read"
+          ],
+          "resources": [
+            "DefaultResource"
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "DefaultAction"
+          ],
+          "resources": [
+            "SalesOrder"
+          ]
+        }
+      ]
+    }
+  ]
+}

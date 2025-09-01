@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "policies": [],
+  "functions": [],
+  "schemas": [
+    {
+      "schema": [
+        "schema"
+      ],
+      "definition": {
+        "attribute": "Structure",
+        "nested": {
+          "$env": {
+            "attribute": "Structure",
+            "nested": {
+              "$user": {
+                "attribute": "Structure",
+                "nested": {
+                  "user_uuid": {
+                    "attribute": "String"
+                  },
+                  "groups": {
+                    "attribute": "String[]"
+                  },
+                  "email": {
+                    "attribute": "String"
+                  }
+                }
+              }
+            }
+          },
+          "$app": {
+            "attribute": "Structure",
+            "nested": {
+              "n_a": {
+                "attribute": "Number[]"
+              },
+              "b": {
+                "attribute": "Boolean"
+              },
+              "s": {
+                "attribute": "String"
+              },
+              "s_a": {
+                "attribute": "String[]"
+              },
+              "b_a": {
+                "attribute": "Boolean[]"
+              },
+              "n": {
+                "attribute": "Number"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "tests": []
+}

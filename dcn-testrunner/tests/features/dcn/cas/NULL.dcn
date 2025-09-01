@@ -1,0 +1,270 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "PolNull"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNull"
+          ],
+          "condition": {
+            "call": [
+              "is_null"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "nullval"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNotNull"
+          ],
+          "condition": {
+            "call": [
+              "is_not_null"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "nullval"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "NullCheck"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "IsNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "nullval": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "nullval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "is_null"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "nullval"
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "nullval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "nullval": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "nullval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "is_not_null"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "nullval"
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsNotNull"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolNull"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "nullval"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

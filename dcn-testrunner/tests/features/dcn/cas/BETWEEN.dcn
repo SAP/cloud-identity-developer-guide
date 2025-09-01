@@ -1,0 +1,638 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "PolBetween"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsBetween"
+          ],
+          "condition": {
+            "call": [
+              "between"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              1.0,
+              2.0
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNotBetween"
+          ],
+          "condition": {
+            "call": [
+              "not_between"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              1.0,
+              2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "PolBetweenAnd"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsBetweenAndCondition"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "between"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  1.0,
+                  5.0
+                ]
+              },
+              {
+                "call": [
+                  "gt"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  3.0
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "PolBetweenOR"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsBetweenOrCondition"
+          ],
+          "condition": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "between"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  1.0,
+                  5.0
+                ]
+              },
+              {
+                "call": [
+                  "gt"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  6.0
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "BetweenCheck"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "IsBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 3.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 3.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotBetween"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "PolBetweenAndTest"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "IsBetweenAndCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenAnd"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsBetweenAndCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenAnd"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsBetweenAndCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenAnd"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 4.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsBetweenAndCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenAnd"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 6.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsBetweenAndCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenAnd"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsBetweenAndCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenAnd"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "PolBetweenOrTest"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "IsBetweenOrCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenOR"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsBetweenOrCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenOR"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsBetweenOrCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenOR"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 4.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsBetweenOrCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenOR"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 7.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsBetweenOrCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenOR"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsBetweenOrCondition"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolBetweenOR"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

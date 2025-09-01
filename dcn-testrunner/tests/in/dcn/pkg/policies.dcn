@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "pkg",
+        "in_number_array"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "resources": [
+            "in_number_array"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "n"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "n_a"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "pkg",
+        "in_boolean_array"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "resources": [
+            "in_boolean_array"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "b"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "b_a"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "pkg",
+        "in_string_array"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "resources": [
+            "in_string_array"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "s"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "s_a"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": []
+}

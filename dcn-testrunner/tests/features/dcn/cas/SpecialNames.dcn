@@ -1,0 +1,1790 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "SameInput"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$env",
+                      "$same",
+                      "x"
+                    ]
+                  },
+                  ""
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$env",
+                      "$same",
+                      "x"
+                    ]
+                  },
+                  ""
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "B"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  ""
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  ""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "Access_Quoted_SubName"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "condition": {
+            "call": [
+              "is_not_null"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$env",
+                  "$Struct",
+                  "Quoted-sub-name"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "Access$user"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$env",
+                  "$user",
+                  "user_uuid"
+                ]
+              },
+              "a"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "Jürgen_s_unicode_test_with_dotted_and_dotless_I__Iiİı_"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "QuotedReference"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "Jürgen_s_unicode_test_with_dotted_and_dotless_I__Iiİı_"
+          ],
+          "restrictions": []
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "$Policy"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "DollarPolicy"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "$Policy"
+          ],
+          "restrictions": []
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "Quote"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "action"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "\"quoted\""
+                    ]
+                  },
+                  "a"
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "\"quoted2\"",
+                      "findme"
+                    ]
+                  },
+                  ""
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "polücywithoutquÖtes"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "$Policy"
+          ],
+          "restrictions": []
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "REF__polücywithoutquÖtes"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "polücywithoutquÖtes"
+          ],
+          "restrictions": []
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "SameInputTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": ""
+                  }
+                }
+              }
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": ""
+                  }
+                }
+              }
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": ""
+                  }
+                }
+              }
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": ""
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": "a"
+                  }
+                }
+              }
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": "a"
+                  }
+                }
+              }
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": "a"
+                  }
+                }
+              }
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {
+                    "x": "a"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$env",
+                  "$same",
+                  "x"
+                ]
+              },
+              ""
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            },
+            {
+              "input": {
+                "$env": {
+                  "$same": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$env",
+                    "$same",
+                    "x"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": ""
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "stringval": ""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "a"
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "stringval": "a"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            },
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              ""
+            ]
+          },
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              ""
+            ]
+          },
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SameInput"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "Access_Quoted_SubName_Test"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "policies": [
+            [
+              "cas",
+              "Access_Quoted_SubName"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$Struct": {
+                    "Quoted-sub-name": "a"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "policies": [
+            [
+              "cas",
+              "Access_Quoted_SubName"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$Struct": {
+                    "anyOtherName": "x"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "policies": [
+            [
+              "cas",
+              "Access_Quoted_SubName"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "policies": [
+            [
+              "cas",
+              "Access_Quoted_SubName"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$Struct": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$env",
+                    "$Struct",
+                    "Quoted-sub-name"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "is_not_null"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$env",
+                  "$Struct",
+                  "Quoted-sub-name"
+                ]
+              }
+            ]
+          },
+          "policies": [
+            [
+              "cas",
+              "Access_Quoted_SubName"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$Struct": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$env",
+                    "$Struct",
+                    "Quoted-sub-name"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "Access$userTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Access$user"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$user": {
+                    "user_uuid": "a"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Access$user"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$user": {
+                    "user_uuid": "b"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Access$user"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Access$user"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$user": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$env",
+                    "$user",
+                    "user_uuid"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$env",
+                  "$user",
+                  "user_uuid"
+                ]
+              },
+              "a"
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Access$user"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$env": {
+                  "$user": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$env",
+                    "$user",
+                    "user_uuid"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "QuotedReferenceTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Jürgen_s_unicode_test_with_dotted_and_dotless_I__Iiİı_"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Jürgen_s_unicode_test_with_dotted_and_dotless_I__Iiİı_"
+            ]
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "QuotedReference"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "QuotedReference"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "DollarPolicyTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "$Policy"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "$Policy"
+            ]
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "DollarPolicy"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "DollarPolicy"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "QuoteTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "a",
+                  "\"quoted2\"": {
+                    "findme": ""
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "b",
+                  "\"quoted2\"": {
+                    "findme": ""
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "a",
+                  "\"quoted2\"": {
+                    "findme": "a"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "b",
+                  "\"quoted2\"": {
+                    "findme": "b"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "a"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted2\"": {
+                    "findme": ""
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted\""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted2\"": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted2\"",
+                    "findme"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted\""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted2\"": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted2\"",
+                    "findme"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "a",
+                  "\"quoted2\"": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted2\"",
+                    "findme"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted2\"": {
+                    "findme": ""
+                  }
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted\""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "b",
+                  "\"quoted2\"": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted2\"",
+                    "findme"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted2\"": {}
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted\""
+                  ]
+                },
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted2\"",
+                    "findme"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "\"quoted2\"",
+                  "findme"
+                ]
+              },
+              ""
+            ]
+          },
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted\"": "a",
+                  "\"quoted2\"": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted2\"",
+                    "findme"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "\"quoted\""
+                ]
+              },
+              "a"
+            ]
+          },
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted2\"": {
+                    "findme": ""
+                  }
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted\""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "\"quoted\""
+                    ]
+                  },
+                  "a"
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "\"quoted2\"",
+                      "findme"
+                    ]
+                  },
+                  ""
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "action"
+          ],
+          "policies": [
+            [
+              "cas",
+              "Quote"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "\"quoted2\"": {}
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted\""
+                  ]
+                },
+                {
+                  "ref": [
+                    "$app",
+                    "\"quoted2\"",
+                    "findme"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "REF__polücywithoutquÖtes_TEST"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "REF__polücywithoutquÖtes"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "REF__polücywithoutquÖtes"
+            ]
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "polücywithoutquÖtes"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "polücywithoutquÖtes"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

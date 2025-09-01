@@ -1,0 +1,2548 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "PolInLiteral"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsIn"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              [
+                1.0,
+                2.0
+              ]
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNotIn"
+          ],
+          "condition": {
+            "call": [
+              "not_in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              [
+                1.0,
+                2.0
+              ]
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsEmptyIn"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              []
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsEmptyNotIn"
+          ],
+          "condition": {
+            "call": [
+              "not_in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              []
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "PolInDynamic"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "numArray"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "condition": {
+            "call": [
+              "not_in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "numArray"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "boolArray"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "condition": {
+            "call": [
+              "not_in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "boolArray"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "str1"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "stringArray"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "condition": {
+            "call": [
+              "not_in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "str1"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "stringArray"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "ArrayIN"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              [
+                "A",
+                "B"
+              ]
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "B"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              {
+                "ref": [
+                  "$app",
+                  "stringArray"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "C"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              "A",
+              {
+                "ref": [
+                  "$app",
+                  "stringArray"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "D"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              "A",
+              [
+                "A",
+                "B"
+              ]
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "E"
+          ],
+          "condition": {
+            "call": [
+              "in"
+            ],
+            "args": [
+              "A",
+              [
+                "B"
+              ]
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "F"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "in"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  [
+                    "A",
+                    "B"
+                  ]
+                ]
+              },
+              {
+                "call": [
+                  "in"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  [
+                    "B",
+                    "C"
+                  ]
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "CheckInLiteral"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "IsIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 3.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  1.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  2.0
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 3.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "ne"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  1.0
+                ]
+              },
+              {
+                "call": [
+                  "ne"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  2.0
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsNotIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsEmptyIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsEmptyIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsEmptyIn"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInLiteral"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "CheckInDynamicNum"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "numArray": []
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "numArray": [],
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "numArray": []
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "numArray": [
+                    1.0,
+                    2.0
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "numArray": [
+                    1.0,
+                    2.0
+                  ],
+                  "restr": 42.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  1.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  2.0
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "num"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "numArray": [
+                    1.0,
+                    2.0
+                  ]
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "CheckInDynamicBool"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "boolArray": []
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "boolArray": [
+                    true
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "boolArray": [
+                    true
+                  ],
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "bool"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "boolArray": [
+                    true
+                  ]
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "CheckInDynamicStr"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "str1": ""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "str1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "str1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "str1": ""
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "str1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "str1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringArray"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": []
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "str1": "",
+                  "stringArray": []
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": []
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "str1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "a",
+                    "b"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "str1": "",
+                  "stringArray": [
+                    "a",
+                    "b"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "a",
+                    "b"
+                  ]
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "str1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "str1"
+                    ]
+                  },
+                  "a"
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "str1"
+                    ]
+                  },
+                  "b"
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsIn"
+          ],
+          "resources": [
+            "str"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolInDynamic"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "a",
+                    "b"
+                  ]
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "str1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "ArrayIN"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A"
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "stringval": "B"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "C"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A",
+                  "stringArray": [
+                    "A",
+                    "B"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "B",
+                  "stringArray": [
+                    "A",
+                    "B"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "C",
+                  "stringArray": [
+                    "A",
+                    "B"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "A",
+                    "B"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "A",
+                    "B"
+                  ]
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A"
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringArray"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "C"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "A"
+                  ]
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "A",
+                    "B"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "C"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringArray": []
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "stringArray": [
+                    "B"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "C"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "C"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringArray"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "D"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "E"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "F"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "B"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "F"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A"
+                }
+              }
+            },
+            {
+              "input": {
+                "$app": {
+                  "stringval": "C"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "F"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "F"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ArrayIN"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

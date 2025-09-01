@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "policies": [],
+  "functions": [],
+  "schemas": [
+    {
+      "schema": [
+        "schema"
+      ],
+      "definition": {
+        "attribute": "Structure",
+        "nested": {
+          "$env": {
+            "attribute": "Structure",
+            "nested": {
+              "$Struct": {
+                "attribute": "Structure",
+                "nested": {
+                  "anyOtherName": {
+                    "attribute": "String"
+                  },
+                  "Quoted-sub-name": {
+                    "attribute": "String"
+                  }
+                }
+              },
+              "$Struct2": {
+                "attribute": "Structure",
+                "nested": {
+                  "anyOtherName": {
+                    "attribute": "String"
+                  },
+                  "Quoted-sub-name": {
+                    "attribute": "String"
+                  }
+                }
+              },
+              "$same": {
+                "attribute": "Structure",
+                "nested": {
+                  "x": {
+                    "attribute": "String"
+                  }
+                }
+              },
+              "$user": {
+                "attribute": "Structure",
+                "nested": {
+                  "user_uuid": {
+                    "attribute": "String"
+                  },
+                  "groups": {
+                    "attribute": "String[]"
+                  },
+                  "email": {
+                    "attribute": "String"
+                  }
+                }
+              }
+            }
+          },
+          "$app": {
+            "attribute": "Structure",
+            "nested": {
+              "nullval": {
+                "attribute": "Boolean"
+              },
+              "stringval": {
+                "attribute": "String"
+              },
+              "\"quoted2\"": {
+                "attribute": "Structure",
+                "nested": {
+                  "findme": {
+                    "attribute": "String"
+                  }
+                }
+              },
+              "element_with_annotations": {
+                "attribute": "String",
+                "annotations": {
+                  "odm.type": "xyz",
+                  "odm.hint": "123"
+                }
+              },
+              "bool3": {
+                "attribute": "Boolean"
+              },
+              "bool2": {
+                "attribute": "Boolean"
+              },
+              "default": {
+                "attribute": "String"
+              },
+              "bool4": {
+                "attribute": "Boolean"
+              },
+              "str1": {
+                "attribute": "String"
+              },
+              "str2": {
+                "attribute": "String"
+              },
+              "num1": {
+                "attribute": "Number"
+              },
+              "\"quoted\"": {
+                "attribute": "String"
+              },
+              "stringArray": {
+                "attribute": "String[]"
+              },
+              "id": {
+                "attribute": "Number"
+              },
+              "bool1": {
+                "attribute": "Boolean"
+              },
+              "num2": {
+                "attribute": "Number"
+              },
+              "restr": {
+                "attribute": "Number"
+              },
+              "boolArray": {
+                "attribute": "Boolean[]"
+              },
+              "ur2": {
+                "attribute": "String"
+              },
+              "ur1": {
+                "attribute": "String"
+              },
+              "ur4": {
+                "attribute": "String"
+              },
+              "numArray": {
+                "attribute": "Number[]"
+              },
+              "ur3": {
+                "attribute": "String"
+              },
+              "x": {
+                "attribute": "Structure"
+              },
+              "ur6": {
+                "attribute": "String"
+              },
+              "ur5": {
+                "attribute": "String"
+              }
+            }
+          }
+        }
+      },
+      "annotations": {
+        "odm.type": "abc"
+      }
+    }
+  ],
+  "tests": []
+}

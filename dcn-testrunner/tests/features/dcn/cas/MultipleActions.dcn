@@ -1,0 +1,523 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "MultipleActions"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              0.0
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "M1"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              1.0
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "M1",
+            "M2"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              2.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "MultiActionsTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "M1",
+            "M2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              0.0
+            ]
+          },
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "M1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "M2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "M1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "M1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  0.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  1.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  2.0
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "M1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "M1",
+            "M2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "M1",
+            "M2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "M1",
+            "M2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  0.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  2.0
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "M2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultipleActions"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

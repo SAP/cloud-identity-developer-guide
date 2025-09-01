@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "GeneratorSameRuleDefinition"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "id"
+                ]
+              },
+              1.0
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "id"
+                ]
+              },
+              1.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "GeneratorSameRuleDefinitionTest"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "GeneratorSameRuleDefinition"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "id": 3.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "GeneratorSameRuleDefinition"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "id": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "GeneratorSameRuleDefinition"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "GeneratorSameRuleDefinition"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "id"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "id"
+                ]
+              },
+              1.0
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "GeneratorSameRuleDefinition"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "id"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

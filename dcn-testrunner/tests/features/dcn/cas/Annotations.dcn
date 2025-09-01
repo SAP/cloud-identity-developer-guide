@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "UsedPolicyWithAnnotations"
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "AnnotatedPolicy"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "annotations": {
+            "Fast": true
+          }
+        }
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "UsedPolicyWithAnnotations"
+          ],
+          "restrictions": []
+        }
+      ],
+      "description": "POLICY description",
+      "annotations": {
+        "description": "POLICY description",
+        "label": "Annotated Policy with special characters ßÖÜÄ"
+      }
+    }
+  ],
+  "functions": [
+    {
+      "function": [
+        "cas",
+        "AnnotatedFunction"
+      ],
+      "result": {
+        "call": [
+          "eq"
+        ],
+        "args": [
+          {
+            "ref": [
+              "$app",
+              "stringval"
+            ]
+          },
+          "a"
+        ]
+      },
+      "returnType": "Boolean",
+      "annotations": {
+        "description": "Annotated Function with special characters ßÖÜÄ"
+      }
+    }
+  ],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "testWithAnnotation"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "annotations": {
+            "IgnoreOnWindows8": true
+          }
+        }
+      ],
+      "annotations": {
+        "description": "TEST description"
+      }
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "PolA"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "PolB"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "B"
+          ]
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "MultiplePoliciesInTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolA"
+            ]
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolB"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolA"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolB"
+            ]
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A",
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolA"
+            ],
+            [
+              "cas",
+              "PolB"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

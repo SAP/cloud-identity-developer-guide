@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "pkg",
+        "like_with_underscore"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "resources": [
+            "like_with_underscore"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "s"
+                ]
+              },
+              "x_y"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "pkg",
+        "like_with_percent"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "resources": [
+            "like_with_percent"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "s"
+                ]
+              },
+              "x%y"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "pkg",
+        "like_with_escape"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "resources": [
+            "like_with_escape"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "s"
+                ]
+              },
+              "xö%_ö_y",
+              "ö"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": []
+}

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "local",
+        "ALocalPolicy"
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": []
+}

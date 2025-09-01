@@ -1,0 +1,2583 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "PolANDTrue"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsAND"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool2"
+                    ]
+                  },
+                  true
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "PolANDFalse"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsAND"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  false
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool2"
+                    ]
+                  },
+                  false
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "ANDCornerCases"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "CC1a"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "gt"
+                ],
+                "args": [
+                  5.0,
+                  7.0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "CC1b"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "gt"
+                ],
+                "args": [
+                  7.0,
+                  5.0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "CC2"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  false
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "CC3a"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "is_null"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "CC3b"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "is_null"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool2"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "ANDCheckTrue"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true,
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false,
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool2"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true,
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false,
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                },
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool2"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ],
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ],
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool2"
+                    ]
+                  },
+                  true
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDTrue"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                },
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "ANDCheckFalse"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true,
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false,
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true,
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false,
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool2"
+                ]
+              },
+              false
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                },
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool2"
+                ]
+              },
+              false
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ],
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              false
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": false
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              false
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ],
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  false
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool2"
+                    ]
+                  },
+                  false
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "IsAND"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolANDFalse"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                },
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "ANDCornerCases"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "CC1a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC1a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC1a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC1a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC1a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "CC1b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC1b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC1b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "CC1b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "CC1b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "CC2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC3a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC3a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC3a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "CC3a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              },
+              {
+                "call": [
+                  "is_null"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "CC3a"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "is_null"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool2"
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ],
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool2": true
+                }
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "CC3b"
+          ],
+          "policies": [
+            [
+              "cas",
+              "ANDCornerCases"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool2"
+                  ]
+                }
+              ],
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

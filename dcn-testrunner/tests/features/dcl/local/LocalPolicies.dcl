@@ -1,0 +1,2 @@
+POLICY ALocalPolicy {
+}

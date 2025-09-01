@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "x"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "structeq"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$env",
+                  "$Struct"
+                ]
+              },
+              {
+                "ref": [
+                  "$env",
+                  "$Struct2"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "x"
+      ]
+    }
+  ]
+}

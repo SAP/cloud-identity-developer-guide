@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "policies": [],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "EmptyTest"
+      ]
+    }
+  ]
+}

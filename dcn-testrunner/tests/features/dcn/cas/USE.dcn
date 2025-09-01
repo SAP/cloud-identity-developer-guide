@@ -1,0 +1,2518 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicy"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "num1"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicyString"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicyBoolean"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicyAbsenceRestrict"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleRestrictPolicy"
+          ],
+          "restrictions": []
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicyWithIn"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleRestrictPolicy"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "in"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "num1"
+                    ]
+                  },
+                  [
+                    1.0,
+                    5.0
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicyWithBetween"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleRestrictPolicy"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "between"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "num1"
+                    ]
+                  },
+                  1.0,
+                  5.0
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicyWithLike"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleRestrictPolicyString"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "like"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  "a%"
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleRestrictPolicyWithOperator"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleRestrictPolicy"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "gt"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "num1"
+                    ]
+                  },
+                  1.0
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "use": [
+            "cas",
+            "SimpleRestrictPolicyString"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "lt"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  "B"
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "use": [
+            "cas",
+            "SimpleRestrictPolicyBoolean"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicy"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "not_restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "num1"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicyString"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "not_restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicyBoolean"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "not_restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicyWithIn"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleNotRestrictPolicy"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "in"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "num1"
+                    ]
+                  },
+                  [
+                    1.0,
+                    5.0
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicyAbsenceRestrict"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleNotRestrictPolicy"
+          ],
+          "restrictions": []
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicyWithBetween"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleNotRestrictPolicy"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "between"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "num1"
+                    ]
+                  },
+                  1.0,
+                  5.0
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicyWithLike"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleNotRestrictPolicyString"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "like"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  "a%"
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "SimpleNotRestrictPolicyWithOperator"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "SimpleNotRestrictPolicy"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "gt"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "num1"
+                    ]
+                  },
+                  1.0
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "use": [
+            "cas",
+            "SimpleNotRestrictPolicyString"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "lt"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "stringval"
+                    ]
+                  },
+                  "B"
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "use": [
+            "cas",
+            "SimpleNotRestrictPolicyBoolean"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "bool1"
+                    ]
+                  },
+                  true
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "Empty"
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "RestrBase"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "X"
+          ]
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "Restr"
+          ],
+          "condition": {
+            "call": [
+              "restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "RestrNot"
+          ],
+          "condition": {
+            "call": [
+              "not_restricted"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "Empty"
+          ],
+          "restrictions": []
+        },
+        {
+          "use": [
+            "cas",
+            "Empty"
+          ],
+          "restrictions": []
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "RestrUse_Restricted"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "RestrBase"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "RestrUse_NOT_Restricted"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "RestrBase"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "not_restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "RestrBaseIndirect"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "RestrBase"
+          ],
+          "restrictions": []
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "RestrUse_NOT_Restricted_And_Unrestricted"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "RestrBaseIndirect"
+          ],
+          "restrictions": []
+        },
+        {
+          "use": [
+            "cas",
+            "RestrBase"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "not_restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "RestrUse_Restricted_And_Unrestricted"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "RestrBaseIndirect"
+          ],
+          "restrictions": []
+        },
+        {
+          "use": [
+            "cas",
+            "RestrBase"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "BaseAllUnrestricted"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "AllUR"
+          ],
+          "condition": {
+            "call": [
+              "and"
+            ],
+            "args": [
+              {
+                "call": [
+                  "restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur1"
+                    ]
+                  }
+                ]
+              },
+              {
+                "call": [
+                  "restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "call": [
+                  "restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur3"
+                    ]
+                  }
+                ]
+              },
+              {
+                "call": [
+                  "restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur4"
+                    ]
+                  }
+                ]
+              },
+              {
+                "call": [
+                  "restricted"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur5"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "policy": [
+        "cas",
+        "RestrictBaseAllUnrestricted"
+      ],
+      "uses": [
+        {
+          "use": [
+            "cas",
+            "BaseAllUnrestricted"
+          ],
+          "restrictions": [
+            [
+              {
+                "call": [
+                  "like"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur1"
+                    ]
+                  },
+                  "a"
+                ]
+              },
+              {
+                "call": [
+                  "in"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur2"
+                    ]
+                  },
+                  [
+                    "a",
+                    "b"
+                  ]
+                ]
+              },
+              {
+                "call": [
+                  "between"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur3"
+                    ]
+                  },
+                  "a",
+                  "c"
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur4"
+                    ]
+                  },
+                  "a"
+                ]
+              },
+              {
+                "call": [
+                  "is_not_null"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "ur5"
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "SimpleRestrictPolicyAbsenceRestrictTest"
+      ],
+      "assertions": [
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyAbsenceRestrict"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleRestrictPolicyWithInTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleRestrictPolicyWithBetweenTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 6.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleRestrictPolicyWithLikeTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "ab"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "bb"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleRestrictPolicyWithOperatorTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "gt"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "num1"
+                ]
+              },
+              1.0
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "C"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "lt"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "B"
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleNotRestrictPolicyWithInTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithIn"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleNotRestrictPolicyAbsenceRestrictTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyAbsenceRestrict"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleNotRestrictPolicyWithBetweenTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 6.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithBetween"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleNotRestrictPolicyWithLikeTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "ab"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "bb"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "SimpleNotRestrictPolicyWithOperatorTest"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "num1": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "gt"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "num1"
+                ]
+              },
+              1.0
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "num1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "C"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "lt"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "B"
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "bool1": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "bool1"
+                ]
+              },
+              true
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "SimpleNotRestrictPolicyWithOperator"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "bool1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "RestrictionCheck"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "Restr",
+            "RestrNot"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrUse_NOT_Restricted"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "Restr",
+            "RestrNot"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrUse_Restricted"
+            ]
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "RestrNot"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrUse_Restricted_And_Unrestricted"
+            ]
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "Restr"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrUse_Restricted_And_Unrestricted"
+            ]
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "Restr",
+            "RestrNot"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrUse_NOT_Restricted_And_Unrestricted"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "RestrictBaseAllUnrestricted"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "AllUR"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrictBaseAllUnrestricted"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "ur2": "a",
+                  "ur1": "a",
+                  "ur4": "a",
+                  "ur3": "a",
+                  "ur5": "a"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "AllUR"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrictBaseAllUnrestricted"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "ur2": "a",
+                  "ur1": "a",
+                  "ur4": "a",
+                  "ur3": "a"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "AllUR"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrictBaseAllUnrestricted"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "ur2": "b",
+                  "ur1": "a",
+                  "ur4": "a",
+                  "ur3": "b",
+                  "ur5": "b"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "AllUR"
+          ],
+          "policies": [
+            [
+              "cas",
+              "RestrictBaseAllUnrestricted"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "ur2": "a",
+                  "ur1": "b",
+                  "ur4": "a",
+                  "ur3": "a",
+                  "ur5": "b"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

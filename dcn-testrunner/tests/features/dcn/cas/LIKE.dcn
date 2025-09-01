@@ -1,0 +1,900 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "PolLike"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "IsLike"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "%TEST%"
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsNotLike"
+          ],
+          "condition": {
+            "call": [
+              "not_like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "%TEST%"
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsLike2"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "_TEST_"
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsLike3"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "_T*E{S}T{1}X++%_"
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsLike4"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "^_X"
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsLike5"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "A^_X"
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsLike6"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "$"
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "IsLikeEscpape"
+          ],
+          "condition": {
+            "call": [
+              "like"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "stringval"
+                ]
+              },
+              "xy",
+              "b"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "LikeCheck2"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "IsLike2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "1TEST1"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "1TEST"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "TEST1"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike3"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "_T*E{S}T{1}X++!_"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike3"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "_T*E{S}T{1}X++_"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike3"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike3"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike4"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "^AX"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike4"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "^AY"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike4"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike4"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike5"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A^AX"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike5"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "B^AX"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike5"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike5"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike6"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "$"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike6"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "A"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike6"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike6"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": [
+        "cas",
+        "LikeCheck"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "IsLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "TEST"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "xTESTx"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "TEST"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "xTESTx"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsNotLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "stringval"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "MISSING"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "IsLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "xMISSINGx"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "MISSING"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "IsNotLike"
+          ],
+          "policies": [
+            [
+              "cas",
+              "PolLike"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "stringval": "xMISSINGx"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

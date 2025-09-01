@@ -1,0 +1,3 @@
+schema{
+    s: String
+}

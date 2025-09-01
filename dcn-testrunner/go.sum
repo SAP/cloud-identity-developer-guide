@@ -1,0 +1,10 @@
+github.com/aclements/go-z3 v0.0.0-20220809013456-4675d5f90ca5 h1:A27FEXOK2zSHuCwXwmPIKfrHcT+caybRGb1kaW4KOBI=
+github.com/aclements/go-z3 v0.0.0-20220809013456-4675d5f90ca5/go.mod h1:Dcqk4DTCIWIVv0jiFnYg5nnTIOWZ3JgU/mYjb5puA1s=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250411121647-8b12144212a9 h1:Q+Uy0JZbFrEKz0wiYqU2Me5yEufTkZBlVlunaoMc2Jw=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250411121647-8b12144212a9/go.mod h1:Q9jDbPUrEyRnCX+lL+5hF+yfuXRuxSYXnz1n5Bd80D8=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250509094427-11759634d0cc h1:kKGaMP5oRHIrgt6RDNf7aiwfELXcoSqCDgsdvfty/f4=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250509094427-11759634d0cc/go.mod h1:Q9jDbPUrEyRnCX+lL+5hF+yfuXRuxSYXnz1n5Bd80D8=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250512120022-a0dc23a7c801 h1:B6PAF/vl7OHXhvXGfNDfTxRBpToJWV5nb/O+bqk8MvY=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250512120022-a0dc23a7c801/go.mod h1:Q9jDbPUrEyRnCX+lL+5hF+yfuXRuxSYXnz1n5Bd80D8=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250515131831-eacecc9e6878 h1:qxeWjNo5RCWsdDRZ9YtzkYpT95Xut8hH/afzL3crJKQ=
+github.com/sap/cloud-identity-authorizations-golang-library v0.0.0-20250515131831-eacecc9e6878/go.mod h1:Q9jDbPUrEyRnCX+lL+5hF+yfuXRuxSYXnz1n5Bd80D8=

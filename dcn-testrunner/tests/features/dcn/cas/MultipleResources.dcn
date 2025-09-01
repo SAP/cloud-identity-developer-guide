@@ -1,0 +1,625 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "policy": [
+        "cas",
+        "MultiResources"
+      ],
+      "rules": [
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              0.0
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              1.0
+            ]
+          }
+        },
+        {
+          "rule": "grant",
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1",
+            "R2"
+          ],
+          "condition": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              2.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "functions": [],
+  "tests": [
+    {
+      "test": [
+        "cas",
+        "MultiResources"
+      ],
+      "assertions": [
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1",
+            "R2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "B"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "eq"
+            ],
+            "args": [
+              {
+                "ref": [
+                  "$app",
+                  "restr"
+                ]
+              },
+              0.0
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 0.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 1.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  1.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  0.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  2.0
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1",
+            "R2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {
+                  "restr": 2.0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "expect": false,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1",
+            "R2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {}
+            }
+          ]
+        },
+        {
+          "expect": true,
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R1",
+            "R2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "ignores": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "expect": {
+            "call": [
+              "or"
+            ],
+            "args": [
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  0.0
+                ]
+              },
+              {
+                "call": [
+                  "eq"
+                ],
+                "args": [
+                  {
+                    "ref": [
+                      "$app",
+                      "restr"
+                    ]
+                  },
+                  2.0
+                ]
+              }
+            ]
+          },
+          "actions": [
+            "A"
+          ],
+          "resources": [
+            "R2"
+          ],
+          "policies": [
+            [
+              "cas",
+              "MultiResources"
+            ]
+          ],
+          "inputs": [
+            {
+              "input": {
+                "$app": {}
+              },
+              "unknowns": [
+                {
+                  "ref": [
+                    "$app",
+                    "restr"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
