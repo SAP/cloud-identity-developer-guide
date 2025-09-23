@@ -8,7 +8,7 @@ POLICY ReadProducts {
 }
 ```
 
-An administrator can use the administration console to create an authorization policy that is a restriction of the base policy for a specific category, such as "electronics":
+An administrator can use the administration console to create an authorization policy that is a restriction of the base policy for a specific category, such as `electronics`:
 
 ```dcl
 POLICY ReadElectronics {
@@ -38,7 +38,7 @@ The [Node.js CAP Sample](https://github.com/SAP-samples/ams-samples-node/tree/ma
 
 ## Value Help Requests
 
-To retrieve the list of available values for a specific attribute, the Authorization Management Service (**AMS**) can be configured to send value help requests to the application. In the response, AMS must receive a list of valid values for the requested attribute from the application and optionally, a human-readable label for each value, which it can then present to the administrator in the administration console.
+To retrieve the list of available values for a specific attribute, AMS can be configured to send value help requests to the application. In the response, AMS must receive a list of valid values for the requested attribute from the application and optionally, a human-readable label for each value, which it can then present to the administrator in the administration console.
 
 ```mermaid
 sequenceDiagram
@@ -65,12 +65,14 @@ Then, when AMS requests value help for a specific attribute such as `category`, 
 
 ```https://your-service.com/odata/v4/value-help/category```
 
+::: tip
 You can customize the path for each attribute using the `@valueHelp` annotation in the DCL schema, as described in the [Annotation Properties](#annotation-properties) section.
+:::
 
 ### Response Format
 
 ::: tip
-CAP services served via the `OData` protocol implement the requirements below automatically including filtering. You can use [projections](https://cap.cloud.sap/docs/cds/cdl#views-projections) to define an entity for each attribute inside a dedicated value help service that exposes only the necessary fields (e.g., ID and name) in the response.
+CAP services served via the `OData` protocol implement the requirements below automatically including filtering. You can use [projections](https://cap.cloud.sap/docs/cds/cdl#views-projections) to define an entity for each attribute inside a dedicated value help service that exposes only the necessary fields (e.g., `ID` and `name`) in the response.
 :::
 
 The value help endpoints of the application must implement parts of the [OData V4 specification](https://www.odata.org/documentation/) to respond with a JSON payload containing the list of available options for the requested attribute.
@@ -91,12 +93,12 @@ The value help endpoints of the application must implement parts of the [OData V
 ```
 
 The response must contain:
-- **value**: Array containing the list of available options
-- **ID**: The actual value to be used in policies (must fit the DCL attribute data type)
-- **name**: (*optional*) human-readable label displayed to administrators (`<= 50` characters for optimal displayability) instead of the ID
+- `value`: Array containing the list of available options
+- `ID`: The actual value to be used in policies (must fit the DCL attribute data type)
+- `name`: (*optional*) human-readable label displayed to administrators (`<= 50` characters for optimal displayability) instead of the ID
 
 ::: tip
-It is possible to use different property names for the value and label fields. You can configure these names using the `@valueHelp` annotation in the DCL schema, as described in the [Annotation Properties](#annotation-properties) section.
+It is possible to use different property names for the value (`ID`) and label (`name`) fields. You can configure these names using the `@valueHelp` annotation in the DCL schema, as described in the [Annotation Properties](#annotation-properties) section.
 :::
 
 ### Request Parameters
@@ -111,7 +113,7 @@ If the application supports multiple languages, the `Accept-Language` header con
 #### Dependent Filters
 If the attribute for which value help is requested [depends on other attributes](#dependent-attributes), AMS will include the current values of these attributes as OData filter parameters in the request, e.g.
 
-```https://your-service.com/odata/v4/ValueHelpService/city?$filter=country eq 'DE'```
+```https://your-service.com/odata/v4/value-help/city?$filter=country eq 'DE'```
 
 
 
@@ -122,13 +124,15 @@ The value help endpoints in your application MUST be protected because they retu
 ### API Permission Group
 
 The API permission group consumed by the AMS server can be freely chosen in the service configuration of the AMS instance.
-Make sure to setup a policy for this API permission group that limits privileges to those that are necessary for the value help endpoints as described in the [App-To-App](/Authorization/TechnicalCommunication#app-to-app) documentation.
+It is best practice to setup an internal policy for this API permission group to limit privileges to those that are necessary for the value help endpoints as described in the App-To-App documentation for [principal propagation](/Authorization/TechnicalCommunication.html#authorization-via-api-permission-groups).
 
-Note that the API policy is just an upper limit for the privileges that can be used with this token. The administrator using the administration console must additionally have the necessary privileges based on assigned policies to access the value help endpoints in your application.
+::: warning Important
+Note that such an API policy defines just an upper limit for the privileges that can be used with this token. The administrator using the administration console must additionally have the necessary privileges based on assigned policies to access the value help endpoints in your application.
+:::
 
 ::: tip
-Depending on your application, it may not be necessary to create a dedicated role or *action*/*resource* for the value help endpoints.
-For example, if there is already a policy that grants read access to categories, you can reuse this policy in the *internal* policy to which the value help API permission group is mapped.
+Depending on your application, it may not be necessary to create a dedicated new role or *action*/*resource* for the value help endpoints.
+For example, if there is already a policy that grants read access to categories, you can `USE` this policy in the *internal* policy for value help.
 :::
 
 ### Certificate Validation
@@ -174,9 +178,9 @@ Add the following configuration to your AMS service instance parameters:
 
 ### Configuration Parameters
 
-- **value-help-url**: The base URL of your OData V4 value help service. AMS will append paths of different attributes to this URL when making requests.
-- **value-help-api-name**: The name of the API that AMS will use for App2App token requests. This must match an entry in the `provided-apis` section.
-- **provided-apis**: Configure a dedicated API for AMS value help. We recommend to set the type to `internal` but `public` is possible if desired.
+- `value-help-url`: The base URL of your OData V4 value help service. AMS will append paths of different attributes to this URL when making requests.
+- `value-help-api-name`: The name of the API that AMS will use for App2App token requests. This must match an entry in the `provided-apis` section.
+- `provided-apis`: Configure a dedicated API for AMS value help. We recommend to set the type to `internal` unless required otherwise.
 
 
 
@@ -201,9 +205,9 @@ SCHEMA {
 }
 ```
 
-- **path**: The path appended to the *value-help-url* when requesting value help for this attribute
-- **valueField**: Property name in the OData response that contains the value
-- **labelField**: Property name in the OData response that contains the human-readable label
+- `path`: The path appended to the *value-help-url* when requesting value help for this attribute
+- `valueField`: Property name in the OData response that contains the value
+- `labelField`: Property name in the OData response that contains the human-readable label
 
 ### Default Annotation Values
 
@@ -238,7 +242,7 @@ In this case, AMS uses these defaults:
 
 ### Disabling Value Help
 
-If no `@valueHelp` annotation is present for an attribute, the value help is disabled for this attribute. For attributes with disabled value help, no button or dialog will be shown in the UI. 
+If no `@valueHelp` annotation is present for an attribute, the value help is disabled for this attribute. For attributes with disabled value help, no button or dialog will be shown in the administration console. 
 
 Alternatively, you can set the `@valueHelp` annotation to `false`, to explicitly disable the value help for an attribute:
 
@@ -268,7 +272,7 @@ SCHEMA {
 }
 ```
 
-In this example, the valid values for `salesOrder.city` depend on the value of `salesOrder.country`. When requesting value help for `salesOrder.city`, AMS will include the current value of `salesOrder.country` as a filter parameter with name `country` in the request if the administrator has already restricted that attribute in the same `RESTRICT` statement`.
+In this example, the valid values for `salesOrder.city` depend on the value of `salesOrder.country`. When requesting value help for `salesOrder.city`, AMS will include the current value of `salesOrder.country` as a filter parameter with name `country` in the request if the administrator has already restricted that attribute in the same `RESTRICT` statement.
 
 For example, given the following state of the `RESTRICT` statement in the administration console:
 
