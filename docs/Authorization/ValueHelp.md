@@ -159,7 +159,19 @@ To enable value help functionality, configure your AMS service instance with the
 
 Add the following configuration to your AMS service instance parameters:
 
-```json
+::: code-group
+```yaml [YAML]
+authorization:
+  enabled: true
+  value-help-url: "https://myapp.cert.cfapps.sap.hana.ondemand.com/odata/v4/value-help/" # [!code ++:2]
+  value-help-api-name: "AmsValueHelp"
+provided-apis:
+  - name: "AmsValueHelp" # [!code ++:3]
+    description: "Value Help Callback from AMS"
+    type: "internal"
+```
+
+```json [JSON]
 {
   "authorization": {
     "enabled": true,
@@ -175,6 +187,9 @@ Add the following configuration to your AMS service instance parameters:
   ]
 }
 ```
+:::
+
+
 
 ### Configuration Parameters
 
