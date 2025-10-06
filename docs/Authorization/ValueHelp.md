@@ -180,8 +180,7 @@ provided-apis:
   "provided-apis": [
     { // [!code ++:5]
       "name": "AmsValueHelp",
-      "description": "Value Help Callback from AMS",
-      "type": "internal"
+      "description": "Value Help Callback from AMS"
     }
   ]
 }
