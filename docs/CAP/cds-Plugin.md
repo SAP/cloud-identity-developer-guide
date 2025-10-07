@@ -57,12 +57,12 @@ SCHEMA {
 :::
 
 ### Base Policy Upload
-Unless disabled, a policy deployer application is generated in `<cds.build.target>/policies` which defaults to:
+Unless disabled, a [policy deployer application](/Authorization/DeployDCL#ams-policies-deployer-app) is generated in:
 
-- [**Node.js**] `gen/policies`
+- [**Node.js**] `<cds.build.target>/policies` which defaults to `gen/policies`
 - [**Java**] `srv/src/gen/policies`
 
-During `cds add ams`, deployment descriptors like `mta.yaml` or `helm` charts are automatically configured to deploy the generated policies to AMS.
+During `cds add ams`, deployment descriptors like `mta.yaml` or `helm` charts are automatically configured to deploy policies to AMS with the policy deployer application in the default location.
 
 ### Validation
 It validates `@ams.attributes` annotations for syntactic correctness and type coherence. This gives early feedback about the correctness of the annotations during development:
@@ -79,7 +79,8 @@ It supports the following properties with the following [`default`]:
 - **dclRoot** *string* [`ams/dcl` / `srv/src/gen/ams` (Java)]: the root DCL folder (containing the `schema.dcl`) which is used for generating DCL, compiling DCL to DCN during development, uploading DCL etc.
 - **dclGenerationPackage** *string* [`cap`]: name of the DCL package to which basePolicies.dcl is generated
 - **dcnRoot** *string* [`gen/dcn` / `srv/src/gen/ams/dcn` (Java)]:  folder for DCL to DCN compilation results during development (see [Testing](/Authorization/Testing#compiling-dcl-to-dcn))
-- **policyDeployerRoot** *string* [`gen/policies` / `srv/src/gen/policies` (Java)]:  folder of the AMS policy deployer application created during `cds build` (see [Base Policy Upload](#base-policy-upload))
+- **generatePoliciesDeployer** *"auto"/false* [`"auto"`]: unless set to `false`, generates a policy deployer application during `cds build` (see [Base Policy Upload](#base-policy-upload))
+- **policyDeployerRoot** *string* [`gen/policies` / `srv/src/gen/policies` (Java)]: folder of the AMS policy deployer application created during `cds build` (see [Base Policy Upload](#base-policy-upload))
 
 ### Node.js specific configuration
 - **authPushDcl** *true/false* [`false`]:  if enabled, uploads the base policies to the AMS server on application start and after DCL changes (see [Hybrid Testing](https://cap.cloud.sap/docs/advanced/hybrid-testing)).
