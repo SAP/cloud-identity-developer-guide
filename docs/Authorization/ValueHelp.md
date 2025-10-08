@@ -159,7 +159,18 @@ To enable value help functionality, configure your AMS service instance with the
 
 Add the following configuration to your AMS service instance parameters:
 
-```json
+::: code-group
+```yaml [YAML]
+authorization:
+  enabled: true
+  value-help-url: "https://myapp.cert.cfapps.sap.hana.ondemand.com/odata/v4/value-help/" # [!code ++:2]
+  value-help-api-name: "AmsValueHelp"
+provided-apis:
+  - name: "AmsValueHelp" # [!code ++:3]
+    description: "Value Help Callback from AMS"
+```
+
+```json [JSON]
 {
   "authorization": {
     "enabled": true,
@@ -169,18 +180,20 @@ Add the following configuration to your AMS service instance parameters:
   "provided-apis": [
     { // [!code ++:5]
       "name": "AmsValueHelp",
-      "description": "Value Help Callback from AMS",
-      "type": "internal"
+      "description": "Value Help Callback from AMS"
     }
   ]
 }
 ```
+:::
+
+
 
 ### Configuration Parameters
 
 - `value-help-url`: The base URL of your OData V4 value help service. AMS will append paths of different attributes to this URL when making requests.
 - `value-help-api-name`: The name of the API that AMS will use for App2App token requests. This must match an entry in the `provided-apis` section.
-- `provided-apis`: Configure a dedicated API for AMS value help. We recommend to set the type to `internal` unless required otherwise.
+- `provided-apis`: Configure a dedicated API for AMS value help.
 
 
 
