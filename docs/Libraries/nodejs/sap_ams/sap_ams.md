@@ -244,6 +244,33 @@ Refer to the [Startup Check](/Authorization/StartupCheck) documentation for guid
 ### Testing
 See the central [Testing](/Authorization/Testing) documentation for details.
 
+## Configuration
+
+### Memory Consumption
+The memory that the AMS needs depends on the number of tenants, users and policy assignments in the application. 
+To approximately calculate the memory usage you can use the following primary formula: 
+````
+Memory(MB) = 6.54 + (AssignmentCount × 0.000117)
+````
+
+In the following table you can find some example sizes: 
+|  Users  | Tenants | Assignments | Total Memory | Memory Growth | Memory/User | Memory/Assignment |
+|:-------:|:-------:|:-----------:|:------------:|:-------------:|:-----------:|:-----------------:|
+| 0       | 0       | 0           | 6.54MB       | 0MB           | -           | -                 |
+| 10      | 1       | 19          | 6.67MB       | 0.13MB        | 13.0KB      | 6.8KB             |
+| 100     | 1       | 167         | 6.72MB       | 0.18MB        | 1.8KB       | 1.1KB             |
+| 1,000   | 10      | 1,901       | 6.97MB       | 0.43MB        | 0.43KB      | 0.23KB            |
+| 10,000  | 100     | 19,164      | 9.06MB       | 2.52MB        | 0.25KB      | 0.13KB            |
+| 50,000  | 100     | 95,867      | 18.28MB      | 11.74MB       | 0.24KB      | 0.12KB            |
+| 100,000 | 100     | 191,446     | 29.12MB      | 22.58MB       | 0.23KB      | 0.12KB            |
+
+The memory growth with increasing numbers of users and policy assignments is linear, but the number of tenants affects memory efficiency in a non linear way:
+- 1 tenant: 7.4KB per user
+- 10 tenants: 0.43KB per user
+- 100 tenants: 0.24KB per user
+
+With an increasing number of tenants, the memory usage per user gets more efficient.
+
 ## API
 
 ### AuthorizationManagementService
