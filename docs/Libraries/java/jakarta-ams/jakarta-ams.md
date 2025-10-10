@@ -101,7 +101,7 @@ bundleGatewayUpdater.maxFailedUpdates=3
 ````
 
 ### Memory Usage
-The memory usage of the AMS depends on the number of tenants, users and policy assignments. To calculate how much memory you will use approximately, you can use the following formula:
+The memory usage of the AMS client library depends on the number of tenants, users and policy assignments. To approximate how much memory it will use, you can use the following formula:
 ````
 memory_usage_in_kb = 0.2 * number_tenants + 0.15 * number_user + 0.07 * number_assignments
 ````
