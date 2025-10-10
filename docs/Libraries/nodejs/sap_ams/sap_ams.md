@@ -248,10 +248,11 @@ See the central [Testing](/Authorization/Testing) documentation for details.
 
 ### Memory Consumption
 The memory that the AMS needs depends on the number of tenants, users and policy assignments in the application. 
-To approximately calculate the memory usage you can use the following primary formula: 
+To approximately calculate the memory usage you can use the following formula: 
 ````
 Memory(MB) = 6.54 + (AssignmentCount × 0.000117)
 ````
+Although the memory usage depends on tenants, users and policy assignemnts, we found out that the driving factor behind large bundle sizes is primarily the number of policy assignments which naturally increases with a larger number of tenants and users. Our experiments found the above formula is a simple and practical way to estimate bundle sizes.
 
 In the following table you can find some example sizes: 
 |  Users  | Tenants | Assignments | Total Memory | Memory Growth | Memory/User | Memory/Assignment |
@@ -264,12 +265,12 @@ In the following table you can find some example sizes:
 | 50,000  | 100     | 95,867      | 18.28MB      | 11.74MB       | 0.24KB      | 0.12KB            |
 | 100,000 | 100     | 191,446     | 29.12MB      | 22.58MB       | 0.23KB      | 0.12KB            |
 
-The memory growth with increasing numbers of users and policy assignments is linear, but the number of tenants affects memory efficiency in a non linear way:
+The analysis revealed that memory usage per user and per policy assignment scales linearly. However, the distribution of users across tenants significantly impacts memory consumption:
 - 1 tenant: 7.4KB per user
 - 10 tenants: 0.43KB per user
 - 100 tenants: 0.24KB per user
 
-With an increasing number of tenants, the memory usage per user gets more efficient.
+With an increasing number of tenants, the memory usage per user gets more efficient, however the overall memory consumption will increase as more tenants are added. 
 
 ## API
 

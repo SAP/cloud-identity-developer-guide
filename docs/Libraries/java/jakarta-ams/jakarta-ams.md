@@ -118,7 +118,7 @@ Some example data.json sizes can be found in this table:
 | 100     | 10000 | 20000       | 3336                                   | 0.0692 (A)                                |
 | 1000    | 10000 | 200000      | 33348                                  | 0.069 (A)                                 |
 
-The increase in memory usage per Tenant, User and Assignment in Java is approximately linear. 
+The increase in memory usage per tenant, user and policy assignment in Java is approximately linear. 
 
 ## Usage
 
