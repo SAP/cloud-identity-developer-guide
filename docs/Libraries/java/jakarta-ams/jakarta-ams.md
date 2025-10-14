@@ -100,6 +100,26 @@ This threshold can be set via the `ams.properties` file in the `src/main/resourc
 bundleGatewayUpdater.maxFailedUpdates=3
 ````
 
+### Memory Usage
+The memory usage of the AMS client library depends on the number of tenants, users and policy assignments. To approximate how much memory it will use, you can use the following formula:
+````
+memory_usage_in_kb = 0.2 * number_tenants + 0.15 * number_user + 0.07 * number_assignments
+````
+
+Some example data.json sizes can be found in this table: 
+
+| Tenants | User  | Assignments | Measured Difference to empty data.json | KB per Tenant (T)/User (U)/Assignment (A) |
+|---------|-------|-------------|----------------------------------------|-------------------------------------------|
+| 10      | 0     | 0           | 2                                      | 0.2 (T)                                   |
+| 10      | 100   | 0           | 17                                     | 0.15 (U)                                  |
+| 1       | 10    | 20          | 4                                      | 0.1 (A)                                   |
+| 1       | 100   | 200         | 34                                     | 0.095 (A)                                 |
+| 10      | 1000  | 2000        | 334                                    | 0.0915 (A)                                |
+| 100     | 10000 | 20000       | 3336                                   | 0.0692 (A)                                |
+| 1000    | 10000 | 200000      | 33348                                  | 0.069 (A)                                 |
+
+The increase in memory usage per tenant, user and policy assignment in Java is approximately linear. 
+
 ## Usage
 
 ### Setup PolicyDecisionPoint
