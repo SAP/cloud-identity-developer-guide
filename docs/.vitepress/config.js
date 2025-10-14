@@ -71,8 +71,7 @@ export default defineConfig(withMermaid({
                     { text: 'Go', 
                         collapsed: true,
                         items: [
-                            { text: 'cloud-identity-authorizations-golang-library', link: 'https://github.com/SAP/cloud-identity-authorizations-golang-library'},
-                            { text: 'golang', link: '/Libraries/go' }
+                            { text: 'cloud-identity-authorizations-golang-library', link: '/Libraries/go/go-ams' }
                         ]
                     }
 
