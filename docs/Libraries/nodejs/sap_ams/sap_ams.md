@@ -247,7 +247,7 @@ See the central [Testing](/Authorization/Testing) documentation for details.
 ## Configuration
 
 ### Memory Consumption
-The memory that the AMS needs depends on the number of tenants, users and policy assignments in the application. 
+The memory that `@sap/ams` needs depends on the number of tenants, users and policy assignments in the application. 
 To approximately calculate the memory usage you can use the following formula: 
 ````
 Memory(MB) = 6.54 + (AssignmentCount × 0.000117)
