@@ -101,7 +101,7 @@ bundleGatewayUpdater.maxFailedUpdates=3
 ````
 
 ### Memory Usage
-The memory usage of the AMS depends on the number of tenants, users and policy assignments. To calculate how much memory you will use approximately, you can use the following formula:
+The memory usage of the AMS client library depends on the number of tenants, users and policy assignments. To approximate how much memory it will use, you can use the following formula:
 ````
 memory_usage_in_kb = 0.2 * number_tenants + 0.15 * number_user + 0.07 * number_assignments
 ````
@@ -118,7 +118,7 @@ Some example data.json sizes can be found in this table:
 | 100     | 10000 | 20000       | 3336                                   | 0.0692 (A)                                |
 | 1000    | 10000 | 200000      | 33348                                  | 0.069 (A)                                 |
 
-The increase in memory usage per Tenant, User and Assignment in Java is approxiamtely linear. 
+The increase in memory usage per tenant, user and policy assignment in Java is approximately linear. 
 
 ## Usage
 
