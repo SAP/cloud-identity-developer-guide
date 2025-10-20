@@ -68,7 +68,12 @@ export default defineConfig(withMermaid({
                             { text: '@sap/ams-dev', link: 'https://www.npmjs.com/package/@sap/ams-dev' }
                         ]
                     },
-                    { text: 'Go', link: 'https://github.com/SAP/cloud-identity-authorizations-golang-library' }
+                    { text: 'Go', 
+                        collapsed: true,
+                        items: [
+                            { text: 'cloud-identity-authorizations-golang-library', link: '/Libraries/go/go-ams' }
+                        ]
+                    }
 
                 ]
             },

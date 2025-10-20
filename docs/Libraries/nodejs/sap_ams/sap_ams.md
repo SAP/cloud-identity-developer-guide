@@ -244,6 +244,28 @@ Refer to the [Startup Check](/Authorization/StartupCheck) documentation for guid
 ### Testing
 See the central [Testing](/Authorization/Testing) documentation for details.
 
+## Configuration
+
+### Memory Consumption
+The memory that `@sap/ams` needs depends on the number of tenants, users and policy assignments in the application. 
+To approximately calculate the memory usage you can use the following formula: 
+````
+Memory(MB) = 6.54 + (AssignmentCount × 0.000117)
+````
+Although the memory usage depends on tenants, users and policy assignemnts, we found out that the driving factor behind large bundle sizes is primarily the number of policy assignments which naturally increases with a larger number of tenants and users. Our experiments found the above formula is a simple and practical way to estimate bundle sizes.
+
+In the following table you can find some example sizes: 
+|  Users  | Tenants | Assignments | Total Memory | Memory Growth | Memory/User | Memory/Assignment |
+|:-------:|:-------:|:-----------:|:------------:|:-------------:|:-----------:|:-----------------:|
+| 0       | 0       | 0           | 6.54MB       | 0MB           | -           | -                 |
+| 10      | 1       | 19          | 6.67MB       | 0.13MB        | 13.0KB      | 6.8KB             |
+| 100     | 1       | 167         | 6.72MB       | 0.18MB        | 1.8KB       | 1.1KB             |
+| 1,000   | 10      | 1,901       | 6.97MB       | 0.43MB        | 0.43KB      | 0.23KB            |
+| 10,000  | 100     | 19,164      | 9.06MB       | 2.52MB        | 0.25KB      | 0.13KB            |
+| 50,000  | 100     | 95,867      | 18.28MB      | 11.74MB       | 0.24KB      | 0.12KB            |
+| 100,000 | 100     | 191,446     | 29.12MB      | 22.58MB       | 0.23KB      | 0.12KB            |
+
+
 ## API
 
 ### AuthorizationManagementService
