@@ -191,6 +191,36 @@ By setting the property `cds.security.authorization.ams.features.generateExists`
 the AMS runtime checks annotated paths for `1..*` associations. If such an association is found in a path,
 the runtime generates the 'where' clause using the [CAP exists predicate][03].
 
+#### Provide custom PDP arguments
+
+In plain Java applications it is already possible to provide additional arguments for 
+the Policy Decision Point (PDP) creation. This argument allow customization of the PDP behavior. E.g.,
+by providing a custom `HttpClient` for setting own headers on the requests to the AMS bundle gateway
+or for supporting ZTIS.
+The `cap-ams-support` module also supports this feature. By implementing the interface
+`com.sap.cloud.security.ams.capsupport.PdpArgumentsProvider` and registering the implementation in
+a `META-INF/services/com.sap.cloud.security.ams.capsupport.PdpArgumentsProvider` file.
+
+Here an example:
+```java
+public class CustomPdpArgs implements PdpArgumentsProvider {
+
+  @Override
+  public Map<String, Object> get() {
+    //As an example we provide a custom path for the local test files. In general, the recommended
+    //way is to use the configuration cds.security.authorization.ams.test-sources in the
+    //application's configuration file (e.g. application.yaml).
+    // But you might have some kind of dynamic resolution of the path in your test setup. Or you could
+    // execute code to fetch the test policies from a remote location.
+    try {
+      return Map.of("sources", new File("srv/target/dcl_opa").getCanonicalFile());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+}
+```
+
 ## Help and Support
 
 See the [SAP Cloud Identity Services Developer Guide documentation](/index.md) or the documentation
