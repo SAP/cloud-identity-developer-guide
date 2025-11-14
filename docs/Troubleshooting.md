@@ -57,7 +57,7 @@ If the CAP application uses `@ams.attributes` annotations for instance-based aut
       action: 'Reader',
       resource: '$SCOPES',
       input: {},
-      defaultInput: { '$user.scim_id': 'principalPropagation' },
+      defaultInput: { '$user.scim_id': '7c1d5056-b334-44ab-b2e1-14afba1f3b8b' },
       result: 'conditional',
       dcn: "($app.genre IN ['Fantasy', 'Fairy Tale', 'Mystery'] AND $app.stock < 30)",
       policies: [ 'local.JuniorReader' ],
