@@ -31,8 +31,9 @@ export default defineConfig(withMermaid({
                 text: 'Authorization',
                 items: [
                     { text: 'Getting Started', link: '/Authorization/GettingStarted' },
-                    { text: 'Startup Check', link: '/Authorization/StartupCheck' },
+                    { text: 'Authorization Policies', link: '/Authorization/AuthorizationPolicies' },
                     { text: 'Authorization Checks', link: '/Authorization/AuthorizationChecks' },
+                    { text: 'Startup Check', link: '/Authorization/StartupCheck' },
                     { text: 'Testing', link: '/Authorization/Testing' },
                     { text: 'Technical Communication', link: '/Authorization/TechnicalCommunication' },
                     { text: 'Deploying DCL', link: '/Authorization/DeployDCL' },
