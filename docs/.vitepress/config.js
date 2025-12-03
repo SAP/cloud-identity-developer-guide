@@ -1,10 +1,9 @@
 import languages from './languages';
-import { defineConfig } from 'vitepress';
-import { withMermaid } from "vitepress-plugin-mermaid";
+import {defineConfig} from 'vitepress';
 
 const base = '/cloud-identity-developer-guide/';
 
-export default defineConfig(withMermaid({
+export default defineConfig({
     base,
     title: 'SCI Developer Guide',
     description: 'Application development with the client libraries for SAP Cloud Identity Services',
@@ -100,4 +99,4 @@ export default defineConfig(withMermaid({
     head: [
         ['link', { rel: 'icon', href: `${base}/favicon.png`, type: 'image/png' }]
     ]
-}));
+});
