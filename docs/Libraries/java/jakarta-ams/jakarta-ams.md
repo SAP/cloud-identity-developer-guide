@@ -42,6 +42,8 @@ The following snippets show you how to use the core API of the library. For more
 
 ### Setup
 
+#### Initializing AuthorizationManagementService
+
 The `AuthorizationManagementService` is the central entry point for performing authorization checks. It manages the policy bundle and provides `Authorizations` objects for checking privileges.
 
 ```java
@@ -79,18 +81,128 @@ if (isLocalTestEnvironment()) {
     // Uses DCN_ROOT env variable to differentiate: if set, uses local DCN; otherwise uses IAS credentials
     ams = AuthorizationManagementServiceFactory.fromEnvironment();
 }
-
-// Create an AuthProvider to derive Authorizations from security context
-AuthProvider authProvider = new IdentityServiceAuthProvider(ams);
 ```
 
 ::: warning Important
 Implement a [startup check](/Authorization/StartupCheck) to ensure that the `AuthorizationManagementService` instance is ready for authorization checks before serving authorized endpoints.
 :::
 
+#### Choosing an AuthProvider
+
+An `AuthProvider` determines which policies apply to the current user based on the security context.
+
+In principal, `Authorizations` can be built directly from the `AuthorizationManagementService` if the application knows which policies are applicable for the current request.
+However, it is best practice to encapsulate this strategy inside an `AuthProvider` which also provides the possibility to set custom attribute values in the `Authorizations` object that shall be applied for any authorization checks of the user, e.g. `$user.region`. 
+
+Typically, the `Authorizations` are built from the security context after authentication.
+For the standard SAP Identity Service token scenarios, you should use one of the built-in `AuthProvider` implementations.
+It implements the recommended strategies for advanced request flows like API consumption from external OAuth2 clients.
+
+As of today, the module comes with two main implementations:
+
+- **`IdentityServiceAuthProvider`** (recommended default): Derives authorizations from SAP Identity Service security context
+- **`HybridAuthProvider`**: For XSUAA applications that have migrated to AMS - derives authorizations from both SAP Identity Service and XSUAA security contexts
+
+**Using IdentityServiceAuthProvider (recommended):**
+
+```java
+AuthProvider authProvider = new IdentityServiceAuthProvider(ams);
+```
+
+**Using HybridAuthProvider (for migrated XSUAA applications):**
+
+```java
+Function<String, String> scopeToPolicyMapper = (scope) -> {
+    // ... Map XSUAA scopes to corresponding fully-qualified AMS base policy names
+};
+AuthProvider authProvider = new HybridAuthProvider(ams, scopeToPolicyMapper);
+```
+
+**Customizing standard AuthProviders:**
+
+You can extend the built-in `AuthProvider` implementations to customize the behavior, e.g., to set additional attribute values:
+
+```java
+public class CustomIdentityServiceAuthProvider extends IdentityServiceAuthProvider {
+    public CustomIdentityServiceAuthProvider(AuthorizationManagementService ams) {
+        super(ams);
+    }
+    
+    @Override
+    public Map<String, Object> getDefaultInput(SapIdToken token) {
+        Map<String, Object> input = super.getDefaultInput(token);
+        input.put("$user.region", deriveUserRegion(token));
+        return input;
+    }
+}
+
+AuthProvider authProvider = new CustomIdentityServiceAuthProvider(ams);
+```
+
+**Custom AuthProvider implementation:**
+
+You can also implement a custom `AuthProvider` with your own logic for determining which policies apply:
+
+```java
+public class CustomAuthProvider implements AuthProvider {
+    private final AuthorizationManagementService ams;
+    
+    public CustomAuthProvider(AuthorizationManagementService ams) {
+        this.ams = ams;
+    }
+    
+    @Override
+    public Authorizations getAuthorizations() {
+        // Custom logic to determine which policies apply
+        Set<String> policies = determinePoliciesFromContext();
+        return ams.getAuthorizations(policies);
+    }
+}
+
+AuthProvider authProvider = new CustomAuthProvider(ams);
+```
+
 ### Authorization Checks
 
 Authorization checks are performed on `Authorizations` objects. The `AuthProvider` determines which policies apply based on the security context:
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant SC as SecurityContext
+    participant App as Application Code
+    participant AP as AuthProvider
+    participant Authz as Authorizations
+    participant Dec as Decision
+
+    rect rgba(128, 128, 128, 0.1)
+        Note over User,SC: Authentication (not part of AMS)<br/>Token validated, user stored in SecurityContext
+    end
+    
+    User->>App: Request to protected resource
+    App->>AP: getAuthorizations()
+    AP->>SC: Read user context
+    SC-->>AP: User info & policies
+    AP-->>App: Authorizations instance
+    
+    App->>Authz: checkPrivilege(action, resource, input)
+    Authz->>Authz: Evaluate policies
+    Authz-->>App: Decision
+    
+    App->>Dec: isGranted() / isDenied() / isConditional()
+    Dec-->>App: boolean
+    
+    alt Granted
+        App->>User: Allow access
+    else Denied
+        App->>User: Deny access (403)
+    else Conditional
+        App->>Dec: visit(SqlExtractor)
+        Dec-->>App: SQL condition
+        App->>App: Apply condition to query
+        App->>User: Return filtered results
+    end
+```
 
 ```java
 // Get authorizations for the current security context
@@ -105,6 +217,46 @@ if (decision.isGranted()) {
 } else {
     // User is not allowed
 }
+```
+
+```mermaid
+classDiagram
+    class AuthProvider {
+        <<interface>>
+        +getAuthorizations() Authorizations
+    }
+    
+    class Authorizations {
+        <<interface>>
+        +checkPrivilege(action, resource) Decision
+        +checkPrivilege(action, resource, input) Decision
+        +checkPrivilege(action, resource, input, unknowns) Decision
+        +getPotentialActions(resource) Set~String~
+        +getPotentialResources() Set~String~
+        +getPotentialPrivileges() Set~Privilege~
+        +setPolicies(policies)
+        +setDefaultInput(input)
+    }
+    
+    class Decision {
+        <<interface>>
+        +isGranted() boolean
+        +isDenied() boolean
+        +isConditional() boolean
+        +visit(visitor) T
+    }
+    
+    class Privilege {
+        -action: String
+        -resource: String
+        +Privilege(action, resource)
+        +getAction() String
+        +getResource() String
+    }
+    
+    AuthProvider --> Authorizations : provides
+    Authorizations --> Decision : returns
+    Authorizations ..> Privilege : uses
 ```
 
 For more examples of common authorization check patterns, please refer to the central [Authorization Checks](/Authorization/AuthorizationChecks) documentation.
