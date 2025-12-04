@@ -13,6 +13,46 @@
   --sap-blue-11: #00144A;
 }
 
+/* Increase maximum width of content area */
+/* Default: do not override for ~1920px and below. Wide-screen overrides are applied via media queries. */
+
+/* 2560px and wider screens */
+@media (min-width: 2400px) {
+  :root {
+    /* Allow a wider overall layout without stretching lines too far */
+    --vp-layout-max-width: 1920px;
+  }
+  .VPDoc:not(.has-sidebar) .container {
+    /* Main content container */
+    max-width: 1580px !important;
+  }
+  .VPDoc:not(.has-sidebar) .content {
+    /* Article text column */
+    max-width: 1220px !important;
+  }
+  .VPDoc.has-aside .content-container {
+    /* Content area when aside (TOC) is present */
+    max-width: 1100px !important;
+  }
+}
+
+/* 3440px (ultrawide) and wider screens */
+@media (min-width: 3300px) {
+  :root {
+    /* Slightly larger than the 2560 setting, but still comfortable for reading */
+    --vp-layout-max-width: 2100px;
+  }
+  .VPDoc:not(.has-sidebar) .container {
+    max-width: 1680px !important;
+  }
+  .VPDoc:not(.has-sidebar) .content {
+    max-width: 1320px !important;
+  }
+  .VPDoc.has-aside .content-container {
+    max-width: 1280px !important;
+  }
+}
+
 /* Feature highlighting for the Enforce card */
 .VPFeatures .container {
   display: flex !important;
