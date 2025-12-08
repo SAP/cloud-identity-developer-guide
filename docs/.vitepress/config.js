@@ -37,6 +37,7 @@ export default defineConfig(withMermaid({
                     { text: 'Testing', link: '/Authorization/Testing' },
                     { text: 'Technical Communication', link: '/Authorization/TechnicalCommunication' },
                     { text: 'Deploying DCL', link: '/Authorization/DeployDCL' },
+                    { text: 'Changing DCL', link: '/Authorization/ChangingDCL' },
                     { text: 'Value Help', link: '/Authorization/ValueHelp' },
                     { text: 'Logging', link: '/Authorization/Logging' },
                 ]
