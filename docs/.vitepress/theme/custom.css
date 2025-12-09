@@ -107,3 +107,7 @@
   font-weight: 600;
   color: var(--vp-c-brand-1);
 }
+/* Override VitePress paragraph line-height specifically for Mermaid diagrams. Other configs cause issues (text overflowing) in multi-line diagrams */
+.vp-doc .mermaid p {
+  line-height: 24px !important;
+}
