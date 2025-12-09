@@ -83,7 +83,7 @@ It supports the following properties with the following [`default`]:
 - **policyDeployerRoot** *string* [`gen/policies` / `srv/src/gen/policies` (Java)]: folder of the AMS policy deployer application created during `cds build` (see [Base Policy Upload](#base-policy-upload))
 
 ### Node.js specific configuration
-- **authPushDcl** *true/false* [`false`]:  if enabled, uploads the base policies to the AMS server on application start and after DCL changes (see [Hybrid Testing](https://cap.cloud.sap/docs/advanced/hybrid-testing)).
+- **autoDeployDcl** *true/false* [`false`]:  if enabled, uploads the base policies to the AMS server on application start and after DCL changes (see [Hybrid Testing](https://cap.cloud.sap/docs/advanced/hybrid-testing)).
 
 :::tip
 All *requires.auth.ams* properties also work in lowercase (for example `generatedcl`), and lowercase has priority over the camel case version (for example `generateDcl`) of properties. This means that all [cds env sources](https://cap.cloud.sap/docs/node.js/cds-env#sources-for-cds-env) including the case-insensitive ones are supported, such as setting properties using environment variables (`CDS_REQUIRES_AUTH_AMS_GENERATEDCL`), which are mapped to lowercase versions of the property. 
