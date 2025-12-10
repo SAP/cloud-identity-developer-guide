@@ -58,8 +58,10 @@ POLICY salesOrderRestricted {
 }
 ```
 
+::: warning
 Forbidden changes are not technically prevented. Please take utmost care when changing the delivered
 policies. If you need to do any changes, you must inform your customers and allow a migration period.
+:::
 
 ## Migration Strategy
 Internal changes, such as changing actions, resources, or conditions, can be achieved in a three-step process if there are multiple microservices involved:
