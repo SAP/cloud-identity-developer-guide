@@ -8,9 +8,9 @@ This document provides the basic information required to use Authorization Manag
 The client libraries of AMS consist of different modules for the following programming languages and frameworks:
 
 - **Java** (Maven):
-    - [jakarta-ams](/Libraries/java/jakarta-ams/jakarta-ams.md)
-    - [spring-ams](/Libraries/java/spring-ams/spring-ams.md)
-    - [cap-ams-support](/Libraries/java/cap-ams-support/cap-ams-support.md)
+    - [jakarta-ams](/Libraries/java/jakarta/jakarta-ams.md)
+    - [spring-ams](/Libraries/java/spring/spring-ams.md)
+    - [cap-ams](/Libraries/java/cap/cap-ams.md)
 - **JavaScript** (Node.js):
     - [@sap/ams](/Libraries/nodejs/sap_ams/sap_ams.md)
     - [@sap/ams-dev](https://www.npmjs.com/package/@sap/ams-dev)
@@ -35,18 +35,28 @@ The recommended modules and versions have changed over time (see [Historical Set
 
 ### Java
 
-| Project Type                | jakarta-ams | spring-ams | jakarta-ams-test | cap-ams-support | @sap/ams    |
-|-----------------------------|:-----------:|:----------:|:----------------:|:---------------:|:-----------:|
-| Jakarta EE                  |     ✓       |     -      |        [✓]      |        -        |      -
-| Spring Boot                 |     -       |     ✓      |        [✓]      |        -        |      -
-| CAP                         |     -       |     -      |         -       |        ✓        |     (✓)\*  
+##### Runtime Dependencies
 
-[✓] = *test-scoped **(!)** maven dependency*\
-(✓) = *devDependency in package.json*
+| Project Type                | jakarta-ams | spring-ams |spring-boot-starter-ams|   cap-ams  | spring-boot-starter-cap-ams |
+|-----------------------------|:-----------:|:----------:|:---------------------:|:----------:|:---------------------------:|
+| Jakarta EE                  |     ✓       |     -      |            -          |     -      |              -              |
+| Spring Boot                 |     *       |     *      |            ✓          |     -      |              -              |
+| Jakarta EE (CAP)            |     *       |     -      |            -          |     ✓      |              -              |
+| Spring Boot (CAP)           |     *       |     -      |            -          |     *      |              ✓              |
 
-::: tip *
-The (optional) Node.js module `@sap/ams` *can* be added in the `package.json` as a *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
+\* transitive dependency
 
+##### Test-Scoped Dependencies
+
+| Project Type                | spring-boot-starter-ams-test | spring-boot-starter-cap-ams-test|
+|-----------------------------|:----------------------------:|:-------------------------------:|
+| Spring Boot                 |                ✓             |                 -               |     
+| Spring Boot (CAP)           |                -             |                 ✓               |
+
+##### Tooling Dependencies
+
+::: tip
+In CAP Java projects, the (optional) Node.js module `@sap/ams` *should* be added in the `package.json` as a *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
 :::
 
 ### Node.js
@@ -76,5 +86,31 @@ For practical examples of how to set up and use the AMS client libraries, refer 
 
 If you operate productive applications with a dependency setup different from the recommended one, you can usually continue using the modules you already have installed for some time. However, we recommend migrating to the new modules and major versions eventually in discussion with us.
 
-### JDK < 17
-For Java versions < 17, the modules `java-ams` and `java-ams-test` are a drop-in replacement for `jakarta-ams` and `jakarta-ams-test`.
+### Java Library Version 3
+For major version 3 of the Java libraries, the following dependency setup was recommended:
+
+##### Runtime Dependencies
+
+| Project Type                | jakarta-ams | spring-ams | cap-ams-support  |
+|-----------------------------|:-----------:|:----------:|:----------------:|
+| Jakarta EE                  |     ✓       |     -      |         -        |
+| Spring Boot                 |     *       |     ✓      |         -        |
+| Jakarta EE (CAP)            |     *       |     -      |         ✓        |
+| Spring Boot (CAP)           |     *       |     -      |         ✓        |
+
+\* transitive dependency
+
+##### Test-Scoped Dependencies
+
+| Project Type                |       jakarta-ams-test       | spring-ams-test-starter |
+|-----------------------------|:----------------------------:|:-----------------------:|
+| Jakarta EE                  |                ✓             |             -           |
+| Spring Boot                 |                -             |             ✓           |
+| Jakarta EE (CAP)            |                -             |             -           |
+| Spring Boot (CAP)           |                -             |             -           |
+
+##### Tooling Dependencies
+
+::: tip
+In CAP Java projects, the (optional) Node.js module `@sap/ams` *should* be added in the `package.json` as a *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
+:::
