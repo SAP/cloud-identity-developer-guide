@@ -25,24 +25,21 @@ Therefore, a typical authorization check answers the question whether a user is 
 const decision = authorizations.checkPrivilege('read', 'products');
 if(decision.isGranted()) {
     // user is allowed to read products
-} else {
+    } else {
     // user is not allowed to read products
 }
 ```
 
 ```java [Java]
-Attributes attributes = principal.getAttributes()
-                .setAction("read")
-                .setResource("products");
-
-if(policyDecisionPoint.allow(attributes)) {
+Decision decision = authorizations.checkPrivilege("read", "products");
+if(decision.isGranted()) {
     // user is allowed to read products
 } else {
     // user is not allowed to read products
 }
 ```
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#authorization-checks) / [Java Details](/Libraries/java/jakarta-ams/jakarta-ams.md#allow)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#authorization-checks) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#authorization-checks)
 
 :::
 
@@ -58,9 +55,9 @@ POLICY ReadProducts {
 }
 ```
 
-### Conditional checks for single entity
+### Single entity instance
 
-When checking the authorization for a single entity, the condition is evaluated against the attributes of that entity.
+When checking the authorization for a single instance of an entity, the condition is evaluated against the attributes of that instance.
 
 **Example** If the product has `stock = 10`, the check returns `true`:
 
@@ -68,8 +65,7 @@ When checking the authorization for a single entity, the condition is evaluated 
 ```js [Node.js]
 const decision = authorizations.checkPrivilege(
     'read', 'products', { stock: 10 });
-
-if(decision.isGranted()) {
+if (decision.isGranted()) {
     // user is allowed to read product with stock 10
 } else {
     // user is not allowed to read product with stock 10
@@ -77,41 +73,46 @@ if(decision.isGranted()) {
 ```
 
 ```java [Java]
-Attributes attributes = principal.getAttributes()
-                .setAction("read")
-                .setResource("products")
-                .app().value("stock", 10)
-                .attributes();
-
-if(policyDecisionPoint.allow(attributes)) {
+Decision decision = authorizations.checkPrivilege(
+    "read", "products", Map.of("stock", 10));
+if (decision.isGranted()) {
     // user is allowed to read product with stock 10
 } else {
     // user is not allowed to read product with stock 10
 }
 ```
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta-ams/jakarta-ams.md#has-user-read-access-to-salesorders-resource-with-countrycode-de-and-salesorder-type-4711)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#has-user-read-access-to-salesorders-resource-with-countrycode-de-and-salesorder-type-4711)
 :::
 
-### Conditional checks for multiple entities
+### Collection of entity instances
 
-When checking the authorization for multiple entities, the application has two options:
+When checking the authorization for multiple instances of an entity, the application has two options:
 
-1. It can fetch all entities from the database, loop over them and check access for each entity individually.
-2. It can filter the entities in the database query based on the condition.
+1. It can fetch the full collection from the database, loop over it and check access for each instance individually.
+2. It can filter the instances with a database query based on the authorization condition.
 
-#### Looping
-The first option is easier to implement and may be sufficient for resources with few entities, such as a list of landscapes:
+##### Looping
+The first option is easier to implement and may be sufficient for resources with few instances, such as a list of landscapes:
+
+**Example**
+
+```dcl [DCL]
+POLICY AccessEUCanaryLandscapes {
+    GRANT access ON landscape
+        WHERE landscape.name LIKE '%canary' AND landscape.region = 'EU';
+}
+```
 
 ::: code-group
 ```js [Node.js]
-const decision = authorizations.checkPrivilege('access', 'landscape');
 const landscapes = [
     { name: 'eu10', region: 'EU' },
     { name: 'eu10-canary', region: 'EU' },
     { name: 'us5', region: 'US' }
 ];
 
+const decision = authorizations.checkPrivilege('access', 'landscape');
 const accessibleLandscapes = 
     landscapes
     .filter(landscape => {
@@ -122,45 +123,65 @@ const accessibleLandscapes =
     });
 ```
 
-```dcl [DCL]
-POLICY AccessEUCanaryLandscapes {
-    GRANT access ON landscape WHERE name LIKE '%canary' AND region = 'EU';
-}
+```java [Java]
+List<Map<String, Object>> landscapes = List.of(
+    Landscape.create("eu10", "EU"),
+    Landscape.create("eu10-canary", "EU"),
+    Landscape.create("us5", "US")
+);
+
+List<Landscape> accessibleLandscapes = 
+    landscapes.stream()
+    .filter(landscape -> {
+        return authorizations.checkPrivilege("access", "landscape", Map.of(
+            "landscape.name", landscape.getName(),
+            "landscape.region", landscape.getRegion()
+        )).isGranted();
+    })
+    .collect(Collectors.toList());
 ```
 :::
 
-However, this strategy can lead to performance issues for larger entity sets, for which thousands of values must be checked individually.
+However, this strategy can lead to performance issues for larger collections, for which thousands of values must be checked individually.
 
-#### Filtering
-The second option is to filter the entities already in the database query. This is more efficient because it reduces the number of entities in the application memory to those entities the user is allowed to access. However, this strategy is non-trivial to implement because it requires traversing the condition tree and translating it into a query language condition.
+##### Filtering
+The second option is to filter the instances already in the database. This is more efficient because it reduces the number of instances in the application memory to those instances the user is allowed to access. However, this strategy is non-trivial to implement because it requires traversing the condition tree and translating it into a query language condition.
 
-In CAP projects, it is implemented out-of-the-box by the libraries to dynamically translate filter conditions imposed by authorization policies to *CQL* conditions. For non-CAP projects, we recommend to contact us for assistance with the existing API or discuss a feature request for a standard transformer to the required query format.
+::: tip CAP Projects
+In CAP projects, this translation is implemented out-of-the-box by the AMS plugins which translate filter conditions imposed by authorization policies to *CQL* conditions.
+:::
 
-## Declarative Authorization Checks
-Instead of manually implementing authorization checks in the code, it's sometimes more elegant to impose them automatically with declarations for required privileges.
-For example, in CAP applications, the standard `@restrict` and `@requires` annotations are used to make checks for roles with AMS.
-In non-CAP applications, there are other ways to impose authorization checks by defining required privileges (*action*/*resource* pairs) on service endpoints:
+For non-CAP projects, we aim to provide extractors for standard query languages. We recommend to contact us for assistance with the existing API or discuss a feature request for missing extractors for your query format.
+
+As of today, there is an extractor for SQL queries available in the Java AMS library:
 
 ::: code-group
-```js [Node.js]
-const app = express();
-app.use(/^\/(?!health).*/i, authenticate, amsMw.authorize());
-
-app.get('/orders', amsMw.precheckPrivilege('read', 'orders'), getOrders);
-app.post('/orders', amsMw.checkPrivilege('read', 'products'), amsMw.precheckPrivilege('create', 'orders'), createOrder);
-```
-
 ```java [Java]
-// Example for Spring request matcher coming soon
+// extractor can be built once per handler
+SqlExtractor sqlExtractor = new SqlExtractor(Map.of(
+                        AttributeName.of("landscape.name"), "name",
+                        AttributeName.of("landscape.region"), "region"));
+
+Decision decision = authorizations.checkPrivilege("access", "landscape");
+SqlExtractor.SqlResult sqlCondition = decision.visit(sqlExtractor);
+
+String sqlQuery = String.format("SELECT * FROM landscape WHERE %s;",
+    sqlCondition.getSqlTemplate());
+List<Landscape> accessibleLandscapes = 
+    db.query(sqlQuery, sqlCondition.getParameters(), Landscape.class);
 ```
 
-```dcl [DCL]
+```js [Node.js]
+// Equivalent to Java snippet coming soon
+```
+:::
+
+## Declarative Authorization Checks
+Instead of manually implementing authorization checks in the code, it improves maintainability to declare the required privileges for different parts of the application centrally.
+
+```dcl
 POLICY ReadProducts {
     GRANT read ON products;
-}
-
-POLICY ReadOrders {
-    GRANT read ON orders WHERE order.createdBy = $user.email;
 }
 
 POLICY OrderAccessory {
@@ -168,8 +189,83 @@ POLICY OrderAccessory {
 }
 ```
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#amsmiddleware) / [Java Spring Details](/Libraries/java/spring-ams/spring-ams.md#usage)
+::: code-group
+```js [Node.js (express)]
+const app = express();
+app.use(/^\/(?!health).*/i, authenticate, amsMw.authorize());
 
+app.get('/products', amsMw.checkPrivilege('read', 'products'), getOrders);
+app.post('/orders', amsMw.precheckPrivilege('create', 'orders'), createOrder);
+```
+
+```java [Spring (Route Security)]
+import com.sap.cloud.security.ams.spring.authorization.AmsRouteSecurity;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+            AmsRouteSecurity via) {
+        http.authorizeHttpRequests(authz -> authz
+                .requestMatchers(GET, "/products/**")
+                    .access(via.checkPrivilege("read", "products"))
+                .requestMatchers(POST, "/orders/**")
+                    .access(via.precheckPrivilege("create", "orders")));
+    
+        return http.build();
+    }
+}
+```
+
+```java [Spring (Method Security)]
+import com.sap.cloud.security.ams.spring.authorization.annotations.AmsAttribute;
+import com.sap.cloud.security.ams.spring.authorization.annotations.CheckPrivilege;
+import com.sap.cloud.security.ams.spring.authorization.annotations.PrecheckPrivilege;
+
+/**
+ * Performs an order creation, secured with instance-based authorization.
+ *
+ * @param product the product
+ * @param quantity the quantity
+ * @param productCategory the product category (used for authorization)
+ * @return the created order
+ */
+@CheckPrivilege(action="create", resource="orders")
+public Order createOrder(
+    Product product,
+    int quantity,
+    @AmsAttribute(name="product.category") String productCategory) {
+        if(!Objects.equals(product.getCategory(), productCategory)) {
+            throw new IllegalArgumentException(
+                "Authorization attribute for product category does not match the product");
+        }
+        
+        // ... create order implementation
+}
+```
+
+```cds [CAP applications]
+// use standard cds @requires or @restrict annotations
+
+service ProductService {
+    @(restrict: [ { grant: 'READ', to: 'ReadProducts' } ])
+    entity Products as projection on my.db.Products;
+}
+
+service OrderService {
+    @(restrict: [ { 
+        grant: ['READ', 'WRITE'],
+        to: 'CreateOrders',
+        // dynamically extended at runtime with product category = 'accessory' filter
+        where: 'createdBy = $user.email'
+    } ])
+    entity Orders as projection on my.db.Orders;
+}
+```
+
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#amsmiddleware) / [Spring Route Security Details](/Libraries/java/spring/spring-ams.md#route-security) / [Spring Method Security Details](/Libraries/java/spring/spring-ams.md#method-security) / [CAP Details](/CAP/Basics)
 :::
 
 ### Advantages
@@ -177,7 +273,9 @@ Declarative authorization checks have several advantages:
   - concise syntax
   - provides central overview of required privileges for different parts of the application
   - allows changing required privileges without touching the implementation of service handlers
-  - prevents accidental information leaks, for example by returning 404 instead of 403 while fetching database entities for the actual authorization check in the service handler
+  - prevents accidental information leaks, for example by returning 404 instead of 403 while fetching database entities to gather information for an authorization check in the service handler
 
-### Disadvantages
-However, this approach is not enough for *action*/*resource* pairs for which conditional access may be granted. The best we can do in this case, is to do a pre-check for the action and resource, and then let the service handler perform an additional check for the condition. This is because the condition check requires additional attribute input, typically involving the database.
+### Limitations
+::: warning Conditional Policies with Instance-Based Access
+Not all declaration methods support checks for *action*/*resource* pairs with instance-based access conditions. In this case, they can only be used for pre-checks but the service handler must perform an additional check for the condition. This is because the condition check requires additional attribute input, typically involving information from the database.
+:::
