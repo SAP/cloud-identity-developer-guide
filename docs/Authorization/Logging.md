@@ -17,7 +17,7 @@ In CAP projects, you can use [hybrid testing](https://cap.cloud.sap/docs/advance
 :::
 
 ### Local Debug Logging
-To enable debug logging when starting the application locally, run with the following environment variables:
+To enable debug logging when starting the application locally, enable it as follows:
 
 ::: code-group
 ```bash [CAP Node.js]
@@ -28,26 +28,18 @@ DEBUG=ams cds watch
 DEBUG=ams npm start
 ```
 
-```yaml [CAP Java]
+```yaml [Spring / Spring Boot (CAP)]
 # application.yaml
 logging:
     level:
         com.sap.cloud.security.ams: DEBUG
-        com.sap.cloud.security.ams.dcl.capsupport: DEBUG
 
 # or via environment variables:
 LOGGING_LEVEL_COM_SAP_CLOUD_SECURITY_AMS=DEBUG
-LOGGING_LEVEL_COM_SAP_CLOUD_SECURITY_AMS_DCL_CAPSUPPORT=DEBUG 
 ```
 
-```yaml [Java]
-# application.yaml
-logging:
-    level:
-        com.sap.cloud.security.ams: DEBUG
-
-# or via environment variables:
-LOGGING_LEVEL_COM_SAP_CLOUD_SECURITY_AMS=DEBUG
+``` [log4j.properties]
+log4j.logger.com.sap.cloud.security.ams=DEBUG
 ```
 :::
 
@@ -80,24 +72,87 @@ ams.on("authorizationCheck", event => {
 });
 ```
 
-```java [CAP Java + Java]
-import com.sap.cloud.security.ams.dcl.client.pdp.PolicyDecisionPoint;
-import static com.sap.cloud.security.ams.factory.AmsPolicyDecisionPointFactory.DEFAULT;
+```java [Spring / Spring Boot (CAP)]
+import com.sap.cloud.security.ams.api.AuthorizationCheckListener;
+import com.sap.cloud.security.ams.events.*;
 
-PolicyDecisionPoint policyDecisionPoint = PolicyDecisionPoint.create(DEFAULT);
-policyDecisionPoint.registerListener(new AmsAuditLogger());
+@Configuration
+public class AmsEventConfiguration {
 
-public class AmsAuditLogger implements Consumer<PolicyEvaluationResult> {
-    @Override
-    public void accept(PolicyEvaluationResult result) {
-        // build audit log payload from result and write to audit log 
+    @Autowired
+    private AuthorizationManagementService ams;
+
+    @PostConstruct
+    public void registerAuthorizationCheckListener() {
+        // Same handler for all events...
+        ams.addAuthorizationCheckListener(
+            AuthorizationCheckListener.fromConsumer(
+                (AuthorizationCheckEvent event) -> AMS_EVENT_LOGGER.debug(event.toString()))
+        );
+        
+        // ... or dedicated handlers for each event type
+        ams.addAuthorizationCheckListener(new AuthorizationCheckListener() {
+            @Override
+            public void onPrivilegeCheck(PrivilegeCheckEvent event) {}     
+
+            @Override
+            public void onGetPotentialActions(GetPotentialActionsEvent event) {}
+
+            @Override
+            public void onGetPotentialResources(GetPotentialResourcesEvent event) {}
+            
+            @Override
+            public void onGetPotentialPrivileges(GetPotentialPrivilegesEvent event) {}
+        });
+    }
+}
+```
+
+```java [Java]
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.events.*;
+import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Configuration
+public class AmsEventConfiguration {
+
+    @Autowired
+    private AuthorizationManagementService ams;
+
+    @PostConstruct
+    public void registerAuthorizationCheckListener() {
+        // Same handler for all events...
+        ams.addAuthorizationCheckListener(
+            AuthorizationCheckListener.fromConsumer(
+                (AuthorizationCheckEvent event) -> AMS_EVENT_LOGGER.debug(event.toString()))
+        );
+        
+        // ... or dedicated handlers for each event type
+        ams.addAuthorizationCheckListener(new AuthorizationCheckListener() {
+            @Override
+            public void onPrivilegeCheck(PrivilegeCheckEvent event) {}
+
+            @Override
+            public void onGetPotentialActions(GetPotentialActionsEvent event) {}
+
+            @Override
+            public void onGetPotentialResources(GetPotentialResourcesEvent event) {}
+
+
+            @Override
+            public void onGetPotentialPrivileges(GetPotentialPrivilegesEvent event) {}
+        });
     }
 }
 ```
 :::
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#events-logging) / [Java Details](/Libraries/java/jakarta-ams/jakarta-ams.md#logging)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#events-logging) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#logging)
 
 
 ### Request correlation
-When logging results, it is typically necessary to correlate the audit log entries with the original request, e.g. based on a `correlation_id`. Please refer to the details of the AMS module used in your application to learn how to this.
+When logging results, it is typically necessary to correlate the audit log entries with the original request, e.g. based on a `correlation_id`.
+
+In Node.js, this information is carried by the event payload. In Java, access depends on your application's web framework and is typically achieved by thread-local storage.
