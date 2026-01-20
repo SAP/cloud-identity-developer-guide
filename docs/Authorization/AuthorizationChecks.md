@@ -246,7 +246,7 @@ public Order createOrder(
 }
 ```
 
-```cds [CAP applications]
+```cds [CAP]
 // use standard cds @requires or @restrict annotations
 
 service ProductService {

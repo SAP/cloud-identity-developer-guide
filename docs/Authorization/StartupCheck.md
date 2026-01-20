@@ -17,8 +17,7 @@ In the asynchronous strategy, make sure that an error is thrown eventually when 
 :::
 
 ::: code-group
-
-```js [CAP Node.js]
+```js [Node.js (CAP)]
 // server.js
 const cds = require('@sap/cds');
 const { amsCapPluginRuntime } = require("@sap/ams");
@@ -33,7 +32,7 @@ cds.on('served', async () => {
 ```
 
 ```js [Node.js]
-// example for asynchronous startup check
+// Asynchronous startup check: uses readiness status in health endpoint
 
 let isReady = false;
 const healthCheck = (req, res) => {
@@ -63,16 +62,58 @@ const server = app.listen(PORT, () => {
 amsStartupCheck();
 ```
 
-```java [Java]
-import com.sap.cloud.security.ams.dcl.client.pdp.PolicyDecisionPoint;
-import static com.sap.cloud.security.ams.dcl.client.pdp.PolicyDecisionPoint.Parameters.STARTUP_HEALTH_CHECK_TIMEOUT;
-import static com.sap.cloud.security.ams.dcl.client.pdp.PolicyDecisionPoint.Parameters.FAIL_ON_STARTUP_HEALTH_CHECK;
+```java [Spring Boot / Spring Boot (CAP)]
+// The spring-boot-starter-ams and spring-boot-starter-cap-ams modules
+// have auto-config for a HealthIndicator that integrates with the
+// Spring Boot Actuator health endpoint.
 
-// Throws an error if the AMS module doesn't get ready within 30 seconds
-PolicyDecisionPoint policyDecisionPoint = PolicyDecisionPoint.create(
-    DEFAULT, 
-    STARTUP_HEALTH_CHECK_TIMEOUT, 30L,
-    FAIL_ON_STARTUP_HEALTH_CHECK, true
-); 
+@Bean
+@ConditionalOnMissingBean(name = "amsHealthIndicator")
+public HealthIndicator amsHealthIndicator(AuthorizationManagementService ams) {
+    LOG.debug("Creating AMS health indicator");
+    return () -> {
+        if (ams.isReady()) {
+            Long secondsSinceRefresh = ams.getBundleAge();
+            return Health.up()
+                    .withDetail("bundleAge", secondsSinceRefresh != null ? secondsSinceRefresh + "s" : "?")
+                    .build();
+        } else {
+            return Health.down()
+                    .withDetail("reason", "Initial authorization bundle not yet received")
+                    .build();
+        }
+    };
+}
 ```
+
+```java [Java]
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+// Synchronous startup check:
+// throws an error if the AMS module doesn't get ready within 30 seconds
+ams.whenReady().get(30, TimeUnit.SECONDS);
+
+// Asynchronous startup check: uses readiness status in health endpoint
+private static final AtomicBoolean isReady = new AtomicBoolean(false);
+
+app.get("/health", ctx -> {
+    if (isReady.get()) {
+        ctx.json(HealthStatus.up());
+    } else {
+        ctx.status(503).json(HealthStatus.down("Service is not ready"));
+    }
+});
+
+// Wait up to 30s for AMS to become ready
+ams.whenReady().orTimeout(30, TimeUnit.SECONDS).thenRun(() -> {
+    isReady.set(true);
+    LOG.info("AMS is ready, application is now ready to serve requests");
+}).exceptionally(ex -> {
+    LOG.error("AMS failed to become ready within the timeout", ex);
+    System.exit(1);
+    return null;
+});
+```
+
 :::
