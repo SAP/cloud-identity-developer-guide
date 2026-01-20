@@ -62,7 +62,7 @@ const server = app.listen(PORT, () => {
 amsStartupCheck();
 ```
 
-```java [Spring Boot / Spring Boot (CAP)]
+```java [Spring Boot/Spring Boot (CAP)]
 // The spring-boot-starter-ams and spring-boot-starter-cap-ams modules
 // have auto-config for a HealthIndicator that integrates with the
 // Spring Boot Actuator health endpoint.

@@ -70,8 +70,24 @@ For technical user requests, the resulting policy is used directly in subsequent
 
 For principal propagation requests, the user's policies are used as a basis to determine the privileges and the policies derived from the consumed API permission groups are used to determine an upper limit for the privileges that are granted to the user during this request. This allows applications to restrict what external applications can do on behalf of the user, while also taking the user's policies into account for the decision.
 
+```mermaid
+graph TD
+    AP["INTERNAL POLICY ReadCatalog {<br/>USE cap.Reader RESTRICT Genre NOT IN ('Mystery');}"]
+    B[Books:<br/>1-Fairy Tale<br/>2-Mystery<br/>4-Drama]
+
+    RQ1(Principal Propagation)
+    UP["POLICY JuniorReader {<br/>USE cap.Reader RESTRICT Genre IN ('Fairy Tale', 'Mystery');}"]
+    CP["USE cap.Reader RESTRICT Genre IN ('Fairy Tale');"]
+    R1[Books:<br/>1-Fairy Tale]
+    RQ1 -->|Assigned Policies| UP -->|AND| AP -->|Limited Authorizations| CP -->|Filter| B -->|Result| R1
+    
+    RQ2(Technical User)
+    R2[Books:<br/>1-Fairy Tale<br/>3-Drama]    
+    RQ2 --> AP -->|Filter| B -->|Result| R2
+```
+
 ::: info
-Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it's not necessary to distinguish between internal and external user requests.
+Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption in the SCI administration console and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it's not necessary to distinguish between internal and external user requests.
 :::
 
 ### Mapping implementation
@@ -112,47 +128,29 @@ function mapPrincipalPropagationApi(api) {
 ```
 
 ```java [Java]
-import com.sap.cloud.security.ams.api.AuthorizationMode;
-import com.sap.cloud.security.ams.api.PolicyAssignmentBuilder;
+final Map<String, Set<String>> TECHNICAL_USER_API_TO_POLICY = Map.of(
+    "ReadCatalog", Set.of("internal.ReadCatalog"));
+final ApiMapper technicalUserApiMapper = ApiMapper.ofMap(TECHNICAL_USER_API_TO_POLICY);
 
-Set<String> technicalUserApis = Set.of("ReadCatalog");
-Set<String> principalPropagationApis = Set.of("AMS_ValueHelp", "ReadCatalog");
-
-private PolicyAssignments mapApisToPolicyAssignments() {
-    PolicyAssignmentBuilder pab = PolicyAssignmentBuilder.create();
-
-    for(String api : technicalUserApis) {
-        pab.addPolicyAssignment(
-            AuthorizationMode.API_TECHNICAL,
-            api,
-            "internal." + api);
-    }
-
-    for(String api : principalPropagationApis) {
-        pab.addPolicyAssignment(
-            AuthorizationMode.API_USER,
-            api,
-            "internal." + api);
-    }
-
-    return pab.build();
-}
+final Map<String, Set<String>> PRINCIPAL_PROPAGATION_API_TO_POLICY = Map.of(
+    "AMS_ValueHelp", Set.of("internal.AMS_ValueHelp"),
+    "ReadCatalog", Set.of("internal.ReadCatalog"));
+final ApiMapper principalPropagationApiMapper = ApiMapper.ofMap(PRINCIPAL_PROPAGATION_API_TO_POLICY);
 ```
 
 :::
 
 ### Mapping registration
-Finally, a bit of configuration is required to register the mapping functions, so that the AMS modules use the resulting policies in authorization checks for requests that are made to the API permission groups.
+Finally, a bit of configuration is required to register the mapping functions, so that the correct policies apply when external requests are made against the API permission groups.
 
-In Node.js applications that use the standard CAP plugin runtime or the `IdentityServiceAuthProvider` directly the mapping functions themselves can directly be registered via the API.\
-In Java applications, the application needs to implement the [`AttributesProcessor`](/Libraries/java/jakarta-ams/jakarta-ams#AttributesProcessor) interface, extract the token from the `SecurityContext`, check if the `ias_apis` claim is present and if so, build and register the `PolicyAssignments` object with the `Principal` object.
+The mapping can be registered in `IdentityServiceAuthProvider` (Node.js) / `IdentityServiceAuthFactory` (Java) and its subclasses, such as `HybridAuthProvider` (Node.js) / `HybridAuthFactory` (Java).
 
 ::: info
-The Node.js module includes special handling for the `principal-propagation` API permission group (see above). In Java, the `AttributesProcessor` implementation below must be extended to check for this API permission group and skip the app-to-app logic, if desired.
+These classes implement the special handling for the `principal-propagation` API permission group described [above](#authorization-via-api-permission-groups).
 :::
 
 ::: code-group
-```js [CAP Node.js]
+```js [Node.js (CAP)]
 const cds = require('@sap/cds');
 const { amsCapPluginRuntime, CdsXssecAuthProvider, IdentityServiceAuthProvider, TECHNICAL_USER_FLOW, PRINCIPAL_PROPAGATION_FLOW  } = require("@sap/ams");
 const { mapTechnicalUserApi, mapPrincipalPropagationApi } = require('./apis'); // import mapping functions
@@ -179,55 +177,37 @@ const authProvider = new IdentityServiceAuthProvider(ams)
     .withApiMapper(mapPrincipalPropagationApi, PRINCIPAL_PROPAGATION_FLOW);
 ```
 
-```java [CAP Java]
-import com.sap.cloud.security.ams.api.AttributesProcessor;
-import com.sap.cloud.security.ams.api.PolicyAssignments;
-import com.sap.cloud.security.token.TokenClaims;
-import org.springframework.security.core.Authentication;
-import com.sap.cds.services.request.UserInfo;
+```java [Spring Boot/Spring Boot (CAP)]
+import static com.sap.cloud.security.ams.api.App2AppFlow.RESTRICTED_PRINCIPAL_PROPAGATION;
+import static com.sap.cloud.security.ams.api.App2AppFlow.TECHNICAL_USER;
 
-public class App2appAttributesProcessor implements AttributesProcessor {
+@Configuration
+public class AmsAuthProviderConfiguration {
 
-    @Override
-    public void processAttributes(Principal principal) {
-        var args = principal.getDynamicArguments();
-        if (args.containsKey(AmsConstants.AP_ARGS_KEY_PREVIOUS_USER_INFO)) {
-            var userInfo = (UserInfo) args.get(AmsConstants.AP_ARGS_KEY_PREVIOUS_USER_INFO);
-            List<String> ias_apis = userInfo.getAttribute(TokenClaims.IAS_APIS);
-            if (ias_apis != null) {
-                PolicyAssignments pas = this.mapApisToPolicyAssignments(); // see example above
-                principal.setPolicyAssignments(pas);
-            }
-        }
+    @Autowired
+    private IdentityServiceAuthProvider authProvider;
+
+    @PostConstruct
+    public void configureAuthProvider() {
+        final ApiMapper PRINCIPAL_PROPAGATION_API_MAPPER = getPrincipalPropagationApiMapper();
+        final ApiMapper TECHNICAL_USER_API_MAPPER = getTechnicalUserApiMapper();
+
+        authProvider
+                .withApiMapper(TECHNICAL_USER_API_MAPPER, TECHNICAL_USER)
+                .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, RESTRICTED_PRINCIPAL_PROPAGATION);
     }
 }
 ```
 
 ```java [Java]
-import com.sap.cloud.security.ams.api.AttributesProcessor;
-import com.sap.cloud.security.ams.api.PolicyAssignments;
-import com.sap.cloud.security.ams.api.Principal;
-import com.sap.cloud.security.spring.token.authentication.AuthenticationToken;
-import com.sap.cloud.security.token.Token;
-import com.sap.cloud.security.token.TokenClaims;
+import com.sap.cloud.security.ams.core.IdentityServiceAuthProvider;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import static com.sap.cloud.security.ams.api.App2AppFlow.RESTRICTED_PRINCIPAL_PROPAGATION;
+import static com.sap.cloud.security.ams.api.App2AppFlow.TECHNICAL_USER;
 
-public class App2appAttributesProcessor implements AttributesProcessor {
-
-    @Override
-    public void processAttributes(Principal principal) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AuthenticationToken) {
-            Token token = (Token) authentication.getPrincipal();
-            List<String> ias_apis = token.getClaimAsStringList(TokenClaims.IAS_APIS);
-            if (ias_apis != null) {
-                PolicyAssignments pas = this.mapApisToPolicyAssignments(); // see example above
-                principal.setPolicyAssignments(pas);
-            }
-        }
-    }
-}
+IdentityServiceAuthProvider authProvider =
+    new IdentityServiceAuthProvider(ams)
+        .withApiMapper(TECHNICAL_USER_API_MAPPER, TECHNICAL_USER)
+        .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, RESTRICTED_PRINCIPAL_PROPAGATION);
 ```
 :::
