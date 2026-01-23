@@ -43,6 +43,118 @@ if(decision.isGranted()) {
 
 :::
 
+## Authorizations
+
+Authorization checks are performed with an `Authorizations` object. It represents the set of authorization policies applicable for the current request and -in more complex scenarios- how to apply them.
+
+Typically, for each request, a new `Authorizations` object is created after authentication which can be used for one or many authorization checks during the request processing.
+
+::: tip CapAmsAuthorizations
+In CAP Applications, the `CapAmsAuthorizations` interface is used instead. It extends the standard `Authorizations` interface with CAP-specific methods for role-based authorization checks which delegate internally to an `Authorizations` object.
+:::
+
+### AuthProvider
+
+To access the `Authorizations` object for the current request, an `AuthProvider` is used. It determines which policies apply and provides default values for authorization attributes such as `$user.email`. Typically, the `Authorizations` are built from the thread-local security context after authentication.
+
+For the standard SAP BTP security service offerings, use the built-in `AuthProvider` implementations.
+They implement the recommended authorization strategies, including advanced scenarios like inbound request flows from external applications.
+
+- **`IdentityServiceAuthProvider`** (recommended default): Derives authorizations from SAP Identity Service security context
+- **`HybridAuthProvider`**: For applications that have migrated from XSUAA to AMS - extends `IdentityServiceAuthProvider`, allows the mapping of scopes from XSUAA security contexts to base policies in AMS
+
+::: code-group
+
+```js [Node.js]
+const { IdentityServiceAuthProvider, HybridAuthProvider } = require('@sap/ams');
+
+const authProvider = new IdentityServiceAuthProvider(ams);
+
+// or for migrated XSUAA applications:
+const scopeToPolicyMapper = (scope) => {
+    const scopeToPoliciesMap = {
+        'ProductReader': ['shopping.ReadProducts'],
+        'Customer': ['shopping.ReadProducts', 'shopping.CreateOrders']
+    };
+    return scopeToPoliciesMap[scope] || [];
+};
+const authProvider = new HybridAuthProvider(ams, scopeToPolicyMapper);
+```
+
+```java
+import com.sap.cloud.security.ams.core.*;
+
+AuthProvider authProvider = new IdentityServiceAuthProvider(ams);
+
+// or for migrated XSUAA applications:
+Map<String, Set<String>> scopeToPoliciesMap = Map.of(
+    "ProductReader", Set.of("shopping.ReadProducts"),
+    "Customer", Set.of("shopping.ReadProducts", "shopping.CreateOrders")
+);
+
+HybridAuthProvider authProvider = new HybridAuthProvider(
+    ams,
+    ScopeMapper.ofMapMultiple(scopeToPoliciesMap)
+);
+```
+
+:::
+
+Alternatively, you can implement a custom `AuthProvider`, e.g. to derive applicable policies from additional sources.
+
+<details>
+<summary> Custom AuthProviders</summary>
+
+**Customizing standard AuthProviders:**
+
+You can extend the built-in `AuthProvider` implementations to customize the behavior, e.g., to apply more than those policies which are assigned to users in the user directory:
+
+```java
+public class CustomIdentityServiceAuthProvider extends IdentityServiceAuthProvider {
+    public CustomIdentityServiceAuthProvider(AuthorizationManagementService ams) {
+        super(ams);
+    }
+    
+    @Override
+    protected Authorizations getUserAuthorizations(SapIdToken token) {
+        Authorizations authorizations = super.getUserAuthorizations(token);
+
+        Set<String> policies = new HashSet<>(authorizations.getPolicies());
+        policies.addAll(/* add policies from other sources for this user */);
+        authorizations.setPolicies(policies);
+
+        return authorizations;
+    }
+}
+
+AuthProvider authProvider = new CustomIdentityServiceAuthProvider(ams);
+```
+
+**Custom AuthProvider implementation:**
+
+You can also implement a custom `AuthProvider` with your own logic for determining which policies apply:
+
+```java
+public class CustomAuthProvider implements AuthProvider {
+    private final AuthorizationManagementService ams;
+    
+    public CustomAuthProvider(AuthorizationManagementService ams) {
+        this.ams = ams;
+    }
+    
+    @Override
+    public Authorizations getAuthorizations() {
+        // Custom logic to determine which policies apply
+        Set<String> policies = determinePoliciesFromContext();
+        return ams.getAuthorizations(policies);
+    }
+}
+
+AuthProvider authProvider = new CustomAuthProvider(ams);
+```
+
+</details>
+
 ## Conditional Policies
 
 Grants of authorization policies can be restricted by conditions. They filter the entities of a resource on which the action is allowed.

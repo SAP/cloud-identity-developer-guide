@@ -57,9 +57,9 @@ export default defineConfig(withMermaid({
                         text: 'Java',
                         collapsed: true,
                         items: [
-                            { text: 'jakarta-ams', link: '/Libraries/java/jakarta-ams/jakarta-ams' },
-                            { text: 'spring-ams', link: '/Libraries/java/spring-ams/spring-ams' },
-                            { text: 'cap-ams-support', link: '/Libraries/java/cap-ams-support/cap-ams-support' }
+                            { text: 'jakarta-ams', link: '/Libraries/java/jakarta/jakarta-ams' },
+                            { text: 'spring-ams', link: '/Libraries/java/spring/spring-ams' },
+                            { text: 'cap-ams', link: '/Libraries/java/cap/cap-ams' }
                         ]
                     },
                     {
