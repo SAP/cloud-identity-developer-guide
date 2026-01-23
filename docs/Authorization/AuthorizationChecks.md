@@ -49,8 +49,8 @@ Authorization checks are performed with an `Authorizations` object. It represent
 
 Typically, for each request, a new `Authorizations` object is created after authentication which can be used for one or many authorization checks during the request processing.
 
-::: tip CapAmsAuthorizations
-In CAP Applications, the `CapAmsAuthorizations` interface is used instead. It extends the standard `Authorizations` interface with CAP-specific methods for role-based authorization checks which delegate internally to an `Authorizations` object.
+::: tip AmsCapAuthorizations
+In CAP Applications, the `AmsCapAuthorizations` interface is used instead. It extends the standard `Authorizations` interface with CAP-specific methods for role-based authorization checks which delegate internally to an `Authorizations` object.
 :::
 
 ### AuthProvider
