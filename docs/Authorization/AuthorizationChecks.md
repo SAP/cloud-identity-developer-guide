@@ -25,7 +25,7 @@ Therefore, a typical authorization check answers the question whether a user is 
 const decision = authorizations.checkPrivilege('read', 'products');
 if(decision.isGranted()) {
     // user is allowed to read products
-    } else {
+} else {
     // user is not allowed to read products
 }
 ```
@@ -81,7 +81,7 @@ const scopeToPolicyMapper = (scope) => {
 const authProvider = new HybridAuthProvider(ams, scopeToPolicyMapper);
 ```
 
-```java
+```java [Java]
 import com.sap.cloud.security.ams.core.*;
 
 AuthProvider authProvider = new IdentityServiceAuthProvider(ams);
@@ -157,99 +157,99 @@ AuthProvider authProvider = new CustomAuthProvider(ams);
 
 ## Conditional Policies
 
-Grants of authorization policies can be restricted by conditions. They filter the entities of a resource on which the action is allowed.
+Grants of authorization policies can be made conditional on dynamic data.
+After declaring relevant attributes in a schema, policies can reference those in where-conditions.
+This is usually used to filter the entities of a resource on which the action is allowed.
+However, conditions may also be based on other data in the context of the authorization check, e.g. a specific user property.
 
-**Example** A policy can grant the right to read products only if the product is in stock:
+**Example** A policy can grant the right to read products only from a specific category:
 
 ```dcl
-POLICY ReadProducts {
-    GRANT read ON products WHERE stock > 0;
+SCHEMA {
+    category: String;
+}
+
+POLICY ReadEquipment {
+    GRANT read ON products WHERE category = 'Equipment';
 }
 ```
 
-### Single entity instance
+### Checking Authorizations with fixed attributes
 
-When checking the authorization for a single instance of an entity, the condition is evaluated against the attributes of that instance.
+When performing an authorization check, the values of relevant attributes may already be known.
+In this case, those attribute values can be provided as part of the authorization check.
 
-**Example** If the product has `stock = 10`, the check returns `true`:
+**Example** The check should be performed for a particular product category:
 
 ::: code-group
 ```js [Node.js]
 const decision = authorizations.checkPrivilege(
-    'read', 'products', { stock: 10 });
+    'read', 'products', { category: 'Equipment' });
 if (decision.isGranted()) {
-    // user is allowed to read product with stock 10
+    // user is allowed to read products in the 'Equipment' category
 } else {
-    // user is not allowed to read product with stock 10
+    // user is not allowed to read products in the 'Equipment' category
 }
 ```
 
 ```java [Java]
 Decision decision = authorizations.checkPrivilege(
-    "read", "products", Map.of("stock", 10));
+    "read", "products", Map.of("category", "Equipment"));
 if (decision.isGranted()) {
-    // user is allowed to read product with stock 10
+    // user is allowed to read products in the 'Equipment' category
 } else {
-    // user is not allowed to read product with stock 10
+    // user is not allowed to read products in the 'Equipment' category
 }
 ```
 
 [Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#has-user-read-access-to-salesorders-resource-with-countrycode-de-and-salesorder-type-4711)
 :::
 
-### Collection of entity instances
+### Checking Authorizations with variable attributes
 
-When checking the authorization for multiple instances of an entity, the application has two options:
+When the values of attributes relevant for the authorization check are part of the entities to be protected, the authorization check can still be performed.
+In this case, the decision resulting from the authorization check becomes conditional.
+Depending on the data storage used by the application, the actual attribute values can be applied later when querying the data.
+The application has two options:
 
-1. It can fetch the full collection from the database, loop over it and check access for each instance individually.
-2. It can filter the instances with a database query based on the authorization condition.
+1. Loop over all entities and check access for each instance individually.
+2. Delegate the filtering process, e.g., by using a database query based on the conditional decision.
 
 ##### Looping
-The first option is easier to implement and may be sufficient for resources with few instances, such as a list of landscapes:
+The first option is easier to implement and is fine when only a few instances are involved:
 
 **Example**
 
-```dcl [DCL]
-POLICY AccessEUCanaryLandscapes {
-    GRANT access ON landscape
-        WHERE landscape.name LIKE '%canary' AND landscape.region = 'EU';
-}
-```
-
 ::: code-group
 ```js [Node.js]
-const landscapes = [
-    { name: 'eu10', region: 'EU' },
-    { name: 'eu10-canary', region: 'EU' },
-    { name: 'us5', region: 'US' }
+const catalog = [
+    { name: 'Notebook', category: 'Equipment' },
+    { name: 'Printer', region: 'Equipment' },
+    { name: 'Toner', region: 'OfficeSupplies' }
 ];
 
-const decision = authorizations.checkPrivilege('access', 'landscape');
-const accessibleLandscapes = 
-    landscapes
-    .filter(landscape => {
+const decision = authorizations.checkPrivilege('read', 'products');
+const accessibleProducts = 
+    catalog
+    .filter(product => {
         return decision.apply({ 
-            '$app.landscape.name' : landscape.name,
-            '$app.landscape.region' : landscape.region
+            '$app.category' : product.category
         }).isGranted();
     });
 ```
 
 ```java [Java]
-List<Map<String, Object>> landscapes = List.of(
-    Landscape.create("eu10", "EU"),
-    Landscape.create("eu10-canary", "EU"),
-    Landscape.create("us5", "US")
+List<Map<String, Product>> catalog = List.of(
+    Product.create("Notebook", "Equipment"),
+    Product.create("Printer", "Equipment"),
+	Product.create("Toner", "OfficeSupplies")
 );
 
-List<Landscape> accessibleLandscapes = 
-    landscapes.stream()
-    .filter(landscape -> {
-        return authorizations.checkPrivilege("access", "landscape", Map.of(
-            "landscape.name", landscape.getName(),
-            "landscape.region", landscape.getRegion()
-        )).isGranted();
-    })
+List<Product> accessibleProducts = 
+    catalog.stream()
+    .filter(product -> authorizations.checkPrivilege("read", "products",
+            Map.of("$app.category", product.getCategory())
+    ).isGranted())
     .collect(Collectors.toList());
 ```
 :::
@@ -257,13 +257,15 @@ List<Landscape> accessibleLandscapes =
 However, this strategy can lead to performance issues for larger collections, for which thousands of values must be checked individually.
 
 ##### Filtering
-The second option is to filter the instances already in the database. This is more efficient because it reduces the number of instances in the application memory to those instances the user is allowed to access. However, this strategy is non-trivial to implement because it requires traversing the condition tree and translating it into a query language condition.
+The second option is to filter the entities before they enter the application.
+This is more efficient because it reduces the number of instances in the application memory to those instances the user is allowed to access.
+However, this strategy is non-trivial to implement because it requires traversing the condition tree and translating it into a query language expression.
 
 ::: tip CAP Projects
-In CAP projects, this translation is implemented out-of-the-box by the AMS plugins which translate filter conditions imposed by authorization policies to *CQL* conditions.
+In CAP projects, this translation is implemented out-of-the-box by the AMS plugins which translate filter conditions imposed by authorization policies to *CQL* expressions.
 :::
 
-For non-CAP projects, we aim to provide extractors for standard query languages. We recommend to contact us for assistance with the existing API or discuss a feature request for missing extractors for your query format.
+For non-CAP projects, we aim to provide extractors for standard query languages. We recommend contacting us for assistance with the existing API or discuss a feature request for missing extractors for your query format.
 
 As of today, there is an extractor for SQL queries available in the Java AMS library:
 
@@ -271,16 +273,16 @@ As of today, there is an extractor for SQL queries available in the Java AMS lib
 ```java [Java]
 // extractor can be built once per handler
 SqlExtractor sqlExtractor = new SqlExtractor(Map.of(
-                        AttributeName.of("landscape.name"), "name",
-                        AttributeName.of("landscape.region"), "region"));
+    AttributeName.of("category"), "CategoryName")
+);
 
-Decision decision = authorizations.checkPrivilege("access", "landscape");
+Decision decision = authorizations.checkPrivilege("read", "products");
 SqlExtractor.SqlResult sqlCondition = decision.visit(sqlExtractor);
 
-String sqlQuery = String.format("SELECT * FROM landscape WHERE %s;",
+String sqlQuery = String.format("SELECT * FROM Products WHERE %s;",
     sqlCondition.getSqlTemplate());
-List<Landscape> accessibleLandscapes = 
-    db.query(sqlQuery, sqlCondition.getParameters(), Landscape.class);
+List<Product> accessibleProducts =
+    db.query(sqlQuery, sqlCondition.getParameters(), Product.class);
 ```
 
 ```js [Node.js]
@@ -289,15 +291,16 @@ List<Landscape> accessibleLandscapes =
 :::
 
 ## Declarative Authorization Checks
-Instead of manually implementing authorization checks in the code, it improves maintainability to declare the required privileges for different parts of the application centrally.
+Instead of manually implementing authorization checks scattered over the code base, it improves maintainability to declare the required privileges for different parts of the application.
+This can, for example, be done centrally or by using code annotations.
 
 ```dcl
 POLICY ReadProducts {
     GRANT read ON products;
 }
 
-POLICY OrderAccessory {
-    GRANT create ON orders WHERE product.category IN 'accesory';
+POLICY OrderOfficeSupplies {
+    GRANT create ON orders WHERE category = 'OfficeSupplies';
 }
 ```
 
@@ -370,7 +373,7 @@ service OrderService {
     @(restrict: [ { 
         grant: ['READ', 'WRITE'],
         to: 'CreateOrders',
-        // dynamically extended at runtime with product category = 'accessory' filter
+        // dynamically extended at runtime with product category = 'OfficeSupplies' filter
         where: 'createdBy = $user.email'
     } ])
     entity Orders as projection on my.db.Orders;
