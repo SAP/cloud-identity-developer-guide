@@ -2,7 +2,7 @@
 
 Authorization policies grant the right to perform actions on protected resources in an application. They can be assigned to users to control access to various parts of the application.
 
-Developers can define a set of base policies that can be assigned directly or used as building blocks to create additional policies during runtime by the application administrators.
+Developers can define a set of base policies that can be assigned directly or used as building blocks by the application administrators to create additional so-called admin policies at runtime.
 
 ## DCL
 
@@ -13,15 +13,15 @@ Here is an example of authorization policies defined in DCL:
 
 ```dcl
 SCHEMA {
-   country: String;
+    category: String;
 }
 
-POLICY ReadSalesOrders {
-    GRANT read ON SalesOrders WHERE country IS NOT RESTRICTED;
+POLICY ReadProducts {
+    GRANT read ON products WHERE category IS NOT RESTRICTED;
 }
 
-POLICY SalesOrderDE {
-    USE ReadSalesOrders RESTRICT country = 'DE';
+POLICY ReadOfficeSupplies {
+    USE ReadProducts RESTRICT category = 'OfficeSupplies';
 }
 ```
 
