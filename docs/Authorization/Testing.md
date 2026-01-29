@@ -56,8 +56,8 @@ In non-CAP applications, they are assigned to `app_tid` and `scim_id` pairs mock
 ```json [Node.js/Java] 
 // mockPolicyAssignments.json
 {
-    "defaultTenant": {
-        "alice": [
+    "defaultTenant": { // app_tid
+        "alice": [ // scim_id
             "shopping.CreateOrders",
             "shopping.DeleteOrders"
         ],
@@ -245,8 +245,12 @@ try {
 ```
 :::
 
-##  Test policies
+##  Local policies
 
-The DCL package called `local` has a special semantic: it's intended for DCL files with policies that are only relevant for testing, but not for production. Policies in the `local` package are ignored during base policy upload even if they are present in the archive.
+The top-level DCL package `local` has a special semantic.
+Any policy defined in this package or any of its sub-packages is considered to be irrelevant for production.
+That is, local policies are ignored during base policy upload and do not become part of the productive authorization bundle.
 
-This allows you to test policies that are restrictions of base policies without shipping them to customers. Typically, such policies would be created by an administrator at runtime in the `SCI admin cockpit`.
+Policies that are only required for testing should be placed in the `local` package.
+This is especially useful to test the anticipated behavior of admin policies which are typically created by restricting base policies.
+Admin policies are not part of the base policies themselves since they are created by administrators at runtime.
