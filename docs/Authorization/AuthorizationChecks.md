@@ -174,7 +174,7 @@ POLICY ReadEquipment {
 }
 ```
 
-### Checking Authorizations with fixed attributes
+### Fixed Attribute values
 
 When performing an authorization check, the values of relevant attributes may already be known.
 In this case, those attribute values can be provided as part of the authorization check.
@@ -205,7 +205,7 @@ if (decision.isGranted()) {
 [Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#decision)
 :::
 
-### Checking Authorizations with variable attributes
+### Dynamic Attribute values
 
 When the values of the relevant attributes cannot be provided as part of the authorization check, the authorization check can still be performed.
 In this case, the decision resulting from the authorization check is typically conditional - unless a policy explicitly grants unrestricted or fully restricted access based on these attributes.
@@ -258,16 +258,16 @@ However, this strategy can lead to performance issues for larger collections, fo
 
 ##### Filtering
 The second option is to filter the entities before they enter the application.
-This is more efficient because it reduces the number of instances in the application memory to those instances the user is allowed to access.
+This is more efficient because it reduces the number of instances in the application memory to those instances that the user is allowed to access.
 However, this strategy is non-trivial to implement because it requires traversing the condition tree and translating it into a query language expression.
 
 ::: tip CAP Projects
-In CAP projects, this translation is implemented out-of-the-box by the AMS plugins which translate filter conditions imposed by authorization policies to *CQL* expressions.
+In CAP projects, this translation is implemented out-of-the-box by the AMS plugins which translate filter conditions imposed by authorization policies to *CQL*/*CXN* expressions.
 :::
 
 For non-CAP projects, we aim to provide extractors for standard query languages. We recommend contacting us for assistance with the existing API or discuss a feature request for missing extractors for your query format.
 
-As of today, there is an extractor for SQL queries available in the Java AMS library:
+As of today, there is a basic extractor for SQL queries available in the Java AMS library:
 
 ::: code-group
 ```java [Java]
@@ -289,6 +289,8 @@ List<Product> accessibleProducts =
 // Equivalent to Java snippet coming soon
 ```
 :::
+
+We can add configuration options and features on request.
 
 ## Declarative Authorization Checks
 Instead of manually implementing authorization checks scattered over the code base, it improves maintainability to declare the required privileges for different parts of the application.
