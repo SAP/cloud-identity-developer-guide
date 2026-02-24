@@ -139,7 +139,7 @@ You should see debug output like this that shows how the list of policies for an
 If the policies listed here do not match your expectations, double-check the assignment of the policies in the administration console.
 
 Check that the application successfully received a bundle update from the AMS server after a short waiting period.
-Policy assignment changes are an asynchronous operation that takes some time to propagate to the application. Wait some time before retrying.
+Policy assignment changes are an asynchronous operation that takes some time to propagate to the application. Wait up to a few minutes before retrying.
 
 ::: warning Missing policy assignments in Token
 As of today, the policies that are assigned to a user are **not** contained in his SCI user tokens. This is normal.
