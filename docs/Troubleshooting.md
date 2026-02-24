@@ -36,8 +36,14 @@ In CAP applications, the following output is expected when the AMS plugin determ
     }
 ```
 
-```text [Java]
-An example for debug log output in Java is coming soon.
+```java [Java]
+[main] DEBUG c.s.c.s.a.e.AuthorizationCheckEvent -- GetPotentialActionsEvent {
+  "policies" : [ "local.JuniorReader" ],
+  "limitingPolicies" : [ ],
+  "description" : "Determined potential actions for resource '$SCOPES': Reader",
+  "resource" : "$SCOPES",
+  "potentialActions" : [ "Reader" ]
+}
 ```
 :::
 
@@ -66,10 +72,18 @@ If the CAP application uses `@ams.attributes` annotations for instance-based aut
     }
 ```
 
-```text [Java]
-An example for debug log output in Java is coming soon.
-As of today, the logs show the content of the Attributes object.
-The limiting policies can be inferred from the scopeFilter property.
+```java [Java]
+[main] DEBUG c.s.c.s.a.e.AuthorizationCheckEvent -- PrivilegeCheckEvent {
+  "policies" : [ "local.JuniorReader" ],
+  "limitingPolicies" : [ "internal.ReadCatalog" ],
+  "description" : "Privilege check for 'Reader' on '$SCOPES' was conditional.",
+  "action" : "Reader",
+  "resource" : "$SCOPES",
+  "result" : "CONDITIONAL",
+  "dcn" : "Genre ['Fantasy', 'Fairy Tale', 'Mystery'] AND stock < 30",
+  "input" : { },
+  "defaultInput" : { }
+}
 ```
 
 :::
