@@ -132,7 +132,7 @@ You should see debug output like this that shows how the list of policies for an
 ```
 
 ```text [Java]
-[main] DEBUG c.s.c.s.a.c.IasAuthorizationsProvider -- User with scim_id mock/stock-manager-fiction in tenant null has the following assigned policies: [local.StockManagerFiction]
+[main] DEBUG c.s.c.s.a.c.IasAuthorizationsProvider -- User with scim_id 7c1d5056-b334-44ab-b2e1-14afba1f3b8b in tenant 93127375-beab-43c7-b5a8-c1bc2265997d has the following assigned policies: [local.JuniorReader]
 ```
 :::
 
