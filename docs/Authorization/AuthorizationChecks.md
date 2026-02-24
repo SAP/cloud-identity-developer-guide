@@ -202,18 +202,18 @@ if (decision.isGranted()) {
 }
 ```
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#has-user-read-access-to-salesorders-resource-with-countrycode-de-and-salesorder-type-4711)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#decision)
 :::
 
 ### Checking Authorizations with variable attributes
 
-When the values of attributes relevant for the authorization check are part of the entities to be protected, the authorization check can still be performed.
-In this case, the decision resulting from the authorization check becomes conditional.
-Depending on the data storage used by the application, the actual attribute values can be applied later when querying the data.
-The application has two options:
+When the values of the relevant attributes cannot be provided as part of the authorization check, the authorization check can still be performed.
+In this case, the decision resulting from the authorization check is typically conditional - unless a policy explicitly grants unrestricted or fully restricted access based on these attributes.
 
-1. Loop over all entities and check access for each instance individually.
-2. Delegate the filtering process, e.g., by using a database query based on the conditional decision.
+The application has two options to handle conditional decisions:
+
+1. Loop over each entity instance individually, apply the entity's attribute values to the decision and check whether the access is granted.
+2. Delegate the filtering process to the data retrieval, e.g., to a database query based on the conditional decision.
 
 ##### Looping
 The first option is easier to implement and is fine when only a few instances are involved:
@@ -247,8 +247,8 @@ List<Map<String, Product>> catalog = List.of(
 
 List<Product> accessibleProducts = 
     catalog.stream()
-    .filter(product -> authorizations.checkPrivilege("read", "products",
-            Map.of("$app.category", product.getCategory())
+    .filter(product -> decision.apply(
+        Map.of(AttributeName.of("category"), product.getCategory())
     ).isGranted())
     .collect(Collectors.toList());
 ```
