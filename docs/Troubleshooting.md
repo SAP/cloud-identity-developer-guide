@@ -132,7 +132,7 @@ You should see debug output like this that shows how the list of policies for an
 ```
 
 ```text [Java]
-An example for debug log output in Java is coming soon.
+[main] DEBUG c.s.c.s.a.c.IasAuthorizationsProvider -- User with scim_id mock/stock-manager-fiction in tenant null has the following assigned policies: [local.StockManagerFiction]
 ```
 :::
 
