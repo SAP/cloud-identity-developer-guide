@@ -53,11 +53,11 @@ Typically, for each request, a new `Authorizations` object is created after auth
 In CAP Applications, the `AmsCapAuthorizations` interface is used instead. It extends the standard `Authorizations` interface with CAP-specific methods for role-based authorization checks which delegate internally to an `Authorizations` object.
 :::
 
-### AuthProvider
+### AuthorizationProvider
 
-To access the `Authorizations` object for the current request, an `AuthProvider` is used. It determines which policies apply and provides default values for authorization attributes such as `$user.email`. Typically, the `Authorizations` are built from the thread-local security context after authentication.
+To access the `Authorizations` object for the current request, an `AuthorizationProvider` is used. It determines which policies apply and provides default values for authorization attributes such as `$user.email`. Typically, the `Authorizations` are built from the thread-local security context after authentication.
 
-For the standard SAP BTP security service offerings, use the built-in `AuthProvider` implementations.
+For the standard SAP BTP security service offerings, use the built-in `AuthorizationProvider` implementations.
 They implement the recommended authorization strategies, including advanced scenarios like inbound request flows from external applications.
 
 - **`IdentityServiceAuthProvider`** (recommended default): Derives authorizations from SAP Identity Service security context
