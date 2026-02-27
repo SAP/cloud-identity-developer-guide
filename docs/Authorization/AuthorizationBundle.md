@@ -1,8 +1,8 @@
 # Authorization Bundle
 
-The *Authorization Bundle* is a container for [authorization policies](#authorization-policies) that sets the context for authorization checks in an application. Bundles are compiled centrally by the Authorization Management Service (**AMS**) from where client applications download the bundle of their respective AMS service instance to perform authorization checks.
+The *Authorization Bundle* is a container for [authorization policies](#authorization-policies) that sets the context for authorization checks in an application. Bundles are compiled centrally by the Authorization Management Service (**AMS**) from where client applications download the bundle of their respective [AMS service instance](/Authorization/GettingStarted#provisioning-of-ams-instances) to perform authorization checks.
 
-The bundle contains both the authorization policies defined as part of the application and the policies created by administrators at runtime. For this reason, clients regularly poll for changes to keep the local copy up to date when administrators make changes (see [Client Library Initialization](#client-library-initialization)).
+The bundle contains both the authorization policies defined as part of the application's source code as well as the policies created by administrators at runtime. For this reason, clients regularly poll for changes to keep the local copy up to date when administrators make changes (see [Client Library Initialization](#client-library-initialization)).
 
 ## Authorization Policies
 
@@ -72,18 +72,18 @@ ServiceBinding identityServiceBinding = DefaultServiceBindingAccessor
 :::
 
 ::: danger Important
-After creating the `AuthorizationManagementService` instance, the application must ensure with a [startup check](#startup-check) that the instance is ready before serving requests that require authorization checks.
+After creating the `AuthorizationManagementService` instance, the application must ensure with a [startup check](#startup-check) that the instance is ready before accepting traffic that requires authorization checks.
 :::
 
 ::: tip
-The AMS client libraries integrate into different web frameworks, such as [CAP](https://cap.cloud.sap/docs/) or [Spring Security](https://spring.io/projects/spring-security). The respective [Spring Boot starters](#getting-started) automatically create the `AuthorizationManagementService` instance from the SCI service binding in the application's environment, so manual initialization is not required in these cases.
+The AMS client libraries integrate into different web frameworks, such as [CAP](https://cap.cloud.sap/docs/) or [Spring Security](https://spring.io/projects/spring-security). The respective [Spring Boot starters](/Authorization/GettingStarted#java) and [Node.js CAP plugin](/Authorization/GettingStarted#node-js) automatically create the `AuthorizationManagementService` instance from the SCI service binding in the application's environment, so manual initialization is not required in these cases.
 :::
 
 ##  Startup Check
 
-While it is possible to delay application startup until the AMS module becomes ready, we recommend including AMS in the application's readiness probes. This allows the application process to become healthy for the cloud platform but prevent traffic from being routed to the process until the AMS module is ready to serve authorization checks. 
+While it is possible to synchronously block application startup until the AMS module becomes ready, we recommend including AMS in the application's **readiness probes**. This allows the application process to become healthy for the cloud platform but prevent traffic from being routed to the process until the AMS module is ready to serve authorization checks. 
 
-If an application does not provide readiness probes, it can alternatively include the AMS readiness state in its health endpoint.
+If an application does not provide readiness probes, it can alternatively include the AMS readiness state in its **health endpoint**.
 
 ::: code-group
 ```js [Node.js (CAP)]
@@ -93,12 +93,12 @@ const { amsCapPluginRuntime } = require("@sap/ams");
 
 cds.on('served', async () => {
     // effectively a synchronous startup check that prevents the server
-    // from serving requests for up to 5s before throwing an error
-    await amsCapPluginRuntime.ams.whenReady(5);
+    // from serving requests for up to 30s before throwing an error
+    await amsCapPluginRuntime.ams.whenReady(30);
     console.log("AMS has become ready.");
 });
 
-// *or*: use amsCapPluginRuntime.ams.isReady() in health or readiness endpoint
+// *better*: use amsCapPluginRuntime.ams.isReady() in health or readiness endpoint
 ```
 
 ```js [Node.js]
@@ -167,6 +167,7 @@ ams.whenReady().orTimeout(30, TimeUnit.SECONDS).thenRun(() -> {
 // AmsReadinessContributor bean. It autowires an AuthorizationManagementService
 // instance and uses AvailabilityChangeEvent.publish
 // to integrate its readiness state with Spring Boot's availability state.
+// The AMS readiness starter is included transitively in the AMS Spring Boot starter.
 ```
 
 ```java [Spring Boot Health Actuator]
@@ -175,6 +176,7 @@ ams.whenReady().orTimeout(30, TimeUnit.SECONDS).thenRun(() -> {
 // Spring Boot Actuator health endpoint. It autowires an
 // AuthorizationManagementService instance and includes its readiness state
 // in the health status.
+// The AMS health starter is NOT included transitively in the AMS Spring Boot starter.
 ```
 
 :::
