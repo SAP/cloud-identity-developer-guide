@@ -1,6 +1,7 @@
 # Authorization Checks
 
-In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (**AMS**).
+In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (**AMS
+**).
 
 ::: tip
 In CAP applications, it's typically not necessary to implement authorization checks programmatically. Instead,
@@ -64,12 +65,13 @@ interface with additional CAP-specific methods for role-based authorization chec
 `Authorizations` object.
 :::
 
-### AuthorizationProvider
+## AuthorizationsProvider
 
 To create and access the `Authorizations` object for the current request, an `AuthorizationsProvider` is used. It
-determines which policies apply and provides default values for authorization attributes of the principal such as `$user.email`.
+determines which policies apply and provides default values for authorization attributes of the principal such as
+`$user.email`.
 
-::: tip Standard implementations
+::: warning Standard implementations
 For the standard SAP BTP security service offerings, we highly recommend using the built-in `AuthorizationsProvider`
 implementations.
 They implement the officially recommended authorization strategies correctly, including more complex scenarios like
@@ -78,115 +80,237 @@ When internals change, these implementations will be patched in a backward-compa
 streamlined, well-tested implementation.
 :::
 
-- **`IasAuthorizationsProvider`/`IdentityServiceAuthProvider`** (recommended default): Derives authorizations from SAP
-  Identity Service token principals. This is the recommended default for applications using SAP Cloud Identity Services
-  for authentication.
-- **`HybridAuthorizationsProvider`/`HybridAuthProvider`**: This is the recommended default for applications that have
-  migrated from XSUAA to AMS. It is a `IasAuthorizationsProvider`/`IdentityServiceAuthProvider` with additional support
-  for XSUAA tokens. It must be configured with a mapping of XSUAA scopes to AMS base policies.
+### IasAuthorizationsProvider
+
+The `IasAuthorizationsProvider` (Node.js: `IdentityServiceAuthProvider`) is the recommended default for applications
+using SAP Cloud Identity Services for authentication. It derives authorizations from SAP Identity Service token
+principals.
 
 ::: code-group
 
 ```js [Node.js]
-const {IdentityServiceAuthProvider, HybridAuthProvider} = require('@sap/ams');
+const {IdentityServiceAuthProvider} = require('@sap/ams');
 
 const authProvider = new IdentityServiceAuthProvider(ams);
+```
 
-// or for migrated XSUAA applications:
+```java [Java]
+import com.sap.cloud.security.ams.core.IasAuthorizationsProvider;
+
+IasAuthorizationsProvider<Authorizations> authProvider
+        = IasAuthorizationsProvider.create(ams);
+```
+
+:::
+
+The `IasAuthorizationsProvider` combines authorizations from two sources:
+
+- **User Authorizations**: Policies assigned to the authenticated user in the SAP Cloud Identity Services directory.
+- **Client Authorizations**: Policies derived from technical communication scenarios (e.g., consumed App-to-App APIs,
+  BTP service plans).
+
+By default*, the authorizations of these two layers are combined as follows:
+
+| User Authorizations | Client Authorizations | Result                                                                     |
+|---------------------|-----------------------|----------------------------------------------------------------------------|
+| present             | null                  | User authorizations are used directly (e.g. named user token)              |
+| null                | present               | Client authorizations are used directly (e.g. technical user token)        |
+| present             | present               | Logical intersection of both is granted (e.g. principal propagation token) |
+| null                | null                  | Fully denied, empty authorizations (unexpected scenario)                   |
+
+\* *In the future, it might be possible to explicitly decide
+for [principal propagation tokens](/Authorization/TechnicalCommunication) how the authorizations
+should be enforced with a configuration property of the App-to-App dependency. In that case, this default logic
+would be overridden based on this information in the token.*
+
+**Example**:
+
+Consider an authorization check with [conditional policies](#conditional-policies).
+
+| User Authorizations      | Client Authorizations    | Effective Condition                                      |
+|--------------------------|--------------------------|----------------------------------------------------------|
+| `category = 'Equipment'` | null                     | `category = 'Equipment'`                                 |
+| null                     | `category = 'Equipment'` | `category = 'Equipment'`                                 |
+| `category = 'Equipment'` | `price < 100`            | `category = 'Equipment' AND price < 100`                 |
+| null                     | null                     | Fully denied, empty authorizations (unexpected scenario) 
+
+#### Customization
+
+`IasAuthorizationsProvider` supports customization through configuration methods and method overriding.
+
+The current configuration methods are for [Technical Communication](/Authorization/TechnicalCommunication). They are
+described on that page in detail.
+
+##### Overriding Methods
+
+You can override the `getUserAuthorizations`,
+`getClientAuthorizations` and the methods for building default input for authorization checks if necessary.
+
+**Example: Customizing Default Input for Authorization Checks**
+
+In this example, we override `getDefaultInput` to include a custom user attribute (`$user.division`) from a token
+claim that is not included by default:
+
+::: code-group
+
+```js [Node.js]
+class CustomAuthProvider extends IdentityServiceAuthProvider {
+    /**
+     * @param {import("@sap/xssec").IdentityServiceSecurityContext} securityContext
+     */
+    getInput(securityContext) {
+        const defaultInput = super.getInput(securityContext);
+
+        const division = securityContext.token.payload.division;
+        if (division) {
+            defaultInput["$user.division"] = division;
+        }
+
+        return defaultInput;
+    }
+}
+```
+
+```java [Java]
+import com.sap.cloud.security.ams.core.IasAuthorizationsProvider;
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.api.expression.AttributeName;
+
+import java.util.Map;
+
+public class CustomAuthorizationsProvider extends IasAuthorizationsProvider<Authorizations> {
+
+    private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
+
+    public CustomAuthorizationsProvider(AuthorizationManagementService ams) {
+        super(ams, AuthorizationsAdapter::identity);
+    }
+
+    @Override
+    protected Map<AttributeName, Object> getDefaultInput(Principal principal) {
+        Map<AttributeName, Object> defaultInput = super.getDefaultInput(principal);
+
+        principal.getClaimAsString("division")
+                .ifPresent(division -> defaultInput.put($USER_DIVISION, division));
+
+        return defaultInput;
+    }
+}
+```
+
+:::
+
+### HybridAuthorizationsProvider
+
+The `HybridAuthorizationsProvider` (Node.js: `HybridAuthProvider`) is recommended for applications that have migrated
+from XSUAA to AMS. It extends `IasAuthorizationsProvider` with additional support for XSUAA tokens by mapping XSUAA
+scopes to AMS base policies.
+
+**Scope to Policy Mapping**
+
+When an XSUAA token is received, the provider extracts scopes from the token and maps them to AMS policies using a
+configured `ScopeMapper`. Relevant scopes are typically prefixed with the application's `xsappname`
+(e.g., `na-foobar!t4711`) in the token.
+
+**Example Mapping** (xsappname: `na-foobar!t4711`)
+
+| Scope in Token                  | Mapped Policy                                          |
+|---------------------------------|--------------------------------------------------------|
+| `na-foobar!t4711.ProductReader` | `shopping.ReadProducts`                                |
+| `na-foobar!t4711.ProductAdmin`  | `shopping.ReadProducts`, `shopping.WriteProducts`      |
+| `openid`                        | *(no policy - generic scope without xsappname prefix)* |
+| `na-foobar!t4711.UnknownScope`  | *(no policy - not in mapping)*                         |
+
+::: code-group
+
+```js [Node.js]
+const {HybridAuthProvider} = require('@sap/ams');
+
 const scopeToPolicyMapper = (scope) => {
     const scopeToPoliciesMap = {
-        'ProductReader': ['shopping.ReadProducts'],
-        'Customer': ['shopping.ReadProducts', 'shopping.CreateOrders']
+        'na-foobar!t4711.ProductReader': ['shopping.ReadProducts'],
+        'na-foobar!t4711.ProductAdmin': ['shopping.ReadProducts', 'shopping.WriteProducts'],
     };
     return scopeToPoliciesMap[scope] || [];
 };
+
 const authProvider = new HybridAuthProvider(ams, scopeToPolicyMapper);
 ```
 
 ```java [Java]
 import com.sap.cloud.security.ams.core.HybridAuthorizationsProvider;
-import com.sap.cloud.security.ams.core.IasAuthorizationsProvider;
+import com.sap.cloud.security.ams.api.ScopeMapper;
 import com.sap.cloud.security.ams.dcn.PolicyName;
 
-AuthorizationsProvider authProvider = IasAuthorizationsProvider.create(ams);
-
-// or for migrated XSUAA applications:
 PolicyName READ_PRODUCTS = PolicyName.of("shopping.ReadProducts");
-PolicyName CREATE_ORDERS = PolicyName.of("shopping.CreateOrders");
+PolicyName WRITE_PRODUCTS = PolicyName.of("shopping.WriteProducts");
 
 Map<String, Set<PolicyName>> scopeToPoliciesMap = Map.of(
         "ProductReader", Set.of(READ_PRODUCTS),
-        "Customer", Set.of(READ_PRODUCTS, CREATE_ORDERS)
+        "ProductAdmin", Set.of(READ_PRODUCTS, WRITE_PRODUCTS)
 );
 
 HybridAuthorizationsProvider<?> authProvider = HybridAuthorizationsProvider
-        .create(
-                ams,
-                ScopeMapper.ofMapMultiple(scopeToPoliciesMap)
-        );
+        .create(ams, ScopeMapper.ofMapMultiple(scopeToPoliciesMap))
+        .withXsAppName("na-foobar!t4711");
 ```
 
 :::
 
-### AuthorizationsProvider Customization
+### Custom Implementation
 
-When you
+If necessary, you can also implement a custom `AuthorizationsProvider` with your own logic for determining which policies apply:
 
-Alternatively, you can implement a custom `AuthProvider`, e.g. to derive applicable policies from additional sources.
+::: code-group
 
-<details>
-<summary> Custom AuthProviders</summary>
+```js [Node.js (Typescript)]
+import { Authorizations, Types, XssecAuthProvider } from "@sap/ams";
+import { SecurityContext, Service, Token, XsuaaSecurityContext } from "@sap/xssec";
 
-**Customizing standard AuthProviders:**
+class XsuaaAuthProvider
+    extends XssecAuthProvider<SecurityContext<Service, Token>>
+    implements XssecAuthProvider<XsuaaSecurityContext>{
 
-You can extend the built-in `AuthProvider` implementations to customize the behavior, e.g., to apply more than those
-policies which are assigned to users in the user directory:
-
-```java
-public class CustomIdentityServiceAuthProvider extends IdentityServiceAuthProvider {
-    public CustomIdentityServiceAuthProvider(AuthorizationManagementService ams) {
-        super(ams);
+    getAuthorizations(securityContext: XsuaaSecurityContext): Promise<Authorizations> {
+        throw new Error("Method not implemented.");
     }
-
-    @Override
-    protected Authorizations getUserAuthorizations(SapIdToken token) {
-        Authorizations authorizations = super.getUserAuthorizations(token);
-
-        Set<String> policies = new HashSet<>(authorizations.getPolicies());
-        policies.addAll(/* add policies from other sources for this user */);
-        authorizations.setPolicies(policies);
-
-        return authorizations;
+    getInput(securityContext: XsuaaSecurityContext): Types.AttributeInput {
+        throw new Error("Method not implemented.");
+    }
+    supportsSecurityContext(securityContext: XsuaaSecurityContext): void {
+        throw new Error("Method not implemented.");
     }
 }
-
-AuthProvider authProvider = new CustomIdentityServiceAuthProvider(ams);
 ```
 
-**Custom AuthProvider implementation:**
+```java [Java]
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.dcn.PolicyName;
 
-You can also implement a custom `AuthProvider` with your own logic for determining which policies apply:
-
-```java
-public class CustomAuthProvider implements AuthProvider {
+public class CustomAuthorizationsProvider implements AuthorizationsProvider<Authorizations> {
     private final AuthorizationManagementService ams;
 
-    public CustomAuthProvider(AuthorizationManagementService ams) {
+    public CustomAuthorizationsProvider(AuthorizationManagementService ams) {
         this.ams = ams;
     }
 
     @Override
-    public Authorizations getAuthorizations() {
+    public Authorizations getAuthorizations(Principal principal) {
         // Custom logic to determine which policies apply
-        Set<String> policies = determinePoliciesFromContext();
+        Set<PolicyName> policies = determinePoliciesFromContext(principal);
         return ams.getAuthorizations(policies);
+    }
+
+    private Set<PolicyName> determinePoliciesFromContext(Principal principal) {
+        // Your custom policy resolution logic here
+        return Set.of(PolicyName.of("myapp.DefaultPolicy"));
     }
 }
 
-AuthProvider authProvider = new CustomAuthProvider(ams);
+AuthorizationsProvider<?> authProvider = new CustomAuthorizationsProvider(ams);
 ```
 
-</details>
+:::
 
 ## Conditional Policies
 
