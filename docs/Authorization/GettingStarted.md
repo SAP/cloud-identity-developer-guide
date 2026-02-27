@@ -1,9 +1,27 @@
 # Getting Started
 
-This document provides the basic information required to use Authorization Management Service (**AMS**) for authorization checks in your application. It provides an overview of the available library modules, their features, and how to integrate them into your projects.
+This document provides the basic information required to use Authorization Management Service (**AMS**) for authorization checks in your application.
 
+## Provisioning of AMS instances
+
+AMS instances can be provisioned as part of the SAP BTP service offering for the SAP Cloud Identity Services (**SCI**). For each SCI service instance that is created, the service configuration decides whether an AMS instance is provisioned or not. This is controlled with the `authorization` property in the service configuration:
+
+```yml [mta.yaml]
+resources:
+  - name: ams-cap-nodejs-bookshop-ias
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: identity
+      service-name: ams-cap-nodejs-bookshop-ias
+      service-plan: application
+      config:
+        authorization: # [!code focus:2]
+          enabled: true
+```
 
 ## Supported Languages and Frameworks
+
+This section provides an overview of the available library modules, their features, and how to integrate them into your projects.
 
 The client libraries of AMS consist of different modules for the following programming languages and frameworks:
 
