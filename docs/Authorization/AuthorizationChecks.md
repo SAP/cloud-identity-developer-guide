@@ -1,7 +1,6 @@
 # Authorization Checks
 
-In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (**AMS
-**).
+In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (**AMS**).
 
 ::: tip
 In CAP applications, it's typically not necessary to implement authorization checks programmatically. Instead,
