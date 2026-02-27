@@ -3,9 +3,13 @@
 In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (**AMS**).
 
 ::: tip
-In CAP applications, it's typically not necessary to implement authorization checks programmatically. Instead, authorization requirements are [declared](#declarative-authorization-checks) via [annotations](https://cap.cloud.sap/docs/guides/security/authorization#requires). The AMS modules perform the resulting authorization checks dynamically for the application.
+In CAP applications, it's typically not necessary to implement authorization checks programmatically. Instead,
+authorization requirements are [declared](#declarative-authorization-checks)
+via [annotations](https://cap.cloud.sap/docs/guides/security/authorization#requires). The AMS modules perform the
+resulting authorization checks dynamically for the application.
 
-Since CAP has role-based authorization, authorization policies and authorization checks in CAP follow a [*role-based*](/CAP/Basics#role-policies) paradigm instead of the standard *action*/*resource* paradigm documented below.
+Since CAP has role-based authorization, authorization policies and authorization checks in CAP follow a [
+*role-based*](/CAP/Basics#role-policies) paradigm instead of the standard *action*/*resource* paradigm documented below.
 :::
 
 ## Actions and Resources
@@ -18,12 +22,14 @@ POLICY ReadProducts {
 }
 ```
 
-Therefore, a typical authorization check answers the question whether a user is allowed to perform a specific action on a specific resource, for example, whether a user is allowed to read products.
+Therefore, a typical authorization check answers the question whether a user is allowed to perform a specific action on
+a specific resource, for example, whether a user is allowed to read products.
 
 ::: code-group
+
 ```js [Node.js]
 const decision = authorizations.checkPrivilege('read', 'products');
-if(decision.isGranted()) {
+if (decision.isGranted()) {
     // user is allowed to read products
 } else {
     // user is not allowed to read products
@@ -32,41 +38,57 @@ if(decision.isGranted()) {
 
 ```java [Java]
 Decision decision = authorizations.checkPrivilege("read", "products");
-if(decision.isGranted()) {
-    // user is allowed to read products
-} else {
-    // user is not allowed to read products
-}
-```
+if(decision.
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#authorization-checks) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#authorization-checks)
+isGranted()){
+        // user is allowed to read products
+        }else{
+        // user is not allowed to read products
+        }
+```
 
 :::
 
 ## Authorizations
 
-Authorization checks are performed with an `Authorizations` object. It represents the set of authorization policies applicable for the current request and -in more complex scenarios- how to apply them.
+Authorization checks are performed with an `Authorizations` object. It represents the set of authorization policies
+applicable for the current request and -in more complex authentication scenarios- how to combine authorizations from
+different layers (user, technical client, etc.).
 
-Typically, for each request, a new `Authorizations` object is created after authentication which can be used for one or many authorization checks during the request processing.
+The `Authorizations` are built **once per request** after authentication and then used for all authorization checks
+performed in this request context.
 
-::: tip AmsCapAuthorizations
-In CAP Applications, the `AmsCapAuthorizations` interface is used instead. It extends the standard `Authorizations` interface with CAP-specific methods for role-based authorization checks which delegate internally to an `Authorizations` object.
+::: tip CdsAuthorizations
+In CAP Applications, the `CdsAuthorizations` interface is used instead. It decorates the standard `Authorizations`
+interface with additional CAP-specific methods for role-based authorization checks which delegate internally to an
+`Authorizations` object.
 :::
 
 ### AuthorizationProvider
 
-To access the `Authorizations` object for the current request, an `AuthorizationProvider` is used. It determines which policies apply and provides default values for authorization attributes such as `$user.email`. Typically, the `Authorizations` are built from the thread-local security context after authentication.
+To create and access the `Authorizations` object for the current request, an `AuthorizationsProvider` is used. It
+determines which policies apply and provides default values for authorization attributes of the principal such as `$user.email`.
 
-For the standard SAP BTP security service offerings, use the built-in `AuthorizationProvider` implementations.
-They implement the recommended authorization strategies, including advanced scenarios like inbound request flows from external applications.
+::: tip Standard implementations
+For the standard SAP BTP security service offerings, we highly recommend using the built-in `AuthorizationsProvider`
+implementations.
+They implement the officially recommended authorization strategies correctly, including more complex scenarios like
+inbound request flows from external applications.
+When internals change, these implementations will be patched in a backward-compatible way to ensure applications share a
+streamlined, well-tested implementation.
+:::
 
-- **`IdentityServiceAuthProvider`** (recommended default): Derives authorizations from SAP Identity Service security context
-- **`HybridAuthProvider`**: For applications that have migrated from XSUAA to AMS - extends `IdentityServiceAuthProvider`, allows the mapping of scopes from XSUAA security contexts to base policies in AMS
+- **`IasAuthorizationsProvider`/`IdentityServiceAuthProvider`** (recommended default): Derives authorizations from SAP
+  Identity Service token principals. This is the recommended default for applications using SAP Cloud Identity Services
+  for authentication.
+- **`HybridAuthorizationsProvider`/`HybridAuthProvider`**: This is the recommended default for applications that have
+  migrated from XSUAA to AMS. It is a `IasAuthorizationsProvider`/`IdentityServiceAuthProvider` with additional support
+  for XSUAA tokens. It must be configured with a mapping of XSUAA scopes to AMS base policies.
 
 ::: code-group
 
 ```js [Node.js]
-const { IdentityServiceAuthProvider, HybridAuthProvider } = require('@sap/ams');
+const {IdentityServiceAuthProvider, HybridAuthProvider} = require('@sap/ams');
 
 const authProvider = new IdentityServiceAuthProvider(ams);
 
@@ -82,23 +104,33 @@ const authProvider = new HybridAuthProvider(ams, scopeToPolicyMapper);
 ```
 
 ```java [Java]
-import com.sap.cloud.security.ams.core.*;
+import com.sap.cloud.security.ams.core.HybridAuthorizationsProvider;
+import com.sap.cloud.security.ams.core.IasAuthorizationsProvider;
+import com.sap.cloud.security.ams.dcn.PolicyName;
 
-AuthProvider authProvider = new IdentityServiceAuthProvider(ams);
+AuthorizationsProvider authProvider = IasAuthorizationsProvider.create(ams);
 
 // or for migrated XSUAA applications:
-Map<String, Set<String>> scopeToPoliciesMap = Map.of(
-    "ProductReader", Set.of("shopping.ReadProducts"),
-    "Customer", Set.of("shopping.ReadProducts", "shopping.CreateOrders")
+PolicyName READ_PRODUCTS = PolicyName.of("shopping.ReadProducts");
+PolicyName CREATE_ORDERS = PolicyName.of("shopping.CreateOrders");
+
+Map<String, Set<PolicyName>> scopeToPoliciesMap = Map.of(
+        "ProductReader", Set.of(READ_PRODUCTS),
+        "Customer", Set.of(READ_PRODUCTS, CREATE_ORDERS)
 );
 
-HybridAuthProvider authProvider = new HybridAuthProvider(
-    ams,
-    ScopeMapper.ofMapMultiple(scopeToPoliciesMap)
-);
+HybridAuthorizationsProvider<?> authProvider = HybridAuthorizationsProvider
+        .create(
+                ams,
+                ScopeMapper.ofMapMultiple(scopeToPoliciesMap)
+        );
 ```
 
 :::
+
+### AuthorizationsProvider Customization
+
+When you
 
 Alternatively, you can implement a custom `AuthProvider`, e.g. to derive applicable policies from additional sources.
 
@@ -107,14 +139,15 @@ Alternatively, you can implement a custom `AuthProvider`, e.g. to derive applica
 
 **Customizing standard AuthProviders:**
 
-You can extend the built-in `AuthProvider` implementations to customize the behavior, e.g., to apply more than those policies which are assigned to users in the user directory:
+You can extend the built-in `AuthProvider` implementations to customize the behavior, e.g., to apply more than those
+policies which are assigned to users in the user directory:
 
 ```java
 public class CustomIdentityServiceAuthProvider extends IdentityServiceAuthProvider {
     public CustomIdentityServiceAuthProvider(AuthorizationManagementService ams) {
         super(ams);
     }
-    
+
     @Override
     protected Authorizations getUserAuthorizations(SapIdToken token) {
         Authorizations authorizations = super.getUserAuthorizations(token);
@@ -137,11 +170,11 @@ You can also implement a custom `AuthProvider` with your own logic for determini
 ```java
 public class CustomAuthProvider implements AuthProvider {
     private final AuthorizationManagementService ams;
-    
+
     public CustomAuthProvider(AuthorizationManagementService ams) {
         this.ams = ams;
     }
-    
+
     @Override
     public Authorizations getAuthorizations() {
         // Custom logic to determine which policies apply
@@ -160,7 +193,8 @@ AuthProvider authProvider = new CustomAuthProvider(ams);
 Grants of authorization policies can be made conditional on dynamic data.
 After declaring relevant attributes in a schema, policies can reference those in where-conditions.
 This is usually used to filter the entities of a resource on which the action is allowed.
-However, conditions may also be based on other data in the context of the authorization check, e.g. a specific user property.
+However, conditions may also be based on other data in the context of the authorization check, e.g. a specific user
+property.
 
 **Example** A policy can grant the right to read products only from a specific category:
 
@@ -182,9 +216,10 @@ In this case, those attribute values can be provided as part of the authorizatio
 **Example** The check should be performed for a particular product category:
 
 ::: code-group
+
 ```js [Node.js]
 const decision = authorizations.checkPrivilege(
-    'read', 'products', { category: 'Equipment' });
+    'read', 'products', {category: 'Equipment'});
 if (decision.isGranted()) {
     // user is allowed to read products in the 'Equipment' category
 } else {
@@ -194,12 +229,14 @@ if (decision.isGranted()) {
 
 ```java [Java]
 Decision decision = authorizations.checkPrivilege(
-    "read", "products", Map.of("category", "Equipment"));
-if (decision.isGranted()) {
-    // user is allowed to read products in the 'Equipment' category
-} else {
-    // user is not allowed to read products in the 'Equipment' category
-}
+        "read", "products", Map.of("category", "Equipment"));
+if(decision.
+
+isGranted()){
+        // user is allowed to read products in the 'Equipment' category
+        }else{
+        // user is not allowed to read products in the 'Equipment' category
+        }
 ```
 
 [Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#decision)
@@ -207,93 +244,109 @@ if (decision.isGranted()) {
 
 ### Dynamic Attribute values
 
-When the values of the relevant attributes cannot be provided as part of the authorization check, the authorization check can still be performed.
-In this case, the decision resulting from the authorization check is typically conditional - unless a policy explicitly grants unrestricted or fully restricted access based on these attributes.
+When the values of the relevant attributes cannot be provided as part of the authorization check, the authorization
+check can still be performed.
+In this case, the decision resulting from the authorization check is typically conditional - unless a policy explicitly
+grants unrestricted or fully restricted access based on these attributes.
 
 The application has two options to handle conditional decisions:
 
-1. Loop over each entity instance individually, apply the entity's attribute values to the decision and check whether the access is granted.
+1. Loop over each entity instance individually, apply the entity's attribute values to the decision and check whether
+   the access is granted.
 2. Delegate the filtering process to the data retrieval, e.g., to a database query based on the conditional decision.
 
 ##### Looping
+
 The first option is easier to implement and is fine when only a few instances are involved:
 
 **Example**
 
 ::: code-group
+
 ```js [Node.js]
 const catalog = [
-    { name: 'Notebook', category: 'Equipment' },
-    { name: 'Printer', region: 'Equipment' },
-    { name: 'Toner', region: 'OfficeSupplies' }
+    {name: 'Notebook', category: 'Equipment'},
+    {name: 'Printer', region: 'Equipment'},
+    {name: 'Toner', region: 'OfficeSupplies'}
 ];
 
 const decision = authorizations.checkPrivilege('read', 'products');
-const accessibleProducts = 
+const accessibleProducts =
     catalog
-    .filter(product => {
-        return decision.apply({ 
-            '$app.category' : product.category
-        }).isGranted();
-    });
+        .filter(product => {
+            return decision.apply({
+                '$app.category': product.category
+            }).isGranted();
+        });
 ```
 
 ```java [Java]
 List<Map<String, Product>> catalog = List.of(
-    Product.create("Notebook", "Equipment"),
-    Product.create("Printer", "Equipment"),
-	Product.create("Toner", "OfficeSupplies")
+        Product.create("Notebook", "Equipment"),
+        Product.create("Printer", "Equipment"),
+        Product.create("Toner", "OfficeSupplies")
 );
 
-List<Product> accessibleProducts = 
-    catalog.stream()
-    .filter(product -> decision.apply(
-        Map.of(AttributeName.of("category"), product.getCategory())
-    ).isGranted())
-    .collect(Collectors.toList());
+List<Product> accessibleProducts =
+        catalog.stream()
+                .filter(product -> decision.apply(
+                        Map.of(AttributeName.of("category"), product.getCategory())
+                ).isGranted())
+                .collect(Collectors.toList());
 ```
+
 :::
 
-However, this strategy can lead to performance issues for larger collections, for which thousands of values must be checked individually.
+However, this strategy can lead to performance issues for larger collections, for which thousands of values must be
+checked individually.
 
 ##### Filtering
+
 The second option is to filter the entities before they enter the application.
-This is more efficient because it reduces the number of instances in the application memory to those instances that the user is allowed to access.
-However, this strategy is non-trivial to implement because it requires traversing the condition tree and translating it into a query language expression.
+This is more efficient because it reduces the number of instances in the application memory to those instances that the
+user is allowed to access.
+However, this strategy is non-trivial to implement because it requires traversing the condition tree and translating it
+into a query language expression.
 
 ::: tip CAP Projects
-In CAP projects, this translation is implemented out-of-the-box by the AMS plugins which translate filter conditions imposed by authorization policies to *CQL*/*CXN* expressions.
+In CAP projects, this translation is implemented out-of-the-box by the AMS plugins which translate filter conditions
+imposed by authorization policies to *CQL*/*CXN* expressions.
 :::
 
-For non-CAP projects, we aim to provide extractors for standard query languages. We recommend contacting us for assistance with the existing API or discuss a feature request for missing extractors for your query format.
+For non-CAP projects, we aim to provide extractors for standard query languages. We recommend contacting us for
+assistance with the existing API or discuss a feature request for missing extractors for your query format.
 
 As of today, there is a basic extractor for SQL queries available in the Java AMS library:
 
 ::: code-group
+
 ```java [Java]
 // extractor can be built once per handler
 SqlExtractor sqlExtractor = new SqlExtractor(Map.of(
-    AttributeName.of("category"), "CategoryName")
-);
+                AttributeName.of("category"), "CategoryName")
+        );
 
 Decision decision = authorizations.checkPrivilege("read", "products");
 SqlExtractor.SqlResult sqlCondition = decision.visit(sqlExtractor);
 
 String sqlQuery = String.format("SELECT * FROM Products WHERE %s;",
-    sqlCondition.getSqlTemplate());
+        sqlCondition.getSqlTemplate());
 List<Product> accessibleProducts =
-    db.query(sqlQuery, sqlCondition.getParameters(), Product.class);
+        db.query(sqlQuery, sqlCondition.getParameters(), Product.class);
 ```
 
 ```js [Node.js]
 // Equivalent to Java snippet coming soon
 ```
+
 :::
 
 We can add configuration options and features on request.
 
 ## Declarative Authorization Checks
-Instead of manually implementing authorization checks scattered over the code base, it improves maintainability to declare the required privileges for different parts of the application.
+
+Instead of manually implementing authorization checks scattered over the code base, it improves maintainability to
+declare the required privileges for different parts of the application.
 This can, for example, be done centrally or by using code annotations.
 
 ```dcl
@@ -307,6 +360,7 @@ POLICY OrderOfficeSupplies {
 ```
 
 ::: code-group
+
 ```js [Node.js (express)]
 const app = express();
 app.use(/^\/(?!health).*/i, authenticate, amsMw.authorize());
@@ -324,13 +378,13 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
-            AmsRouteSecurity via) {
+                                           AmsRouteSecurity via) {
         http.authorizeHttpRequests(authz -> authz
                 .requestMatchers(GET, "/products/**")
-                    .access(via.checkPrivilege("read", "products"))
+                .access(via.checkPrivilege("read", "products"))
                 .requestMatchers(POST, "/orders/**")
-                    .access(via.precheckPrivilege("create", "orders")));
-    
+                .access(via.precheckPrivilege("create", "orders")));
+
         return http.build();
     }
 }
@@ -349,17 +403,17 @@ import com.sap.cloud.security.ams.spring.authorization.annotations.PrecheckPrivi
  * @param productCategory the product category (used for authorization)
  * @return the created order
  */
-@CheckPrivilege(action="create", resource="orders")
+@CheckPrivilege(action = "create", resource = "orders")
 public Order createOrder(
-    Product product,
-    int quantity,
-    @AmsAttribute(name="product.category") String productCategory) {
-        if(!Objects.equals(product.getCategory(), productCategory)) {
-            throw new IllegalArgumentException(
+        Product product,
+        int quantity,
+        @AmsAttribute(name = "product.category") String productCategory) {
+    if (!Objects.equals(product.getCategory(), productCategory)) {
+        throw new IllegalArgumentException(
                 "Authorization attribute for product category does not match the product");
-        }
-        
-        // ... create order implementation
+    }
+
+    // ... create order implementation
 }
 ```
 
@@ -386,13 +440,20 @@ service OrderService {
 :::
 
 ### Advantages
+
 Declarative authorization checks have several advantages:
-  - concise syntax
-  - provides central overview of required privileges for different parts of the application
-  - allows changing required privileges without touching the implementation of service handlers
-  - prevents accidental information leaks, for example by returning 404 instead of 403 while fetching database entities to gather information for an authorization check in the service handler
+
+- concise syntax
+- provides central overview of required privileges for different parts of the application
+- allows changing required privileges without touching the implementation of service handlers
+- prevents accidental information leaks, for example by returning 404 instead of 403 while fetching database entities to
+  gather information for an authorization check in the service handler
 
 ### Limitations
+
 ::: warning Conditional Policies with Instance-Based Access
-Not all declaration methods support checks for *action*/*resource* pairs with instance-based access conditions. In this case, they can only be used for pre-checks but the service handler must perform an additional check for the condition. This is because the condition check requires additional attribute input, typically involving information from the database.
+Not all declaration methods support checks for *action*/*resource* pairs with instance-based access conditions. In this
+case, they can only be used for pre-checks but the service handler must perform an additional check for the condition.
+This is because the condition check requires additional attribute input, typically involving information from the
+database.
 :::
