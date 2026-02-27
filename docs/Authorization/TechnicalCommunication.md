@@ -206,7 +206,7 @@ import static com.sap.cloud.security.ams.api.App2AppFlow.RESTRICTED_PRINCIPAL_PR
 import static com.sap.cloud.security.ams.api.App2AppFlow.TECHNICAL_USER;
 
 IdentityServiceAuthProvider authProvider =
-    new IdentityServiceAuthProvider(ams)
+    IdentityServiceAuthProvider.create(ams)
         .withApiMapper(TECHNICAL_USER_API_MAPPER, TECHNICAL_USER)
         .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, RESTRICTED_PRINCIPAL_PROPAGATION);
 ```
