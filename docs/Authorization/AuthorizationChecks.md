@@ -38,16 +38,16 @@ if (decision.isGranted()) {
 
 ```java [Java]
 Decision decision = authorizations.checkPrivilege("read", "products");
-if(decision.
-
-isGranted()){
-        // user is allowed to read products
-        }else{
-        // user is not allowed to read products
-        }
+if(decision.isGranted()){
+    // user is allowed to read products
+} else {
+    // user is not allowed to read products
+}
 ```
 
 :::
+
+Instead of checking a single action on a single resource, we can also query AMS for a [list of action/resource privileges](#querying-potential-privileges) that are granted to the user.
 
 ## Authorizations
 
@@ -579,4 +579,104 @@ Not all declaration methods support checks for *action*/*resource* pairs with in
 case, they can only be used for pre-checks but the service handler must perform an additional check for the condition.
 This is because the condition check requires additional attribute input, typically involving information from the
 database.
+:::
+
+## Querying Potential Privileges
+
+In addition to checking specific privileges, applications can query which actions, resources, or privileges are granted to the user. These methods are useful for **pre-checks**, such as determining which UI elements to display to a user before they attempt an action.
+
+::: warning Conditions are Ignored
+These methods ignore any conditions on grants during evaluation. The returned actions, resources, or privileges may still depend on conditions, and an additional `checkPrivilege` call **must** be performed before actually allowing the action on the resource.
+:::
+
+### getPotentialResources
+
+Collects all resources for which at least one action is potentially granted:
+
+::: code-group
+
+```js [Node.js]
+const potentialResources = authorizations.getPotentialResources();
+// Returns: Set<string>, e.g., Set { 'products', 'orders', 'customers' }
+
+for (const resource of potentialResources) {
+    console.log(`User may have access to: ${resource}`);
+}
+```
+
+```java [Java]
+Set<String> potentialResources = authorizations.getPotentialResources();
+// Returns: Set<String>, e.g., ["products", "orders", "customers"]
+
+for (String resource : potentialResources) {
+    System.out.println("User may have access to: " + resource);
+}
+```
+
+:::
+
+### getPotentialActions
+
+Collects all actions that are potentially granted for a given resource:
+
+::: code-group
+
+```js [Node.js]
+const potentialActions = authorizations.getPotentialActions('products');
+// Returns: Set<string>, e.g., Set { 'read', 'create', 'update' }
+
+if (potentialActions.has('delete')) {
+    // Show delete button in UI
+}
+```
+
+```java [Java]
+Set<String> potentialActions = authorizations.getPotentialActions("products");
+// Returns: Set<String>, e.g., ["read", "create", "update"]
+
+if (potentialActions.contains("delete")) {
+    // Show delete button in UI
+}
+```
+
+:::
+
+### getPotentialPrivileges
+
+Collects all action/resource combinations that are potentially granted:
+
+::: code-group
+
+```js [Node.js]
+const potentialPrivileges = authorizations.getPotentialPrivileges();
+// Returns: Array<{action: string, resource: string}>
+// e.g., [{ action: 'read', resource: 'products' }, { action: 'create', resource: 'orders' }]
+
+for (const privilege of potentialPrivileges) {
+    console.log(`User may: ${privilege.action} on ${privilege.resource}`);
+}
+```
+
+```java [Java]
+Set<Privilege> potentialPrivileges = authorizations.getPotentialPrivileges();
+// Returns: Set<Privilege>
+// e.g., [Privilege("read", "products"), Privilege("create", "orders")]
+
+for (Privilege privilege : potentialPrivileges) {
+    System.out.println("User may: " + privilege.action() + " on " + privilege.resource());
+}
+```
+
+:::
+
+### Use Cases
+
+These methods are particularly useful for:
+
+- **UI Rendering**: Determine which menu items, buttons, or sections to display based on the user's potential authorizations.
+- **Feature Toggles**: Enable or disable features in the UI based on whether the user might have access.
+- **Navigation Guards**: Pre-filter accessible routes or views.
+
+::: tip Remember to Verify
+The results of these methods should only be used for UI hints and pre-checks. Always perform an actual `checkPrivilege` call when the user attempts to execute an action to ensure proper authorization enforcement.
 :::
