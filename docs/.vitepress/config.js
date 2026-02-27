@@ -1,6 +1,6 @@
 import languages from './languages';
-import { defineConfig } from 'vitepress';
-import { withMermaid } from "vitepress-plugin-mermaid";
+import {defineConfig} from 'vitepress';
+import {withMermaid} from "vitepress-plugin-mermaid";
 
 const base = '/cloud-identity-developer-guide/';
 
@@ -22,31 +22,31 @@ export default defineConfig(withMermaid({
             level: [2, 3], // Show both ## and ### headings in the TOC
         },
         nav: [
-            { text: 'Samples', link: '/Samples' },
-            { text: 'Troubleshooting', link: '/Troubleshooting' },
-            { text: 'Support', link: '/Support' }
+            {text: 'Samples', link: '/Samples'},
+            {text: 'Troubleshooting', link: '/Troubleshooting'},
+            {text: 'Support', link: '/Support'}
         ],
         sidebar: [
             {
                 text: 'Authorization',
                 items: [
-                    { text: 'Getting Started', link: '/Authorization/GettingStarted' },
-                    { text: 'Authorization Bundle', link: '/Authorization/AuthorizationBundle' },
-                    { text: 'Authorization Checks', link: '/Authorization/AuthorizationChecks' },
-                    { text: 'Testing', link: '/Authorization/Testing' },
-                    { text: 'Technical Communication', link: '/Authorization/TechnicalCommunication' },
-                    { text: 'Deploying DCL', link: '/Authorization/DeployDCL' },
-                    { text: 'Changing DCL', link: '/Authorization/ChangingDCL' },
-                    { text: 'Value Help', link: '/Authorization/ValueHelp' },
-                    { text: 'Logging', link: '/Authorization/Logging' },
+                    {text: 'Getting Started', link: '/Authorization/GettingStarted'},
+                    {text: 'Authorization Bundle', link: '/Authorization/AuthorizationBundle'},
+                    {text: 'Authorization Checks', link: '/Authorization/AuthorizationChecks'},
+                    {text: 'Testing', link: '/Authorization/Testing'},
+                    {text: 'Technical Communication', link: '/Authorization/TechnicalCommunication'},
+                    {text: 'Deploying DCL', link: '/Authorization/DeployDCL'},
+                    {text: 'Changing DCL', link: '/Authorization/ChangingDCL'},
+                    {text: 'Value Help', link: '/Authorization/ValueHelp'},
+                    {text: 'Logging', link: '/Authorization/Logging'},
                 ]
             },
             {
                 text: 'CAP Authorization',
                 items: [
-                    { text: 'Basics', link: '/CAP/Basics' },
-                    { text: 'Instance-Based Authorization', link: '/CAP/InstanceBasedAuthorization' },
-                    { text: 'CDS Plugin', link: '/CAP/cds-Plugin' }
+                    {text: 'Basics', link: '/CAP/Basics'},
+                    {text: 'Instance-Based Authorization', link: '/CAP/InstanceBasedAuthorization'},
+                    {text: 'CDS Plugin', link: '/CAP/cds-Plugin'}
                 ]
             },
             {
@@ -56,23 +56,24 @@ export default defineConfig(withMermaid({
                         text: 'Java',
                         collapsed: true,
                         items: [
-                            { text: 'jakarta-ams', link: '/Libraries/java/jakarta/jakarta-ams' },
-                            { text: 'spring-ams', link: '/Libraries/java/spring/spring-ams' },
-                            { text: 'cap-ams', link: '/Libraries/java/cap/cap-ams' }
+                            {text: 'ams-core', link: '/Libraries/java/ams-core'},
+                            {text: 'spring-boot-ams', link: '/Libraries/java/spring-boot-ams'},
+                            {text: 'cap-ams', link: '/Libraries/java/cap-ams'}
                         ]
                     },
                     {
                         text: 'Node.js',
                         collapsed: true,
                         items: [
-                            { text: '@sap/ams', link: '/Libraries/nodejs/sap_ams/sap_ams' },
-                            { text: '@sap/ams-dev', link: 'https://www.npmjs.com/package/@sap/ams-dev' }
+                            {text: '@sap/ams', link: '/Libraries/nodejs/sap_ams/sap_ams'},
+                            {text: '@sap/ams-dev', link: 'https://www.npmjs.com/package/@sap/ams-dev'}
                         ]
                     },
-                    { text: 'Go', 
+                    {
+                        text: 'Go',
                         collapsed: true,
                         items: [
-                            { text: 'cloud-identity-authorizations-golang-library', link: '/Libraries/go/go-ams' }
+                            {text: 'cloud-identity-authorizations-golang-library', link: '/Libraries/go/go-ams'}
                         ]
                     }
 
@@ -81,10 +82,10 @@ export default defineConfig(withMermaid({
             {
                 text: 'Resources',
                 items: [
-                    { text: 'Privacy', link: '/resources/Privacy' },
-                    { text: 'Imprint', link: 'https://www.sap.com/about/legal/impressum.html', target: '_blank' },
-                    { text: 'Terms of Use', link: 'https://www.sap.com/about/legal/terms-of-use.html', target: '_blank' },
-                    { text: 'Trademarks', link: 'https://www.sap.com/about/legal/trademark.html', target: '_blank' }
+                    {text: 'Privacy', link: '/resources/Privacy'},
+                    {text: 'Imprint', link: 'https://www.sap.com/about/legal/impressum.html', target: '_blank'},
+                    {text: 'Terms of Use', link: 'https://www.sap.com/about/legal/terms-of-use.html', target: '_blank'},
+                    {text: 'Trademarks', link: 'https://www.sap.com/about/legal/trademark.html', target: '_blank'}
                 ]
             }
         ],
@@ -93,10 +94,10 @@ export default defineConfig(withMermaid({
             copyright: '© 2025-present SAP SE or an SAP affiliate company and cloud-identity-authorizations-libraries contributors'
         },
         socialLinks: [
-            { icon: 'github', link: 'https://github.com/SAP/cloud-identity-authorizations-libraries' },
+            {icon: 'github', link: 'https://github.com/SAP/cloud-identity-authorizations-libraries'},
         ]
     },
     head: [
-        ['link', { rel: 'icon', href: `${base}/favicon.png`, type: 'image/png' }]
+        ['link', {rel: 'icon', href: `${base}/favicon.png`, type: 'image/png'}]
     ]
 }));
