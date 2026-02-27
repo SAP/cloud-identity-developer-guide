@@ -64,6 +64,24 @@ The recommended modules and versions have changed over time (see [Historical Set
 The AMS modules support both Spring Boot 3 and 4.
 :::
 
+##### Maven BOM
+
+Use the `ams-bom` for consistent version management across all AMS modules:
+
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.sap.cloud.security.ams</groupId>
+            <artifactId>ams-bom</artifactId>
+            <version>${sap.cloud.security.ams.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
 ##### Runtime Dependencies
 
 | Project Type      | ams-core | spring-boot-starter-ams | spring-boot-starter-cap-ams |
