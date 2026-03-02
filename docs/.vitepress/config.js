@@ -57,6 +57,7 @@ export default defineConfig(withMermaid({
                         collapsed: true,
                         items: [
                             {text: 'ams-core', link: '/Libraries/java/ams-core'},
+                            {text: 'ams-test', link: '/Libraries/java/ams-test'},
                             {text: 'spring-boot-ams', link: '/Libraries/java/spring-boot-ams'},
                             {text: 'cap-ams', link: '/Libraries/java/cap-ams'}
                         ]

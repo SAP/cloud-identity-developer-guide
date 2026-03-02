@@ -8,6 +8,10 @@ This guide explains how to efficiently test your integration with the Authorizat
 Write tests early to save time and get your AMS setup running quickly. Well-designed tests help you catch issues in your authorization logic **before** deployment.
 :::
 
+::: tip Policy Unit Testing with ams-test (Java)
+For Java applications, you can use the [`ams-test`](/Libraries/java/ams-test) module to write unit tests for individual authorization policies without the overhead of integration tests. This allows you to test your DCL policies directly with different input combinations and verify expected authorization decisions.
+:::
+
 To enhance productivity, tests should be executable locally — without requiring cloud resources or deploying the application. This enables rapid feedback cycles and lets you iterate on your authorization policies and application logic efficiently.
 
 Local tests also make it easy to use a debugger or analyze debug logs without persisting sensitive information to understand unexpected authorization check behavior. This is invaluable for [troubleshooting](/Troubleshooting).
