@@ -1,6 +1,7 @@
 # Authorization Checks
 
-In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (**AMS**).
+In this section, we cover the basic concepts of authorization checks with the Authorization Management Service (**AMS
+**).
 
 ::: tip
 In CAP applications, it's typically not necessary to implement authorization checks programmatically. Instead,
@@ -38,16 +39,19 @@ if (decision.isGranted()) {
 
 ```java [Java]
 Decision decision = authorizations.checkPrivilege("read", "products");
-if(decision.isGranted()){
-    // user is allowed to read products
-} else {
-    // user is not allowed to read products
-}
+if(decision.
+
+isGranted()){
+        // user is allowed to read products
+        }else{
+        // user is not allowed to read products
+        }
 ```
 
 :::
 
-Instead of checking a single action on a single resource, we can also query AMS for a [list of action/resource privileges](#querying-potential-privileges) that are granted to the user.
+Instead of checking a single action on a single resource, we can also query AMS for
+a [list of action/resource privileges](#querying-potential-privileges) that are granted to the user.
 
 ## Authorizations
 
@@ -79,9 +83,9 @@ When internals change, these implementations will be patched in a backward-compa
 streamlined, well-tested implementation.
 :::
 
-### IasAuthorizationsProvider
+### SciAuthorizationsProvider
 
-The `IasAuthorizationsProvider` (Node.js: `IdentityServiceAuthProvider`) is the recommended default for applications
+The `SciAuthorizationsProvider` (Node.js: `IdentityServiceAuthProvider`) is the recommended default for applications
 using SAP Cloud Identity Services for authentication. It derives authorizations from SAP Identity Service token
 principals.
 
@@ -94,15 +98,15 @@ const authProvider = new IdentityServiceAuthProvider(ams);
 ```
 
 ```java [Java]
-import com.sap.cloud.security.ams.core.IasAuthorizationsProvider;
+import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 
-IasAuthorizationsProvider<Authorizations> authProvider
-        = IasAuthorizationsProvider.create(ams);
+SciAuthorizationsProvider<Authorizations> authProvider
+        = SciAuthorizationsProvider.create(ams);
 ```
 
 :::
 
-The `IasAuthorizationsProvider` combines authorizations from two sources:
+The `SciAuthorizationsProvider` combines authorizations from two sources:
 
 - **User Authorizations**: Policies assigned to the authenticated user in the SAP Cloud Identity Services directory.
 - **Client Authorizations**: Policies derived from technical communication scenarios (e.g., consumed App-to-App APIs,
@@ -135,7 +139,7 @@ Consider an authorization check with [conditional policies](#conditional-policie
 
 #### Customization
 
-`IasAuthorizationsProvider` supports customization through configuration methods and method overriding.
+`SciAuthorizationsProvider` supports customization through configuration methods and method overriding.
 
 The current configuration methods are for [Technical Communication](/Authorization/TechnicalCommunication). They are
 described on that page in detail.
@@ -171,13 +175,13 @@ class CustomAuthProvider extends IdentityServiceAuthProvider {
 ```
 
 ```java [Java]
-import com.sap.cloud.security.ams.core.IasAuthorizationsProvider;
+import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 import com.sap.cloud.security.ams.api.*;
 import com.sap.cloud.security.ams.api.expression.AttributeName;
 
 import java.util.Map;
 
-public class CustomAuthorizationsProvider extends IasAuthorizationsProvider<Authorizations> {
+public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Authorizations> {
 
     private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
 
@@ -202,7 +206,7 @@ public class CustomAuthorizationsProvider extends IasAuthorizationsProvider<Auth
 ### HybridAuthorizationsProvider
 
 The `HybridAuthorizationsProvider` (Node.js: `HybridAuthProvider`) is recommended for applications that have migrated
-from XSUAA to AMS. It extends `IasAuthorizationsProvider` with additional support for XSUAA tokens by mapping XSUAA
+from XSUAA to AMS. It extends `SciAuthorizationsProvider` with additional support for XSUAA tokens by mapping XSUAA
 scopes to AMS base policies.
 
 **Scope to Policy Mapping**
@@ -258,17 +262,21 @@ HybridAuthorizationsProvider<?> authProvider = HybridAuthorizationsProvider
 
 ### Custom Implementation
 
-If necessary, you can also implement a custom `AuthorizationsProvider` with your own logic for determining which policies apply:
+If necessary, you can also implement a custom `AuthorizationsProvider` with your own logic for determining which
+policies apply:
 
 ::: code-group
 
 ```js [Node.js (Typescript)]
-import { Authorizations, Types, XssecAuthProvider } from "@sap/ams";
-import { SecurityContext, Service, Token, XsuaaSecurityContext } from "@sap/xssec";
+import {Authorizations, Types, XssecAuthProvider} from "@sap/ams";
+import {SecurityContext, Service, Token, XsuaaSecurityContext} from "@sap/xssec";
 
 class XsuaaAuthProvider
-    extends XssecAuthProvider<SecurityContext<Service, Token>>
-    implements XssecAuthProvider<XsuaaSecurityContext>{
+    extends XssecAuthProvider<SecurityContext<Service, Token
+
+>>
+implements
+XssecAuthProvider < XsuaaSecurityContext > {
 
     getAuthorizations(securityContext: XsuaaSecurityContext): Promise<Authorizations> {
         throw new Error("Method not implemented.");
@@ -583,10 +591,14 @@ database.
 
 ## Querying Potential Privileges
 
-In addition to checking specific privileges, applications can query which actions, resources, or privileges are granted to the user. These methods are useful for **pre-checks**, such as determining which UI elements to display to a user before they attempt an action.
+In addition to checking specific privileges, applications can query which actions, resources, or privileges are granted
+to the user. These methods are useful for **pre-checks**, such as determining which UI elements to display to a user
+before they attempt an action.
 
 ::: warning Conditions are Ignored
-These methods ignore any conditions on grants during evaluation. The returned actions, resources, or privileges may still depend on conditions, and an additional `checkPrivilege` call **must** be performed before actually allowing the action on the resource.
+These methods ignore any conditions on grants during evaluation. The returned actions, resources, or privileges may
+still depend on conditions, and an additional `checkPrivilege` call **must** be performed before actually allowing the
+action on the resource.
 :::
 
 ### getPotentialResources
@@ -608,8 +620,11 @@ for (const resource of potentialResources) {
 Set<String> potentialResources = authorizations.getPotentialResources();
 // Returns: Set<String>, e.g., ["products", "orders", "customers"]
 
-for (String resource : potentialResources) {
-    System.out.println("User may have access to: " + resource);
+for(
+String resource :potentialResources){
+        System.out.
+
+println("User may have access to: "+resource);
 }
 ```
 
@@ -634,9 +649,11 @@ if (potentialActions.has('delete')) {
 Set<String> potentialActions = authorizations.getPotentialActions("products");
 // Returns: Set<String>, e.g., ["read", "create", "update"]
 
-if (potentialActions.contains("delete")) {
-    // Show delete button in UI
-}
+if(potentialActions.
+
+contains("delete")){
+        // Show delete button in UI
+        }
 ```
 
 :::
@@ -662,9 +679,14 @@ Set<Privilege> potentialPrivileges = authorizations.getPotentialPrivileges();
 // Returns: Set<Privilege>
 // e.g., [Privilege("read", "products"), Privilege("create", "orders")]
 
-for (Privilege privilege : potentialPrivileges) {
-    System.out.println("User may: " + privilege.action() + " on " + privilege.resource());
-}
+for(
+Privilege privilege :potentialPrivileges){
+        System.out.
+
+println("User may: "+privilege.action() +" on "+privilege.
+
+resource());
+        }
 ```
 
 :::
@@ -673,10 +695,12 @@ for (Privilege privilege : potentialPrivileges) {
 
 These methods are particularly useful for:
 
-- **UI Rendering**: Determine which menu items, buttons, or sections to display based on the user's potential authorizations.
+- **UI Rendering**: Determine which menu items, buttons, or sections to display based on the user's potential
+  authorizations.
 - **Feature Toggles**: Enable or disable features in the UI based on whether the user might have access.
 - **Navigation Guards**: Pre-filter accessible routes or views.
 
 ::: tip Remember to Verify
-The results of these methods should only be used for UI hints and pre-checks. Always perform an actual `checkPrivilege` call when the user attempts to execute an action to ensure proper authorization enforcement.
+The results of these methods should only be used for UI hints and pre-checks. Always perform an actual `checkPrivilege`
+call when the user attempts to execute an action to ensure proper authorization enforcement.
 :::
