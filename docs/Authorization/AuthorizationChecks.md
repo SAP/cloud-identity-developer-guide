@@ -361,16 +361,12 @@ if (decision.isGranted()) {
 ```java [Java]
 Decision decision = authorizations.checkPrivilege(
         "read", "products", Map.of("category", "Equipment"));
-if(decision.
-
-isGranted()){
-        // user is allowed to read products in the 'Equipment' category
-        }else{
-        // user is not allowed to read products in the 'Equipment' category
-        }
+if(decision.isGranted()){
+    // user is allowed to read products in the 'Equipment' category
+} else{
+    // user is not allowed to read products in the 'Equipment' category
+}
 ```
-
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#handling-decisions) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#decision)
 :::
 
 ### Dynamic Attribute values
@@ -567,7 +563,7 @@ service OrderService {
 }
 ```
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#amsmiddleware) / [Spring Route Security Details](/Libraries/java/spring/spring-ams.md#route-security) / [Spring Method Security Details](/Libraries/java/spring/spring-ams.md#method-security) / [CAP Details](/CAP/Basics)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#amsmiddleware) / [Spring Route Security Details](/Libraries/java/spring-boot-ams#route-level-security) / [Spring Method Security Details](/Libraries/java/spring-boot-ams#method-level-security) / [CAP Details](/CAP/Basics)
 :::
 
 ### Advantages

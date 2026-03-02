@@ -52,7 +52,7 @@ A token refresh is **NOT** necessary after making changes to policy assignments.
 
 #### Authorization bundle issues
 
-- **No authorization data loaded error**: The application must wait for the **[AMS Startup Check](/Authorization/StartupCheck)** before making authorization checks.
+- **No authorization data loaded error**: The application must wait for the **[AMS Startup Check](/Authorization/AuthorizationBundle#startup-check)** before making authorization checks.
 
 ::: warning
 The startup check is also necessary before unit tests that perform authorization checks.

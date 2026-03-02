@@ -149,7 +149,7 @@ public class AmsEventConfiguration {
 ```
 :::
 
-[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#events-logging) / [Java Details](/Libraries/java/jakarta/jakarta-ams.md#logging)
+[Node.js Details](/Libraries/nodejs/sap_ams/sap_ams.md#events-logging) / [Java Details](/Libraries/java/ams-core#events-logging)
 
 
 ### Request correlation

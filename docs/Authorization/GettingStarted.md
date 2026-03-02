@@ -31,8 +31,8 @@ The client libraries of AMS consist of different modules for the following progr
 
 - **Java** (Maven):
     - [ams-core](/Libraries/java/ams-core.md) (Plain Java)
-    - [spring-boot-starter-ams](/Libraries/java/spring-boot-starter-ams.md) (Spring Boot)
-    - [spring-boot-starter-cap-ams](/Libraries/java/spring-boot-starter-cap-ams.md) (CAP Spring Boot)
+    - [spring-boot-ams](/Libraries/java/spring-boot-ams.md) (Spring Boot)
+    - [cap-ams](/Libraries/java/cap-ams.md) (CAP Spring Boot)
 - **JavaScript** (Node.js):
     - [@sap/ams](/Libraries/nodejs/sap_ams/sap_ams.md)
     - [@sap/ams-dev](https://www.npmjs.com/package/@sap/ams-dev)
