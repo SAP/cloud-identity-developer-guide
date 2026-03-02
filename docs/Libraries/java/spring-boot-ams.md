@@ -20,6 +20,19 @@ Use the Spring Boot starter module:
 For CAP applications, use `spring-boot-starter-cap-ams` instead.
 :::
 
+## Public API
+
+The following classes are part of the stable public API and can be freely used by consumer applications.
+
+- `com.sap.cloud.security.ams.spring.AmsRouteSecurity`
+- `com.sap.cloud.security.ams.spring.annotations.CheckPrivilege`
+- `com.sap.cloud.security.ams.spring.annotations.PrecheckPrivilege`
+- `com.sap.cloud.security.ams.spring.annotations.AmsAttribute`
+
+::: warning Semantic Versioning Notice
+Classes and packages **not listed above** are internal implementation details. They may change, be renamed, or be removed in minor or patch releases without notice. Do not depend on internal classes in production code.
+:::
+
 ## Auto-Configuration
 
 The starter automatically configures:
