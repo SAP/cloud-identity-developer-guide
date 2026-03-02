@@ -243,7 +243,7 @@ const authProvider = new HybridAuthProvider(ams, scopeToPolicyMapper);
 ```java [Java]
 import com.sap.cloud.security.ams.core.HybridAuthorizationsProvider;
 import com.sap.cloud.security.ams.api.ScopeMapper;
-import com.sap.cloud.security.ams.dcn.PolicyName;
+import com.sap.cloud.security.ams.api.PolicyName;
 
 PolicyName READ_PRODUCTS = PolicyName.of("shopping.ReadProducts");
 PolicyName WRITE_PRODUCTS = PolicyName.of("shopping.WriteProducts");
@@ -292,7 +292,7 @@ XssecAuthProvider < XsuaaSecurityContext > {
 
 ```java [Java]
 import com.sap.cloud.security.ams.api.*;
-import com.sap.cloud.security.ams.dcn.PolicyName;
+import com.sap.cloud.security.ams.api.PolicyName;
 
 public class CustomAuthorizationsProvider implements AuthorizationsProvider<Authorizations> {
     private final AuthorizationManagementService ams;
