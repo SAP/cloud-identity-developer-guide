@@ -167,7 +167,7 @@ ams.whenReady().orTimeout(30, TimeUnit.SECONDS).thenRun(() -> {
 // AmsReadinessContributor bean. It autowires an AuthorizationManagementService
 // instance and uses AvailabilityChangeEvent.publish
 // to integrate its readiness state with Spring Boot's availability state.
-// The AMS readiness starter is included transitively in the AMS Spring Boot starter.
+// The AMS readiness starter is included transitively in all AMS Spring Boot starters.
 ```
 
 ```java [Spring Boot Health Actuator]
@@ -176,7 +176,7 @@ ams.whenReady().orTimeout(30, TimeUnit.SECONDS).thenRun(() -> {
 // Spring Boot Actuator health endpoint. It autowires an
 // AuthorizationManagementService instance and includes its readiness state
 // in the health status.
-// The AMS health starter is NOT included transitively in the AMS Spring Boot starter.
+// The AMS health starter is NOT included transitively in any AMS Spring Boot starter.
 ```
 
 :::

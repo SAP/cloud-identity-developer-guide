@@ -60,8 +60,8 @@ In non-CAP applications, they are assigned to `app_tid` and `scim_id` pairs mock
 ```json [Node.js/Java] 
 // mockPolicyAssignments.json
 {
-    "defaultTenant": { // app_tid
-        "alice": [ // scim_id
+    "defaultTenant": { // tenant ID (app_tid)
+        "alice": [ // user's ID (scim_id)
             "shopping.CreateOrders",
             "shopping.DeleteOrders"
         ],
@@ -111,6 +111,22 @@ cds:
       bob:
         policies: // [!code ++:2]
           - local.OrderAccessory
+```
+
+```yaml [Spring Boot]
+# application-test.yaml
+sap:
+  ams:
+    test:
+      policy-assignments:
+        provider: # tenant ID (app_tid)
+          alice:  # user's ID (scim_id)
+            - shopping.CreateOrders
+            - shopping.DeleteOrders
+          bob:
+            - local.OrderAccessory
+      # OR use a file:
+      # policy-assignments-file: src/test/resources/mockPolicyAssignments.json
 ```
 :::
 
@@ -215,7 +231,7 @@ To load the compiled DCN files, the AMS client library needs to be configured to
 ::: tip
 In CAP Node.js projects, this is done automatically by the AMS modules if `requires.auth.kind = mocked`.
 
-In CAP Java projects, this is done automatically if `spring-boot-starter-cap-ams-test` is on the classpath and `cds.security.mock.enabled` is set to `true`.
+In Java projects, this is done automatically if `spring-boot-starter-cap-ams-test` or `spring-boot-starter-ams-test` is on the classpath.
 :::
 
 ::: code-group
