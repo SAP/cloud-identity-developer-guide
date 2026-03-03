@@ -59,7 +59,8 @@ export default defineConfig(withMermaid({
                             {text: 'ams-core', link: '/Libraries/java/ams-core'},
                             {text: 'ams-test', link: '/Libraries/java/ams-test'},
                             {text: 'spring-boot-ams', link: '/Libraries/java/spring-boot-ams'},
-                            {text: 'cap-ams', link: '/Libraries/java/cap-ams'}
+                            {text: 'cap-ams', link: '/Libraries/java/cap-ams'},
+                            {text: 'Migration Guide (v3 → v4)', link: '/Libraries/java/migration-v3-to-v4'}
                         ]
                     },
                     {
