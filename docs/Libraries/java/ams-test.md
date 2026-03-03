@@ -81,7 +81,9 @@ The `AmsTestExtension` provides several factory methods:
 AmsTestExtension.fromLocalDcn();
 
 // Use custom DCN path
-AmsTestExtension.fromLocalDcn(Path.of("path/to/dcn"));
+AmsTestExtension.
+
+fromLocalDcn(Path.of("path/to/dcn"));
 ```
 
 ### DCL Packages
@@ -168,19 +170,20 @@ void testPartialInput_isConditional() {
 }
 ```
 
-### Testing with Empty Unknowns
+### Testing with Empty Attribute Context
 
-To treat missing attributes as `null` rather than unknown (resulting in `DENIED` or `GRANTED` instead of `CONDITIONAL`),
-pass an empty set of unknowns:
+To treat missing attributes as `null` rather than ungrounded (resulting in `DENIED` or `GRANTED` instead of
+`CONDITIONAL`),
+pass an empty attribute context:
 
 ```java
 import java.util.Set;
 
 @Test
-void testMissingInput_withoutUnknowns_isDenied() {
+void testMissingInput_withEmptyAttributeContext_isDenied() {
     Authorizations auth = amsTest.getAuthorizations("mypackage.RequiredInputPolicy");
 
-    // With empty unknowns, missing attributes are treated as null
+    // With empty attribute context, ungrounded attributes are treated as null
     assertDenied(() -> auth.checkPrivilege("action", "resource", Map.of(), Set.of()));
 }
 ```
