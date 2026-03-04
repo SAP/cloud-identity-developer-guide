@@ -1,531 +1,207 @@
 # Migration Guide: v3 → v4
 
-This guide helps you migrate your Java application from AMS Client Library version 3.x to version 4.x. Version 4
-introduces significant changes to the module structure, dependency coordinates, and API design.
+This guide helps you migrate your Java application from AMS Client Library version 3.x to version 4.x.
 
-::: warning Upgrade Recommended
-Version 3.x is deprecated. All new projects should use version 4.x, and existing projects should migrate as soon as
-possible.
+::: warning Recommendation
+We recommend all applications to upgrade to version 4 to benefit from simpler customization, stream-lined
+authorization strategies and security updates. Version 3 will not receive new features and will only get
+critical bug fixes until its end of maintenance.
 :::
 
 ## Overview of Changes
 
-Version 4 brings the following major changes:
+Version 4 introduces **significant** changes to the API, lifecycle objects and dependency modules.
+However, breaking changes for **CAP applications** and **Spring Boot applications** are limited compared to plain Java integrations due to the annotation-based authorization checks.
 
-| Area            | v3                                  | v4                                        |
-|-----------------|-------------------------------------|-------------------------------------------|
-| Maven Group ID  | `com.sap.cloud.security.ams.client` | `com.sap.cloud.security.ams`              |
-| BOM Artifact    | `parent`                            | `ams-bom`                                 |
-| DCL Compilation | Maven plugins                       | `@sap/ams-dev` npm package                |
-| DCL Output      | `target/dcl_opa`                    | `target/generated-test-resources/ams/dcn` |
-| Spring Security | Expression handlers                 | `AmsRouteSecurity`                        |
-| CAP Integration | `cap-ams-support`                   | `spring-boot-starter-cap-ams`             |
+### Lifecycle Object Changes
+The core API changed from `PolicyDecisionPoint`, `Attributes` and `AttributesProcessor` to the following interfaces:
 
-## Maven Dependencies
+- `Authorizations`: Main API used for performing authorization checks\
+(1 instance *per request context*)
+- `AuthorizationManagementService`: Library instantiation, configuration, event logging\
+(usually 1 instance *per application*)
+- `AuthorizationsProvider`: Gives access to `Authorizations` for current principal, implementing official authorization strategies for different token flows with customization options\
+(usually 1 instance *per application*)
 
-### BOM Configuration
 
-**v3 Configuration:**
+## Dependency Migration
 
-```xml
+- Remove the previous AMS maven dependencies for group id `com.sap.cloud.security.ams.client`.\*
+- Add the [recommended dependencies](/Authorizations/GettingStarted) for group id `com.sap.cloud.security.ams`.
 
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.sap.cloud.security.ams.client</groupId>
-            <artifactId>parent</artifactId>
-            <version>${sap.cloud.security.ams.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+\* You can keep the old `dcl-compiler-plugin` for now. However, there will be an improved `dcl-compiler-plugin` available very soon.
+
+
+
+
+## Runtime Code Migration
+
+### Initialization and Configuration
+
+Replace `PolicyDecisionPoint` initialization with `AuthorizationManagementService` and `AuthorizationsProvider` as documented [here](/Authorization/AuthorizationBundle#client-library-initialization).
+
+::: tip
+If you are using a Spring Boot starter, the `AuthorizationManagementService` and `AuthorizationsProvider` are auto-configured and available for injection. You can customize them by overriding the beans or configuring them.
+:::
+
+### Startup Checks
+
+- Remove manual startup checks and configuration properties.
+- Implement startup check as described [here](/Authorization/AuthorizationBundle#startup-check)
+
+::: tip
+If you use a Spring Boot starter, it automatically integrates into Spring Boot readiness. Alternatively, you can use the Spring Boot 3 or 4 starter for health actuator integration.
+:::
+
+### AttributesProcessor Removal
+
+- Remove any implementations of the `AttributesProcessor` interface and the meta data configuration for the service loader.
+
+Typical use cases for `AttributesProcessor` such as [technical communication](/Authorization/TechnicalCommunication), [XSUAA scope mapping](/Authorization/AuthorizationChecks#hybridauthorizationsprovider) or [custom user attribute injection](/Authorization/AuthorizationChecks#overriding-methods) can now be implemented much simpler via `AuthorizationsProvider` configuration.
+
+### PolicyDecisionPoint checks
+
+- Rewrite `PolicyDecisionPoint#allow` checks with `Authorizations#checkPrivilege` as documented [here](/Authorization/AuthorizationChecks#performing-authorization-checks).
+
+**Example**:
+
+::: code-group
+
+```java [v3]
+import com.sap.cloud.security.ams.api.Principal;
+import static com.sap.cloud.security.ams.dcl.client.pdp.Attributes.Names.APP;
+import static com.sap.cloud.security.ams.dcl.client.pdp.Attributes.Names.ENV;
+
+Principal principal = Principal.create();
+
+// definite allow
+Attributes attributes =
+    principal
+        .getAttributes()
+        .setAction("read")
+        .setResource("salesOrders");
+
+boolean allowed = policyDecisionPoint.allow(attributes);
+
+// allow that ignores any conditions
+Attributes attributes =
+    principal
+        .getAttributes()
+        .setAction("read")
+        .setResource("salesOrders")
+        .setIgnores(List.of(APP, ENV));
+
+boolean allowed = policyDecisionPoint.allow(attributes);
 ```
 
-**v4 Configuration:**
+```java [v4]
+import static com.sap.cloud.security.ams.api.Principal.fromSecurityContext;
 
-```xml
+Authorizations authorizations = authProvider
+    .getAuthorizations(fromSecurityContext());
 
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.sap.cloud.security.ams</groupId>
-            <artifactId>ams-bom</artifactId>
-            <version>${sap.cloud.security.ams.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+// definite allow
+boolean allowed = authorizations
+    .checkPrivilege("read", "salesOrders")
+    .isGranted();
+
+// allow that ignores any conditions
+boolean allowed = !authorizations
+    .checkPrivilege("read", "salesOrders")
+    .isDenied();
 ```
 
-### Artifact Mapping
+:::
 
-The following table shows the mapping from v3 artifacts to v4 artifacts:
+### Spring Route Security
 
-| v3 Artifact                              | v4 Artifact                        | Description                           |
-|------------------------------------------|------------------------------------|---------------------------------------|
-| `jakarta-ams`                            | `ams-core`                         | Core authorization library            |
-| `java-ams-test`                          | `ams-test`                         | Testing utilities for plain Java      |
-| `spring-ams`                             | `spring-boot-starter-ams`          | Spring Boot integration               |
-| `spring-boot-starter-ams-resourceserver` | `spring-boot-starter-ams`          | Spring Security resource server       |
-| `spring-boot-starter-ams-test`           | `spring-boot-starter-ams-test`     | Spring Boot test utilities            |
-| `cap-ams-support`                        | `spring-boot-starter-cap-ams`      | CAP Java integration                  |
-| N/A                                      | `spring-boot-starter-cap-ams-test` | CAP Java test utilities               |
-| N/A                                      | `spring-boot-3-starter-ams-health` | Spring Boot Actuator health indicator |
+- Replace `SecurityExpressionHandler` with `AmsRouteSecurity` (CAP: `AmsCdsRouteSecurity`) bean in `SecurityFilterChain`.
+- Update route authorization checks based on following mapping:
 
-### Example: Spring Boot Application
+| v3 Route Check Syntax                                        | v4 Route Check Syntax                          |
+|--------------------------------------------------------------|------------------------------------------------|
+| `hasBaseAuthority("action", "resource")`                     | `precheckPrivilege("action", "resource")`      |
+| `forAction("action")`                                        | `checkPrivilege("action", "*")`                |
+| `forResource("resource")`                                    | `checkPrivilege("*", "resource")`              |
+| `forResourceAction("resource", "action")`                    | `checkPrivilege("action", "resource")`         |
+| `forResourceAction("resource", "action", attributes...)`     | use method security instead                    |
 
-**v3:**
+**Example**:
 
-```xml
+::: code-group
+```java [v3]
+@Bean
+public SecurityFilterChain filterChain(
+        HttpSecurity http,
+        SecurityExpressionHandler<RequestAuthorizationContext> amsHttpExpressionHandler) {
 
-<dependency>
-    <groupId>com.sap.cloud.security.ams.client</groupId>
-    <artifactId>spring-boot-starter-ams-resourceserver</artifactId>
-    <version>${sap.cloud.security.ams.version}</version>
-</dependency>
-<dependency>
-<groupId>com.sap.cloud.security.ams.client</groupId>
-<artifactId>spring-boot-starter-ams-test</artifactId>
-<version>${sap.cloud.security.ams.version}</version>
-<scope>test</scope>
-</dependency>
+    WebExpressionAuthorizationManager readOrders =
+            new WebExpressionAuthorizationManager("hasBaseAuthority('read', 'orders')");
+    readOrders.setExpressionHandler(amsHttpExpressionHandler);
+
+    http.authorizeHttpRequests(authz -> authz
+            .requestMatchers(GET, "/orders/**").access(readOrders));
+    return http.build();
+}
 ```
 
-**v4:**
+```java [v4]
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http, AmsRouteSecurity via) {
 
-```xml
+    http.authorizeHttpRequests(authz -> authz
+            .requestMatchers(GET, "/orders/**")
+                .access(via.precheckPrivilege("read", "orders")));
+    return http.build();
+}
+```
+:::
 
-<dependency>
-    <groupId>com.sap.cloud.security.ams</groupId>
-    <artifactId>spring-boot-starter-ams</artifactId>
-</dependency>
-<dependency>
-<groupId>com.sap.cloud.security.ams</groupId>
-<artifactId>spring-boot-starter-ams-test</artifactId>
-<scope>test</scope>
-</dependency>
-        <!-- Optional: Health indicator -->
-<dependency>
-<groupId>com.sap.cloud.security.ams</groupId>
-<artifactId>spring-boot-3-starter-ams-health</artifactId>
-</dependency>
+### Spring Method Security
+
+- Replace `@PreAuthorize` annotations with v3 AMS expressions by the new AMS annotations.
+- For methods with attributes, use `@AmsAttribute` on parameters to pass them to the authorization check.
+
+| v3 Method Security Syntax                                           | v4 Method Security Syntax                                          |
+|---------------------------------------------------------------------|--------------------------------------------------------------------|
+| `@PreAuthorize("forAction('read')")`                                | `@CheckPrivilege(action = "read", resource = "*")`                 |
+| `@PreAuthorize("forResource('products')")`                          | `@CheckPrivilege(action = "*", resource = "products")`             |
+| `@PreAuthorize("forResourceAction('products', 'read')")`            | `@CheckPrivilege(action = "read", resource = "products")`          |
+
+::: code-group
+```java [v3]
+@PreAuthorize("forResourceAction('products', 'read')")
+public List<Product> getProducts() { ... }
+
+@PreAuthorize("forResourceAction('products', 'read', 'product.category:string=' + #category)")
+public List<Product> getProductsByCategory(@PathVariable String category) { ... }
 ```
 
-### Example: CAP Java Application
+```java [v4]
+@CheckPrivilege(action = "read", resource = "products")
+public List<Product> getProducts() { ... }
 
-**v3:**
-
-```xml
-
-<dependency>
-    <groupId>com.sap.cloud.security.ams.client</groupId>
-    <artifactId>jakarta-ams</artifactId>
-    <version>${sap.cloud.security.ams.version}</version>
-</dependency>
-<dependency>
-<groupId>com.sap.cloud.security.ams.client</groupId>
-<artifactId>cap-ams-support</artifactId>
-<version>${sap.cloud.security.ams.version}</version>
-</dependency>
+@CheckPrivilege(action = "read", resource = "products")
+public List<Product> getProductsByCategory(@AmsAttribute(name = "product.category") String category) { ... }
 ```
+:::
 
-**v4:**
 
-```xml
 
-<dependency>
-    <groupId>com.sap.cloud.security.ams</groupId>
-    <artifactId>spring-boot-starter-cap-ams</artifactId>
-</dependency>
-<dependency>
-<groupId>com.sap.cloud.security.ams</groupId>
-<artifactId>spring-boot-starter-cap-ams-test</artifactId>
-<scope>test</scope>
-</dependency>
-```
 
-## DCL Compilation
-
-### Migration from Maven Plugins to npm
-
-Version 3 used Maven plugins (`dcl-compiler-plugin` and `dcl-surefire-plugin`) for DCL compilation and testing. Version
-4 uses the `@sap/ams-dev` npm package instead.
-
-**v3 Maven Plugin Configuration:**
-
-```xml
-
-<plugin>
-    <groupId>com.sap.cloud.security.ams.client</groupId>
-    <artifactId>dcl-compiler-plugin</artifactId>
-    <version>${sap.cloud.security.ams.version}</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>compile</goal>
-            </goals>
-            <configuration>
-                <verbose>true</verbose>
-                <failOn>deprecation</failOn>
-                <sourceDirectory>${project.basedir}/dcldeployer/dcl</sourceDirectory>
-                <dcn>true</dcn>
-                <dcnParameter>pretty</dcnParameter>
-                <compileTestToDcn>true</compileTestToDcn>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-<plugin>
-<groupId>com.sap.cloud.security.ams.client</groupId>
-<artifactId>dcl-surefire-plugin</artifactId>
-<version>${sap.cloud.security.ams.version}</version>
-<executions>
-    <execution>
-        <goals>
-            <goal>test</goal>
-        </goals>
-        <configuration>
-            <verbose>true</verbose>
-            <prefix>${project.groupId}__${project.artifactId}__</prefix>
-        </configuration>
-    </execution>
-</executions>
-</plugin>
-```
-
-**v4 npm-based Configuration:**
-
-For Spring Boot applications, use `frontend-maven-plugin`:
-
-```xml
-
-<plugin>
-    <groupId>com.github.eirslett</groupId>
-    <artifactId>frontend-maven-plugin</artifactId>
-    <version>1.14.1</version>
-    <executions>
-        <execution>
-            <id>install node and npm</id>
-            <goals>
-                <goal>install-node-and-npm</goal>
-            </goals>
-            <phase>generate-test-resources</phase>
-            <configuration>
-                <nodeVersion>v24.11.0</nodeVersion>
-            </configuration>
-        </execution>
-        <execution>
-            <id>compile-dcl</id>
-            <goals>
-                <goal>npx</goal>
-            </goals>
-            <phase>generate-test-resources</phase>
-            <configuration>
-                <arguments>--package=@sap/ams-dev compile-dcl
-                    -d ${project.basedir}/src/main/resources/dcl
-                    -o ${project.build.directory}/generated-test-resources/ams/dcn
-                </arguments>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-```
-
-For CAP Java applications, use `cds-maven-plugin`:
-
-```xml
-
-<plugin>
-    <groupId>com.sap.cds</groupId>
-    <artifactId>cds-maven-plugin</artifactId>
-    <executions>
-        <!-- ... other executions ... -->
-        <execution>
-            <id>compile-dcl</id>
-            <goals>
-                <goal>npx</goal>
-            </goals>
-            <phase>generate-test-resources</phase>
-            <configuration>
-                <arguments>--package=@sap/ams-dev compile-dcl
-                    -d ${project.basedir}/src/main/resources/ams
-                    -o ${project.build.directory}/generated-test-resources/ams/dcn
-                </arguments>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-```
-
-### DCL Source Directory
-
-The default location for DCL files has changed:
-
-| Application Type       | v3 Location                   | v4 Location                   |
-|------------------------|-------------------------------|-------------------------------|
-| Plain Java/Spring Boot | `dcldeployer/dcl/`            | `src/main/resources/dcl/`     |
-| CAP Java               | `srv/src/main/resources/ams/` | `srv/src/main/resources/ams/` |
+## Test Setup Migration
 
 ### DCL Output Directory
+
+Replace the DCL output directory with the new default output directory for AMS DCN test resources in DCL compiler maven plugin.
 
 | v3 Output         | v4 Output                                  |
 |-------------------|--------------------------------------------|
 | `target/dcl_opa/` | `target/generated-test-resources/ams/dcn/` |
 
-## DCL Syntax Updates
+### CAP Java Configuration
 
-### Schema Definition
-
-The schema keyword and type names are now in uppercase:
-
-**v3:**
-
-```dcl
-schema {
-    salesOrder: {
-        type: number
-    },
-    CountryCode: string
-}
-```
-
-**v4:**
-
-```dcl
-SCHEMA {
-    SalesOrder: {
-        Type: Number
-    }
-    CountryCode: String
-}
-```
-
-::: tip Compatibility
-While lowercase syntax may still work for backward compatibility, it is recommended to update to the uppercase format
-for consistency with the current specification.
-:::
-
-### Policy Syntax
-
-Policy syntax remains largely unchanged. Both `POLICY` and `GRANT`/`ASSIGN` keywords were already uppercase in v3.
-
-## Spring Security Configuration
-
-### Route-Level Security
-
-The way you configure route-level security with AMS has changed significantly.
-
-**v3 Configuration:**
-
-```java
-import org.springframework.security.access.expression.SecurityExpressionHandler;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-
-@Configuration
-public class SecurityConfiguration {
-
-    @Autowired
-    Converter<Jwt, AbstractAuthenticationToken> amsAuthenticationConverter;
-
-    @Bean
-    public SecurityFilterChain filterChain(
-            HttpSecurity http,
-            SecurityExpressionHandler<RequestAuthorizationContext> amsHttpExpressionHandler)
-            throws Exception {
-
-        WebExpressionAuthorizationManager hasBaseAuthority =
-                new WebExpressionAuthorizationManager("hasBaseAuthority('read', 'salesOrders')");
-        hasBaseAuthority.setExpressionHandler(amsHttpExpressionHandler);
-
-        http.authorizeHttpRequests(authz -> {
-                    authz.requestMatchers(GET, "/health").permitAll();
-                    authz.requestMatchers(GET, "/salesOrders/**").access(hasBaseAuthority);
-                    authz.anyRequest().authenticated();
-                })
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(
-                        jwt -> jwt.jwtAuthenticationConverter(amsAuthenticationConverter)));
-
-        return http.build();
-    }
-}
-```
-
-**v4 Configuration:**
-
-```java
-import com.sap.cloud.security.ams.spring.AmsRouteSecurity;
-
-import static com.sap.cloud.security.ams.api.Privilege.of;
-
-@Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
-public class SecurityConfiguration {
-
-    // Define privileges as constants
-    private static final Privilege READ_SALES_ORDERS = of("read", "salesOrders");
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AmsRouteSecurity via)
-            throws Exception {
-
-        http.authorizeHttpRequests(authz -> {
-                    authz.requestMatchers(GET, "/health").permitAll();
-                    authz.requestMatchers(GET, "/salesOrders/**")
-                            .access(via.checkPrivilege(READ_SALES_ORDERS));
-                    authz.anyRequest().authenticated();
-                })
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
-
-        return http.build();
-    }
-}
-```
-
-### Key Changes
-
-| Aspect              | v3                                            | v4                                               |
-|---------------------|-----------------------------------------------|--------------------------------------------------|
-| Expression Handler  | `amsHttpExpressionHandler`                    | `AmsRouteSecurity`                               |
-| Authorization Check | `hasBaseAuthority('action', 'resource')`      | `via.checkPrivilege(Privilege)`                  |
-| JWT Converter       | Manual `amsAuthenticationConverter` injection | Auto-configured with `Customizer.withDefaults()` |
-| Pre-check Support   | N/A                                           | `via.precheckPrivilege(Privilege)`               |
-
-### Privilege Constants
-
-It's recommended to define privilege constants in a dedicated class:
-
-```java
-import com.sap.cloud.security.ams.api.Privilege;
-
-public final class Privileges {
-    public static final Privilege READ_PRODUCTS = Privilege.of("read", "products");
-    public static final Privilege CREATE_ORDERS = Privilege.of("create", "orders");
-    public static final Privilege DELETE_ORDERS = Privilege.of("delete", "orders");
-    public static final Privilege READ_ORDERS = Privilege.of("read", "orders");
-
-    private Privileges() {
-    }
-}
-```
-
-## Core API Changes (Plain Java / Javalin)
-
-### Authorization Client Initialization
-
-**v3:**
-
-```java
-import com.sap.cloud.security.ams.dcl.client.pdp.PolicyDecisionPoint;
-
-import static com.sap.cloud.security.ams.factory.AmsPolicyDecisionPointFactory.DEFAULT;
-
-PolicyDecisionPoint policyDecisionPoint = PolicyDecisionPoint.create(DEFAULT);
-```
-
-**v4:**
-
-```java
-import com.sap.cloud.security.ams.api.AuthorizationManagementService;
-import com.sap.cloud.environment.servicebinding.api.ServiceBinding;
-import com.sap.cloud.environment.servicebinding.api.DefaultServiceBindingAccessor;
-
-ServiceBinding identityBinding = DefaultServiceBindingAccessor.getInstance()
-        .getServiceBindings().stream()
-        .filter(binding -> "identity".equals(binding.getServiceName().orElse(null)))
-        .findFirst()
-        .orElseThrow(() -> new IllegalStateException("No identity binding found"));
-
-AuthorizationManagementService ams =
-        AuthorizationManagementService.fromIdentityServiceBinding(identityBinding);
-```
-
-### Performing Authorization Checks
-
-**v3:**
-
-```java
-import com.sap.cloud.security.ams.api.Principal;
-import com.sap.cloud.security.ams.dcl.client.pdp.Attributes;
-
-Attributes attributes = Principal.create()
-        .getAttributes()
-        .setAction("read")
-        .setResource("salesOrders");
-
-if(!policyDecisionPoint.
-
-allow(attributes)){
-        // Access denied
-        }
-```
-
-**v4:**
-
-```java
-import com.sap.cloud.security.ams.api.Authorizations;
-import com.sap.cloud.security.ams.api.Privilege;
-import com.sap.cloud.security.ams.api.Principal;
-import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
-
-// Create an authorizations provider
-SciAuthorizationsProvider<Authorizations> authProvider =
-        SciAuthorizationsProvider.create(ams, Authorizations::of);
-
-        // Get authorizations for current principal
-        Authorizations authorizations = authProvider.getAuthorizations(
-                Principal.fromSecurityContext());
-
-        // Check privilege
-        Privilege readSalesOrders = Privilege.of("read", "salesOrders");
-if(authorizations.
-
-        checkPrivilege(readSalesOrders).
-
-        isDenied()){
-        // Access denied
-        }
-```
-
-### Custom Authorizations Class
-
-In v4, you can create custom `Authorizations` implementations:
-
-```java
-import com.sap.cloud.security.ams.api.Authorizations;
-import com.sap.cloud.security.ams.api.AuthorizationsData;
-
-public class ShoppingAuthorizations implements Authorizations {
-    private final AuthorizationsData data;
-
-    private ShoppingAuthorizations(AuthorizationsData data) {
-        this.data = data;
-    }
-
-    public static ShoppingAuthorizations of(AuthorizationsData data) {
-        return new ShoppingAuthorizations(data);
-    }
-
-    @Override
-    public AuthorizationsData getData() {
-        return data;
-    }
-
-    // Add domain-specific methods
-    public boolean canReadProducts() {
-        return !checkPrivilege(Privilege.of("read", "products")).isDenied();
-    }
-}
-```
-
-## CAP Java Configuration
-
-### Local Development
-
-**v3** required explicit configuration of test sources in `application.yaml`:
+- Remove test sources property from `application.yaml`:
 
 ```yaml
 cds:
@@ -535,250 +211,51 @@ cds:
         test-sources: "" # empty uses default srv/target/dcl_opa
 ```
 
-**v4** auto-detects local test mode when mock users are configured with policies. No explicit `test-sources`
-configuration is required:
-
-```yaml
-cds:
-  security:
-    mock:
-      users:
-        admin:
-          password: admin
-          roles:
-            - admin
-        stock-manager:
-          policies:
-            - cap.StockManager
-        stock-manager-fiction:
-          policies:
-            - local.StockManagerFiction
-```
-
-::: info Automatic Detection
-In v4, when mock users with `policies` are maintained for a profile, the policy assignment via mock users is active by
-default.
+:::tip
+In v4, the existence of `spring-boot-starter-ams-cap-test` on the classpath determines whether AMS will try to load local DCN. For this reason, make sure to keep it test-scoped.
 :::
-
-## Testing
 
 ### Spring Security Tests
 
-**v3:**
+The `MockOidcTokenRequestPostProcessor.userWithPolicies` from `jakarta-ams-test` has been removed because the real AMS production code can now be tested.
+It requires the definition of a [policy assignments](/Authorization/Testing#assigning-policies-to-mocked-users) map from which AMS determines the used policies based on the `app_tid` and `scim_id` claims of the token, and for advanced token flows: other claims as needed.
 
-```java
-import com.sap.cloud.security.test.extension.SecurityTestExtension;
 
-import static com.sap.cloud.security.ams.spring.test.resourceserver.MockOidcTokenRequestPostProcessor.userWithPolicies;
-import static com.sap.cloud.security.ams.spring.test.resourceserver.MockOidcTokenRequestPostProcessor.userWithoutPolicies;
-import static com.sap.cloud.security.config.Service.IAS;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class MyControllerTest {
 
-    @RegisterExtension
-    static SecurityTestExtension extension =
-            SecurityTestExtension.forService(IAS).setPort(MOCK_SERVER_PORT);
 
-    @Autowired
-    private MockMvc mockMvc;
+## Leverage new Features
 
-    @Test
-    void testReadWithPermission() throws Exception {
-        mockMvc.perform(get("/read")
-                        .with(userWithPolicies(extension.getContext(), "common.readAll")))
-                .andExpect(status().isOk());
-    }
+### Unit Testing Policies
 
-    @Test
-    void testReadWithoutPermission() throws Exception {
-        mockMvc.perform(get("/read")
-                        .with(userWithoutPolicies(extension.getContext())))
-                .andExpect(status().isForbidden());
-    }
-}
-```
+There is a simple new method of unit testing policy semantics without a full-blown integration test using [`ams-test`](/Libraries/java/ams-test).
 
-**v4:**
+### Domain-specific Authorization Checks
 
-```java
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+You can implement an `AuthorizationsAdapter<T>` to [wrap](https://github.com/SAP-samples/ams-samples-java/blob/new_lib_v4/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/auth/AuthHandler.java#L68) `Authorizations` objects with [domain-specific methods](https://github.com/SAP-samples/ams-samples-java/blob/new_lib_v4/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/auth/ShoppingAuthorizations.java#L27-L46) for [better readability](https://github.com/SAP-samples/ams-samples-java/blob/new_lib_v4/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/service/OrdersService.java#L151-L153) and reusability of authorization checks across your application.
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(TestSecurityConfiguration.class)
-class MyControllerTest {
+::: tip CdsAuthorizations
+The CAP Spring Boot starter already wraps the standard `Authorizations` in a `CdsAuthorizations` adapter that provides CAP-specific methods for role checks.
+:::
 
-    @Autowired
-    private MockMvc mockMvc;
+### Simple Name Constants
 
-    @Test
-    void testReadWithPermission() throws Exception {
-        String userJwt = loadJwtFromFile("User_with_read_policy.json");
-        mockMvc.perform(get("/read")
-                        .header("Authorization", "Bearer " + userJwt))
-                .andExpect(status().isOk());
-    }
+Use the new `Privilege`, `AttributeName` and `PolicyName` utility classes to define constants for the action/resource combinations of your application, as well as references to DCL attributes and policies, to avoid typos and increase readability.
 
-    @Test
-    void testReadWithoutPermission() throws Exception {
-        String userJwt = loadJwtFromFile("User_without_policies.json");
-        mockMvc.perform(get("/read")
-                        .header("Authorization", "Bearer " + userJwt))
-                .andExpect(status().isForbidden());
-    }
-}
-```
+::: tip
+There is no more need to deal with `$app` and `$env` attribute prefixes as they are inferred automatically just like in DCL. There are both factory methods for dot notation (`of`) and array notation (`ofSegments`).
+:::
 
-**Test Security Configuration (v4):**
+### Event Logging
 
-```java
+Use the new [event logging API](/Libraries/java/ams-core#events-logging) to log authorization events as per your needs.
 
-@TestConfiguration
-public class TestSecurityConfiguration {
+### Better DEBUG Logging
 
-    private final Base64JwtDecoder base64JwtDecoder = Base64JwtDecoder.getInstance();
+When things don't work as expected, you can benefit from [improved debug logging](/Troubleshooting.html#generic-privilege-check) of the AMS Client Library. By setting the log level to DEBUG for the `com.sap.cloud.security.ams` package, you can get detailed insights into the decisions that lead to the construction of the `Authorizations` object and the results of authorization checks, including which policies were evaluated and which attributes were considered.
 
-    @Bean
-    @Primary
-    public JwtDecoder jwtDecoder() {
-        return token -> {
-            DecodedJwt decodedJwt = base64JwtDecoder.decode(token);
-            SapIdToken sapIdToken = new SapIdToken(decodedJwt);
-            SecurityContext.setToken(sapIdToken);
+### New TRACE Logging
 
-            Map<String, Object> headers = sapIdToken.getHeaders();
-            Map<String, Object> claims = sapIdToken.getClaims();
-            Instant issuedAt = claims.containsKey("iat")
-                    ? Instant.ofEpochSecond(((Number) claims.get("iat")).longValue())
-                    : Instant.now();
-            Instant expiresAt = Optional.ofNullable(sapIdToken.getExpiration())
-                    .orElse(Instant.now().plusSeconds(3600));
+To understand the detailed steps taken by the internal logic engine for evaluation of policy conditions, you can set the log level to TRACE for the `com.sap.cloud.security.ams` package. This will provide a step-by-step trace of the evaluation process, showing how conditions are built and grounded with attribute input and how the predicates were evaluated.
 
-            return new Jwt(token, issuedAt, expiresAt, headers, claims);
-        };
-    }
-}
-```
-
-### JWT Test Files (v4)
-
-Create JSON files in `src/test/resources/jwt/` containing user claims and policies:
-
-```json
-{
-  "sub": "alice",
-  "iss": "https://test.accounts.ondemand.com",
-  "aud": "test-client",
-  "iat": 1704067200,
-  "exp": 1893456000,
-  "ams_policies": [
-    "shopping.CreateOrders",
-    "shopping.DeleteOrders"
-  ]
-}
-```
-
-## Package Migrations
-
-Update your import statements according to this mapping:
-
-| v3 Package                                              | v4 Package                          |
-|---------------------------------------------------------|-------------------------------------|
-| `com.sap.cloud.security.ams.dcl.client.pdp`             | `com.sap.cloud.security.ams.api`    |
-| `com.sap.cloud.security.ams.factory`                    | `com.sap.cloud.security.ams.api`    |
-| `com.sap.cloud.security.ams.spring.test.resourceserver` | `com.sap.cloud.security.ams.spring` |
-
-## Health Indicator (New in v4)
-
-v4 introduces a Spring Boot Actuator health indicator for AMS:
-
-```xml
-
-<dependency>
-    <groupId>com.sap.cloud.security.ams</groupId>
-    <artifactId>spring-boot-3-starter-ams-health</artifactId>
-</dependency>
-```
-
-Configure in `application.yaml`:
-
-```yaml
-management:
-  endpoint:
-    health:
-      show-components: always
-      show-details: always
-  endpoints:
-    web:
-      exposure:
-        include: health
-  health:
-    defaults.enabled: false
-    ping.enabled: true
-    db.enabled: true
-    ams.enabled: true
-```
-
-## Migration Checklist
-
-Use this checklist to track your migration progress:
-
-- [ ] Update Maven BOM from `parent` to `ams-bom`
-- [ ] Update Maven Group ID from `com.sap.cloud.security.ams.client` to `com.sap.cloud.security.ams`
-- [ ] Update artifact names according to the mapping table
-- [ ] Remove `dcl-compiler-plugin` and `dcl-surefire-plugin`
-- [ ] Add npm-based DCL compilation (`@sap/ams-dev`)
-- [ ] Move DCL files to new location (if applicable)
-- [ ] Update DCL output directory in configuration
-- [ ] Update schema syntax to uppercase (optional but recommended)
-- [ ] Update Spring Security configuration to use `AmsRouteSecurity`
-- [ ] Update authorization checks to use `Privilege` class
-- [ ] Update test configurations
-- [ ] Remove explicit `test-sources` configuration (CAP)
-- [ ] Add health indicator dependency (optional)
-- [ ] Update import statements
-
-## Troubleshooting
-
-### Common Issues
-
-**1. ClassNotFoundException for v3 Classes**
-
-If you see errors like `ClassNotFoundException: com.sap.cloud.security.ams.dcl.client.pdp.PolicyDecisionPoint`, ensure
-you've updated all dependencies to v4 artifacts.
-
-**2. DCL Compilation Errors**
-
-If DCL compilation fails with the npm-based approach:
-
-- Ensure Node.js is installed (v18+ recommended)
-- Check that the DCL source directory path is correct
-- Verify the output directory exists or can be created
-
-**3. Spring Security Authorization Failures**
-
-If authorization checks fail after migration:
-
-- Verify `AmsRouteSecurity` is injected correctly
-- Check that privilege actions and resources match your DCL policies
-- Ensure JWT decoder is configured with `Customizer.withDefaults()`
-
-**4. CAP Mock Users Not Working**
-
-If mock users with policies aren't being recognized:
-
-- Ensure you're using the correct profile
-- Verify policy names include the correct package prefix (e.g., `cap.StockManager`)
-- Check that DCL files are compiled and available in the target directory
-
-## Further Resources
-
-- [AMS Core Module](/Libraries/java/ams-core)
-- [Spring Boot AMS Integration](/Libraries/java/spring-boot-ams)
-- [CAP AMS Integration](/Libraries/java/cap-ams)
-- [Authorization Checks](/Authorization/AuthorizationChecks)
-- [Java Sample Applications](https://github.com/SAP-samples/ams-samples-java)
+Additionally, it provides insights into the content of the authorization bundle.
