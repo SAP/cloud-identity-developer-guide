@@ -56,6 +56,7 @@ export default defineConfig(withMermaid({
                         text: 'Java',
                         collapsed: true,
                         items: [
+                            { text: 'Changelog', link: '/Libraries/java/changelog' },
                             { text: 'ams-core', link: '/Libraries/java/ams-core' },
                             { text: 'ams-test', link: '/Libraries/java/ams-test' },
                             { text: 'cap-ams', link: '/Libraries/java/cap-ams' },
@@ -64,7 +65,7 @@ export default defineConfig(withMermaid({
                                 text: 'Version 3.x',
                                 collapsed: true,
                                 items: [
-                                    { text: 'Migration Guide (→ 4.x)', link: '/Libraries/java/migration-v3-to-v4' },
+                                    { text: 'Migration Guide (→ 4.x)', link: '/Libraries/java/v3/migration-v3-to-v4' },
                                     { text: 'jakarta-ams', link: '/Libraries/java/v3/jakarta-ams' },
                                     { text: 'cap-ams-support', link: '/Libraries/java/v3/cap-ams-support' },
                                     { text: 'spring-ams', link: '/Libraries/java/v3/spring-ams' },
