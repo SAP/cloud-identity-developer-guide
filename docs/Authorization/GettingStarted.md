@@ -82,46 +82,124 @@ Use the `ams-bom` for consistent version management across all AMS modules:
 </dependencyManagement>
 ```
 
-##### Runtime Dependencies
+##### Dependencies
 
-| Project Type      | ams-core | spring-boot-starter-ams | spring-boot-starter-cap-ams |
-|-------------------|:--------:|:-----------------------:|:---------------------------:|
-| Plain Java        |    ✓     |            -            |              -              |
-| Spring Boot       |    *     |            ✓            |              -              |
-| Spring Boot (CAP) |    *     |            -            |              ✓              |
+::: code-group
 
-\* transitive dependency
+```xml [Plain Java]
+<dependencies>
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>ams-core</artifactId>
+    </dependency>
+  
+    <!-- Optional: For unit testing policies without integration tests
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>ams-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    -->
+</dependencies>
+```
 
-##### Test-Scoped Dependencies
+```xml [Spring Boot]
+<dependencies>
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-starter-ams</artifactId>
+    </dependency>
+  
+    <!-- Recommended: For integration tests without AMS cloud instance
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-starter-ams-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    -->
+  
+    <!-- Optional: For unit testing policies without integration tests
+    <dependency>
+      <groupId>com.sap.cloud.security.ams</groupId>
+      <artifactId>ams-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    -->  
+  
+    <!-- Optional: Health indicator for Spring Boot Actuator (Spring Boot 3)
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-3-starter-ams-health</artifactId>
+    </dependency>
+    -->
+  
+    <!-- Optional: Health indicator for Spring Boot Actuator (Spring Boot 4)
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-starter-ams-health</artifactId>
+    </dependency>
+    -->
+</dependencies>
+```
 
-| Project Type      | ams-test | spring-boot-starter-ams-test | spring-boot-starter-cap-ams-test |
-|-------------------|:--------:|:----------------------------:|:--------------------------------:|
-| Plain Java        |    ✓     |              -               |                -                 |
-| Spring Boot       |    -     |              ✓               |                -                 |
-| Spring Boot (CAP) |    -     |              *               |                ✓                 |
+```xml [Spring Boot (CAP)]
+<dependencies>
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-starter-cap-ams</artifactId>
+    </dependency>
+  
+    <!-- Recommended: For integration tests without AMS cloud instance
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-starter-cap-ams-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    -->
 
-\* transitive dependency
+    <!-- Optional: For unit testing policies without integration tests
+    <dependency>
+      <groupId>com.sap.cloud.security.ams</groupId>
+      <artifactId>ams-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    -->
+    
+    <!-- Optional: Health indicator for Spring Boot Actuator (Spring Boot 3)
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-3-starter-ams-health</artifactId>
+    </dependency>
+    -->
+  
+    <!-- Optional: Health indicator for Spring Boot Actuator (Spring Boot 4)
+    <dependency>
+        <groupId>com.sap.cloud.security.ams</groupId>
+        <artifactId>spring-boot-starter-ams-health</artifactId>
+    </dependency>
+    -->
+</dependencies>
+```
 
-##### Tooling Dependencies
+:::
 
-::: tip
+::: tip Health Indicators
+The `spring-boot-starter-ams-readiness` module provides readiness state integration via `AvailabilityChangeEvent` and
+is already included **transitively** in all Spring Boot starters. The optional health modules listed above provide
+alternatively `HealthIndicator` beans for Spring Boot Actuator health endpoint integration
+(see [Startup Check](/Authorization/AuthorizationBundle#startup-check)).
+:::
+
+#### Tooling
+
+::: tip CDS Build Plugin
 In CAP Java projects, the (optional) Node.js module `@sap/ams` *should* be added in the `package.json` as a
 *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
 :::
 
-##### Optional Dependencies
-
-The following optional modules provide `HealthIndicator` beans for Spring Boot Actuator health endpoint integration (
-see [Startup Check](/Authorization/AuthorizationBundle#startup-check)):
-
-| Spring Boot Version | Module                             |
-|---------------------|------------------------------------|
-| 3                   | `spring-boot-3-starter-ams-health` |
-| 4                   | `spring-boot-starter-ams-health`   |
-
-::: tip
-The `spring-boot-starter-ams-readiness` module alternatively provides readiness state integration via
-`AvailabilityChangeEvent` and is already included **transitively** in all Spring Boot starters.
+::: tip DCL compiler plugin
+In the near future, there will be new maven build plugin for DCL compilation for local integration tests without AMS cloud instance.
+For the time being, refer to the samples for an interim solution based on the Node.js tooling or continue use the old maven DCL compiler plugin.
 :::
 
 ### Node.js
