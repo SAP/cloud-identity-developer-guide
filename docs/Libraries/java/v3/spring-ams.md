@@ -14,7 +14,7 @@ The library also supports controlling access to specific actions and resources, 
 ## <a id="api-disclaimer"></a>Disclaimer on API usage
 This documentation provides information that might be useful when you use the Authorization Management Service. We try to ensure that future versions of the APIs are backwards compatible with the immediately preceding version. 
 This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.  
-Check the [release notes](../releases.md) or the release notes for updates about new features and API modifications.
+Check the [release notes](../changelog.md) or the release notes for updates about new features and API modifications.
 
 ## Requirements
 - Java 17
@@ -248,7 +248,7 @@ There are 2 ways to enforce authorization in the hybrid mode:
    property `sap.security.hybrid.xsuaa.scope-check.enabled `to be set to false. Authorization is carried out
    through `PolicyDecisionPoint` and enforced
    by [AMS Spring Security Expressions](#overview-of-ams-spring-security-expressions). However, for this mode to work,
-   XSUAA Scopes must be converted into authorization policies. This can be done with the help of [AttributesProccessor](../jakarta-ams/jakarta-ams.md#customize-attributes), but
+   XSUAA Scopes must be converted into authorization policies. This can be done with the help of [AttributesProccessor](./jakarta-ams.md#customize-attributes), but
    please note this conversion process is not provided by this library.
 
 ### Additional Information
@@ -264,7 +264,7 @@ private PolicyDecisionPoint policyDecisionPoint;
     Attributes attributes=principal.getAttributes().setAction("read");
     boolean isReadAllowed=policyDecisionPoint.allow(attributes);
 ````
-See [here](../jakarta-ams/jakarta-ams#overview-policydecisionpoint-methods) for ``PolicyDecisionPoint`` API documentation.
+See [here](./jakarta-ams.md#overview-policydecisionpoint-methods) for ``PolicyDecisionPoint`` API documentation.
 
 > :heavy_exclamation_mark: [Consider also limitation of api liability](#api-disclaimer).
 
@@ -279,7 +279,7 @@ You can simply create a ``Principal`` instance within the same thread. Use ``Pri
 You can find the test utilities `spring-ams-test-starter` module.
 
 ## Audit Logging
-Please check out this [documentation](../jakarta-ams/jakarta-ams.md#audit-logging).
+Please check out this [documentation](./jakarta-ams.md#audit-logging).
 
 ## Troubleshooting
 

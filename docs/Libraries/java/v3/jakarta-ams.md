@@ -10,7 +10,7 @@ The library also supports controlling access to specific actions and resources, 
 ## <a id="api-disclaimer"></a>Disclaimer on API Usage
 
 This documentation provides information that might be useful when you use the Authorization Management Service. We try to ensure that future versions of the APIs are backwards compatible to the immediately preceding version. This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.\
-Please check the [release notes](../releases.md) to stay tuned about new features and API modifications.
+Please check the [release notes](../changelog.md) to stay tuned about new features and API modifications.
 
 ## Requirements
 
