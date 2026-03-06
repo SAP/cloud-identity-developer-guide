@@ -31,9 +31,8 @@ export default defineConfig(withMermaid({
                 text: 'Authorization',
                 items: [
                     { text: 'Getting Started', link: '/Authorization/GettingStarted' },
-                    { text: 'Authorization Policies', link: '/Authorization/AuthorizationPolicies' },
+                    { text: 'Authorization Bundle', link: '/Authorization/AuthorizationBundle' },
                     { text: 'Authorization Checks', link: '/Authorization/AuthorizationChecks' },
-                    { text: 'Startup Check', link: '/Authorization/StartupCheck' },
                     { text: 'Testing', link: '/Authorization/Testing' },
                     { text: 'Technical Communication', link: '/Authorization/TechnicalCommunication' },
                     { text: 'Deploying DCL', link: '/Authorization/DeployDCL' },
@@ -57,9 +56,21 @@ export default defineConfig(withMermaid({
                         text: 'Java',
                         collapsed: true,
                         items: [
-                            { text: 'jakarta-ams', link: '/Libraries/java/jakarta-ams/jakarta-ams' },
-                            { text: 'spring-ams', link: '/Libraries/java/spring-ams/spring-ams' },
-                            { text: 'cap-ams-support', link: '/Libraries/java/cap-ams-support/cap-ams-support' }
+                            { text: 'Changelog', link: '/Libraries/java/changelog' },
+                            { text: 'ams-core', link: '/Libraries/java/ams-core' },
+                            { text: 'ams-test', link: '/Libraries/java/ams-test' },
+                            { text: 'cap-ams', link: '/Libraries/java/cap-ams' },
+                            { text: 'spring-boot-ams', link: '/Libraries/java/spring-boot-ams' },
+                            {
+                                text: 'Version 3.x',
+                                collapsed: true,
+                                items: [
+                                    { text: 'Migration Guide (→ 4.x)', link: '/Libraries/java/v3/migration-v3-to-v4' },
+                                    { text: 'jakarta-ams', link: '/Libraries/java/v3/jakarta-ams' },
+                                    { text: 'cap-ams-support', link: '/Libraries/java/v3/cap-ams-support' },
+                                    { text: 'spring-ams', link: '/Libraries/java/v3/spring-ams' },
+                                ]
+                            }
                         ]
                     },
                     {
@@ -70,7 +81,8 @@ export default defineConfig(withMermaid({
                             { text: '@sap/ams-dev', link: 'https://www.npmjs.com/package/@sap/ams-dev' }
                         ]
                     },
-                    { text: 'Go', 
+                    {
+                        text: 'Go',
                         collapsed: true,
                         items: [
                             { text: 'cloud-identity-authorizations-golang-library', link: '/Libraries/go/go-ams' }
