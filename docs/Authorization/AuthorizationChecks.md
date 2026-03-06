@@ -39,13 +39,11 @@ if (decision.isGranted()) {
 
 ```java [Java]
 Decision decision = authorizations.checkPrivilege("read", "products");
-if(decision.
-
-isGranted()){
-        // user is allowed to read products
-        }else{
-        // user is not allowed to read products
-        }
+if (decision.isGranted()) {
+    // user is allowed to read products
+} else {
+    // user is not allowed to read products
+}
 ```
 
 :::
@@ -272,11 +270,8 @@ import {Authorizations, Types, XssecAuthProvider} from "@sap/ams";
 import {SecurityContext, Service, Token, XsuaaSecurityContext} from "@sap/xssec";
 
 class XsuaaAuthProvider
-    extends XssecAuthProvider<SecurityContext<Service, Token
-
->>
-implements
-XssecAuthProvider < XsuaaSecurityContext > {
+    extends XssecAuthProvider<SecurityContext<Service, Token>>
+    implements XssecAuthProvider<XsuaaSecurityContext> {
 
     getAuthorizations(securityContext: XsuaaSecurityContext): Promise<Authorizations> {
         throw new Error("Method not implemented.");
@@ -616,11 +611,8 @@ for (const resource of potentialResources) {
 Set<String> potentialResources = authorizations.getPotentialResources();
 // Returns: Set<String>, e.g., ["products", "orders", "customers"]
 
-for(
-String resource :potentialResources){
-        System.out.
-
-println("User may have access to: "+resource);
+for (String resource : potentialResources) {
+    System.out.println("User may have access to: " + resource);
 }
 ```
 
@@ -645,11 +637,9 @@ if (potentialActions.has('delete')) {
 Set<String> potentialActions = authorizations.getPotentialActions("products");
 // Returns: Set<String>, e.g., ["read", "create", "update"]
 
-if(potentialActions.
-
-contains("delete")){
-        // Show delete button in UI
-        }
+if (potentialActions.contains("delete")) {
+    // Show delete button in UI
+}
 ```
 
 :::
@@ -675,14 +665,9 @@ Set<Privilege> potentialPrivileges = authorizations.getPotentialPrivileges();
 // Returns: Set<Privilege>
 // e.g., [Privilege("read", "products"), Privilege("create", "orders")]
 
-for(
-Privilege privilege :potentialPrivileges){
-        System.out.
-
-println("User may: "+privilege.action() +" on "+privilege.
-
-resource());
-        }
+for (Privilege privilege : potentialPrivileges) {
+    System.out.println("User may: " + privilege.action() + " on " + privilege.resource());
+}
 ```
 
 :::

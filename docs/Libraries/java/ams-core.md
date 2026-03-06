@@ -90,15 +90,11 @@ ams.addAuthorizationCheckListener(new AuthorizationCheckListener() {
 });
 
 // Option 2: Use the convenience method for simple logging scenarios
-        ams.
-
-addAuthorizationCheckListener(
-        AuthorizationCheckListener.fromConsumer(event ->{
-        logger.
-
-info("Authorization check: {}",event.getDescription());
+ams.addAuthorizationCheckListener(
+        AuthorizationCheckListener.fromConsumer(event -> {
+            logger.info("Authorization check: {}", event.getDescription());
         })
-        );
+);
 ```
 
 #### Event Types
@@ -168,32 +164,21 @@ import com.sap.cloud.security.ams.error.AmsBackgroundException;
 import com.sap.cloud.security.ams.error.BundleInitializationErrorEvent;
 import com.sap.cloud.security.ams.error.BundleRefreshErrorEvent;
 
-ams.addErrorListener(event ->{
-        if(event instanceof BundleInitializationErrorEvent){
-        logger.
-
-error("AMS bundle initialization failed - service not ready: {}",
-      event.getException().
-
-getMessage());
+ams.addErrorListener(event -> {
+    if (event instanceof BundleInitializationErrorEvent) {
+        logger.error("AMS bundle initialization failed - service not ready: {}",
+                event.getException().getMessage());
         // Eventually the cloud platform will restart the application after a 
         // certain number of failed attempts to the health endpoint, so
         // typically no action besides logging is required here
-        }else if(event instanceof
-BundleRefreshErrorEvent refreshError){
-        logger.
-
-warn("AMS bundle refresh failed (current bundle age: {} seconds): {}",
-     refreshError.getSecondsSinceLastRefresh(),
-            refreshError.
-
-getException().
-
-getMessage());
+    } else if (event instanceof BundleRefreshErrorEvent refreshError) {
+        logger.warn("AMS bundle refresh failed (current bundle age: {} seconds): {}",
+                refreshError.getSecondsSinceLastRefresh(),
+                refreshError.getException().getMessage());
         // Consider taking action such as logging an error instead of a warning
         // when the bundle is stale for extended periods of time
-        }
-        });
+    }
+});
 ```
 
 ::: info Automatic Error Logging
