@@ -1,10 +1,13 @@
 # Release Notes for AMS Client Library Java 
 
-## 4.0.0
+## 4.0.0 - 4.0.5*
 
 Version 4 drastically changes the core API to streamline it with the Node.js library which received positive feedback since it introduced the same changes.
 
-Instead of checking privileges on a `PolicyDecisionPoint` with an `Attributes` object, an `AuthorizationsProvider` prepares an `Authorizations` object for the same purpose. This separates *what* to check from *how* to check it. The necessary configuration for advanced authorization scenarios such as principal propagation or non-standard authorization strategies are configured once during application start. As a result, the authorization checks themselves remain straight-forward in version 4, with a focus on the application domain.
+Instead of checking privileges on a `PolicyDecisionPoint` with an `Attributes` object, an `AuthorizationsProvider` prepares an `Authorizations` object for the same purpose. This separates *what* to check from *how* to check it. The necessary configuration for advanced authorization scenarios such as principal propagation or non-standard authorization strategies are configured once 
+during application start. As a result, the authorization checks themselves remain straight-forward in version 4, with a focus on the application domain.
+
+\* *first publicly available 4.x release version*
 
 ### New features
 
