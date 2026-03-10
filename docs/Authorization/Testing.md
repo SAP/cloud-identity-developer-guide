@@ -8,6 +8,10 @@ This guide explains how to efficiently test your integration with the Authorizat
 Write tests early to save time and get your AMS setup running quickly. Well-designed tests help you catch issues in your authorization logic **before** deployment.
 :::
 
+::: tip Policy Unit Testing with ams-test (Java)
+For Java applications, you can use the [`ams-test`](/Libraries/java/ams-test) module to write unit tests for individual authorization policies without the overhead of integration tests. This allows you to test your DCL policies directly with different input combinations and verify expected authorization decisions.
+:::
+
 To enhance productivity, tests should be executable locally — without requiring cloud resources or deploying the application. This enables rapid feedback cycles and lets you iterate on your authorization policies and application logic efficiently.
 
 Local tests also make it easy to use a debugger or analyze debug logs without persisting sensitive information to understand unexpected authorization check behavior. This is invaluable for [troubleshooting](/Troubleshooting).
@@ -50,10 +54,26 @@ The two steps are described in the following sections.
 ### Assigning Policies to Mocked Users
 
 In CAP applications, policies can be assigned to (both existing and custom) mocked users directly.\
-In non-CAP applications, they are assigned to `app_tid` and `scim_id` pairs mocked during authentication (Node.js) or to a special claim `test_policies` in the JWT token (Java):
+In non-CAP applications, they are assigned to `app_tid` and `scim_id` pairs mocked during authentication:
 
 ::: code-group
-```json [CAP Node.js] 
+```json [Node.js/Java] 
+// mockPolicyAssignments.json
+{
+    "defaultTenant": { // tenant ID (app_tid)
+        "alice": [ // user's ID (scim_id)
+            "shopping.CreateOrders",
+            "shopping.DeleteOrders"
+        ],
+        "bob": [
+            "local.OrderAccessory"
+        ],
+        "carol": []
+    }
+}
+```
+
+```json [Node.js (CAP)] 
 // cds.env source
 {
     "requires": {
@@ -71,10 +91,15 @@ In non-CAP applications, they are assigned to `app_tid` and `scim_id` pairs mock
                         "policies": [ // [!code ++:3]
                             "local.OrderAccessory"
                         ]
-                    } 
+                    }
+                }
+            }
+        }
+    }
+} 
 ```
 
-```yml [CAP Java]
+```yml [Java (CAP)]
 # application.yml
 cds:
   security:
@@ -88,34 +113,20 @@ cds:
           - local.OrderAccessory
 ```
 
-```json [Node.js] 
-// mockPolicyAssignments.json
-{
-    "defaultTenant": {
-        "alice": [
-            "shopping.CreateOrders",
-            "shopping.DeleteOrders"
-        ],
-        "bob": [
-            "local.OrderAccessory"
-        ],
-        "carol": []
-    }
-}
-```
-
-```java [Java]
-// OrderControllerTest.java
-@Test
-  void requestWithCreateOrders_ok(SecurityTestContext context) throws IOException {
-    String jwt =
-        context
-            .getPreconfiguredJwtGenerator()
-            .withClaimValues("test_policies", "shopping.CreateOrders") // [!code ++]
-            .createToken()
-            .getTokenValue();
-
-    HttpGet request = createGetRequest(jwt);
+```yaml [Spring Boot]
+# application-test.yaml
+sap:
+  ams:
+    test:
+      policy-assignments:
+        provider: # tenant ID (app_tid)
+          alice:  # user's ID (scim_id)
+            - shopping.CreateOrders
+            - shopping.DeleteOrders
+          bob:
+            - local.OrderAccessory
+      # OR use a file:
+      # policy-assignments-file: src/test/resources/mockPolicyAssignments.json
 ```
 :::
 
@@ -131,33 +142,6 @@ In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cd
 :::
 
 ::: code-group
-```xml [(CAP) Java]
-<!-- srv/pom.xml -->
-<build>
-    <plugins>
-        <plugin> <!-- [!code ++:20] -->
-        	<groupId>com.sap.cloud.security.ams.client</groupId>
-        	<artifactId>dcl-compiler-plugin</artifactId>
-        	<version>${sap.cloud.security.ams.version}</version>
-        	<executions>
-                <execution>
-        			<id>compile</id>
-        			<goals>
-        				<goal>compile</goal>
-        			</goals>
-        			<configuration>
-        				<sourceDirectory>${project.basedir}/src/main/resources/ams</sourceDirectory>
-        				<dcn>true</dcn>
-        				<dcnParameter>pretty</dcnParameter>
-        				<compileTestToDcn>true</compileTestToDcn>
-        			</configuration>
-        		</execution>        
-        	</executions>
-        </plugin>
-    </plugins>
-</build>
-```
-
 ```json [Node.js]
 // package.json
 "scripts": {
@@ -168,6 +152,77 @@ In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cd
         "@sap/ams-dev": "^2", // [!code ++]
 }
 ```
+
+```xml [Java (CAP)]
+<!-- srv/pom.xml -->
+<build>
+    <plugins>
+        <!-- STEPS TO BUILD CDS MODEL AND GENERATE POJOs -->
+        <plugin>
+            <groupId>com.sap.cds</groupId>
+            <artifactId>cds-maven-plugin</artifactId>
+            <executions>
+                <!-- ... -->
+
+                <!-- DCL -> DCN compilation before tests --> // [!code ++:14]
+                <execution>
+                    <id>compile-dcl</id>
+                    <goals>
+                        <goal>npx</goal>
+                    </goals>
+                    <phase>generate-test-resources</phase>
+                    <configuration>
+                        <arguments>--package=@sap/ams-dev compile-dcl
+                            -d ${project.basedir}/src/main/resources/ams
+                            -o ${project.basedir}/target/generated-test-sources/dcn
+                        </arguments>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+```xml [Java]
+<build>
+        <plugins>
+            <!-- ... -->
+
+            <!-- Plugin for DCL -> DCN compilation before tests --> // [!code ++:31]
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.14.1</version>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <nodeVersion>v24.11.0</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-dcl</id>
+                        <goals>
+                            <goal>npx</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <arguments>--package=@sap/ams-dev compile-dcl
+                                -d ${project.basedir}/src/main/resources/dcl
+                                -o ${project.basedir}/target/generated-test-sources/dcn
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+```
 :::
 
 #### Loading DCN
@@ -175,48 +230,47 @@ To load the compiled DCN files, the AMS client library needs to be configured to
 
 ::: tip
 In CAP Node.js projects, this is done automatically by the AMS modules if `requires.auth.kind = mocked`.
+
+In Java projects, this is done automatically if `spring-boot-starter-cap-ams-test` or `spring-boot-starter-ams-test` is on the classpath.
 :::
 
 ::: code-group
 ```js [Node.js]
-// application setup
-let ams;
-if (process.env.NODE_ENV === 'test') { // [!code ++:5]
-    ams = AuthorizationManagementService.fromLocalDcn("./test/dcn", {
-        assignments: "./test/mockPolicyAssignments.json"
-    });
-} else {
-    // production
-    const identityService = require('./identityService');
-    ams = AuthorizationManagementService.fromIdentityService(identityService);
-} // [!code ++]
+// test-specific application setup
+
+const ams = AuthorizationManagementService.fromLocalDcn("./test/dcn", {
+    assignments: "./test/mockPolicyAssignments.json"
+});
 ```
 
-```yaml [CAP Java]
-# application.yaml
+```java [Java]
+// test-specific application setup
 
-cds:
-  security:
-    authorization:
-      ams:
-        test-sources: "" # when empty, the default srv/target/dcl_opa is used
-```
+AuthorizationManagementService ams = null;
+try {
+    LocalAuthorizationManagementServiceConfig amsTestConfig = 
+        new LocalAuthorizationManagementServiceConfig()
+            .withPolicyAssignmentsPath(
+                Path.of("src", "test", "resources", "mockPolicyAssignments.json"));
+    ams = AuthorizationManagementServiceFactory
+            .fromLocalDcn(
+                Path.of("target", "generated-test-sources", "ams", "dcn"), amsTestConfig);
 
-```xml{6} [Java]
- <!-- pom.xml -->
- <dependencies>
-    <dependency> 
-        <groupId>com.sap.cloud.security.ams.client</groupId> <!-- [!code ++:4] -->
-        <artifactId>jakarta-ams-test</artifactId>
-        <version>${sap.cloud.security.ams.client.version}</version>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
+    ams.whenReady().get(3, TimeUnit.SECONDS);
+} catch (TimeoutException e) {
+    throw new RuntimeException("Local AMS test client did not become ready within timeout", e);
+} catch (Exception e) {
+    throw new RuntimeException("Failed to create AMS client", e);
+}
 ```
 :::
 
-##  Test policies
+##  Local policies
 
-The DCL package called `local` has a special semantic: it's intended for DCL files with policies that are only relevant for testing, but not for production. Policies in the `local` package are ignored during base policy upload even if they are present in the archive.
+The top-level DCL package `local` has a special semantic.
+Any policy defined in this package or any of its sub-packages is considered to be irrelevant for production.
+That is, local policies are ignored during base policy upload and do not become part of the productive authorization bundle.
 
-This allows you to test policies that are restrictions of base policies without shipping them to customers. Typically, such policies would be created by an administrator at runtime in the `SCI admin cockpit`.
+Policies that are only required for testing should be placed in the `local` package.
+This is especially useful to test the anticipated behavior of admin policies which are typically created by restricting base policies.
+Admin policies are not part of the base policies themselves since they are created by administrators at runtime.

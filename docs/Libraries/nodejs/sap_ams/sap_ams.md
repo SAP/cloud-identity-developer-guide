@@ -82,7 +82,7 @@ app.use(/^\/(?!health).*/i, authenticate, amsMw.authorize());
 ```
 
 ::: warning Important
-Implement a [startup check](/Authorization/StartupCheck) to ensure that the `AuthorizationManagementService` instance is ready for authorization checks before serving authorized endpoints.
+Implement a [startup check](/Authorization/AuthorizationBundle#startup-check) to ensure that the `AuthorizationManagementService` instance is ready for authorization checks before serving authorized endpoints.
 :::
 
 ### Authorization checks
@@ -238,7 +238,7 @@ If your application does not subscribe to the "error" event, these bundle events
 :::
 
 ::: tip Handling Initial Bundle Load Errors
-Refer to the [Startup Check](/Authorization/StartupCheck) documentation for guidance on how to react when AMS fails to initialize the bundle. The error events emitted for this case are only intended to provide information about the failed requests.
+Refer to the [Startup Check](/Authorization/AuthorizationBundle#startup-check) documentation for guidance on how to react when AMS fails to initialize the bundle. The error events emitted for this case are only intended to provide information about the failed requests.
 :::
 
 ### Testing
