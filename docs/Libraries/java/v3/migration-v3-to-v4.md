@@ -115,16 +115,18 @@ boolean allowed = !authorizations
 
 ### Spring Route Security
 
-- Replace `SecurityExpressionHandler` with `AmsRouteSecurity` (CAP: `AmsCdsRouteSecurity`) bean in `SecurityFilterChain`.
+- Replace `SecurityExpressionHandler` with `AmsRouteSecurity`/`AmsCdsRouteSecurity` (CAP) bean in `SecurityFilterChain`.
 - Update route authorization checks based on following mapping:
 
-| v3 Route Check Syntax                                        | v4 Route Check Syntax                          |
-|--------------------------------------------------------------|------------------------------------------------|
-| `hasBaseAuthority("action", "resource")`                     | `precheckPrivilege("action", "resource")`      |
-| `forAction("action")`                                        | `checkPrivilege("action", "*")`                |
-| `forResource("resource")`                                    | `checkPrivilege("*", "resource")`              |
-| `forResourceAction("resource", "action")`                    | `checkPrivilege("action", "resource")`         |
-| `forResourceAction("resource", "action", attributes...)`     | use method security instead                    |
+| v3 Route Check Syntax                                        | AmsRouteSecurity                           | AmsCdsRouteSecurity       |
+|--------------------------------------------------------------|--------------------------------------------|---------------------------------|
+| `hasBaseAuthority("read", "products")`                       | `precheckPrivilege("read", "products")`    | —                               |
+| `hasBaseAuthority("Admin", "$SCOPES")`                       | `precheckPrivilege("Admin", "$SCOPES")`    | `precheckRole("Admin")`         |
+| `forAction("read")`                                          | `checkPrivilege("read", "*")`              | —                               |
+| `forResource("products")`                                    | `checkPrivilege("*", "products")`          | —                               |
+| `forResourceAction("products", "read")`                      | `checkPrivilege("read", "products")`       | —                               |
+| `forResourceAction("$SCOPES", "Admin")`                      | `checkPrivilege("Admin", "$SCOPES")`       | `checkRole("Admin")`            |
+| `forResourceAction("products", "read", attributes...)`       | use method security                 | use method security      |   
 
 **Example**:
 
@@ -139,19 +141,39 @@ public SecurityFilterChain filterChain(
             new WebExpressionAuthorizationManager("hasBaseAuthority('read', 'orders')");
     readOrders.setExpressionHandler(amsHttpExpressionHandler);
 
+    WebExpressionAuthorizationManager adminRole =
+            new WebExpressionAuthorizationManager("forResourceAction('$SCOPES', 'Admin')");
+    adminRole.setExpressionHandler(amsHttpExpressionHandler);
+
     http.authorizeHttpRequests(authz -> authz
-            .requestMatchers(GET, "/orders/**").access(readOrders));
+            .requestMatchers(GET, "/orders/**").access(readOrders)
+            .requestMatchers("/admin/**").access(adminRole));
     return http.build();
 }
 ```
 
-```java [v4]
+```java [v4 AmsRouteSecurity]
 @Bean
 public SecurityFilterChain filterChain(HttpSecurity http, AmsRouteSecurity via) {
 
     http.authorizeHttpRequests(authz -> authz
             .requestMatchers(GET, "/orders/**")
-                .access(via.precheckPrivilege("read", "orders")));
+                .access(via.precheckPrivilege("read", "orders"))
+            .requestMatchers("/admin/**")
+                .access(via.checkPrivilege("Admin", "$SCOPES")));
+    return http.build();
+}
+```
+
+```java [v4 AmsCdsRouteSecurity (CAP)]
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http, AmsCdsRouteSecurity via) {
+
+    http.authorizeHttpRequests(authz -> authz
+            .requestMatchers(GET, "/orders/**")
+                .access(via.precheckPrivilege("read", "orders"))
+            .requestMatchers("/admin/**")
+                .access(via.checkRole("Admin")));
     return http.build();
 }
 ```
@@ -201,10 +223,10 @@ Replace the DCL output directory with the new default output directory for AMS D
 
 ### CAP Java Configuration
 
-- Remove test sources property from `application.yaml`:
+- Remove test sources property from `application.yaml`. It is no longer used:
 
 ```yaml
-cds:
+cds: # [!code --:5]
   security:
     authorization:
       ams:
@@ -217,5 +239,5 @@ In v4, the existence of `spring-boot-starter-ams-cap-test` on the classpath dete
 
 ### Spring Security Tests
 
-The `MockOidcTokenRequestPostProcessor.userWithPolicies` from `jakarta-ams-test` has been removed because the real AMS production code can now be tested.
+The `MockOidcTokenRequestPostProcessor.userWithPolicies` from `jakarta-ams-test` has been removed because now, the full AMS production code can be tested including the real `AuthorizationProvider`.
 It requires the definition of a [policy assignments](/Authorization/Testing#assigning-policies-to-mocked-users) map from which AMS determines the used policies based on the `app_tid` and `scim_id` claims of the token, and for advanced token flows: other claims as needed.
