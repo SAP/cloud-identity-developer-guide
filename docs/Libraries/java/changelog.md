@@ -1,6 +1,13 @@
 # Release Notes for AMS Client Library Java 
 
-## 4.0.0 - 4.0.5*
+## Version 4
+
+### 4.0.6
+
+- Fix: Read Number constants from DCN as `Double` instead of `Long/Int` to avoid runtime errors when comparing with `Double` attribute input
+- Fix `AmsCapAutoConfiguration`: Use @Order(-100) for `AmsUserInfoProvider` bean to make sure it runs late in the `UserInfoProvider` chain. For example, this fixes incompatibilities with DwcUserInfoProvider which must run before the `AmsUserInfoProvider` to extract user information from the token.
+
+### 4.0.0 - 4.0.5*
 
 Version 4 drastically changes the core API to streamline it with the Node.js library which received positive feedback since it introduced the same changes.
 
@@ -17,7 +24,7 @@ during application start. As a result, the authorization checks themselves remai
 ::: tip ZTIS Auto-Configuration
 There is out-of-the-box support for ZTIS service bindings via the Spring Boot starters.
 :::
-- Domain-Specific `Authorizations` by [wrapping](https://github.com/SAP-samples/ams-samples-java/blob/new_lib_v4/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/auth/AuthHandler.java#L68) `Authorizations` objects with [domain-specific methods](https://github.com/SAP-samples/ams-samples-java/blob/new_lib_v4/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/auth/ShoppingAuthorizations.java#L27-L46) for [better readability](https://github.com/SAP-samples/ams-samples-java/blob/new_lib_v4/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/service/OrdersService.java#L151-L153) and reusability of authorization checks across your application.
+- Domain-Specific `Authorizations` by [wrapping](https://github.com/SAP-samples/ams-samples-java/blob/main/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/auth/AuthHandler.java#L68) `Authorizations` objects with [domain-specific methods](https://github.com/SAP-samples/ams-samples-java/blob/main/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/auth/ShoppingAuthorizations.java#L27-L46) for [better readability](https://github.com/SAP-samples/ams-samples-java/blob/main/ams-javalin-shopping/src/main/java/com/sap/cloud/security/ams/samples/service/OrdersService.java#L151-L153) and reusability of authorization checks across your application.
 ::: tip CdsAuthorizations
 The CAP Spring Boot starter already wraps the standard `Authorizations` in a `CdsAuthorizations` adapter that provides CAP-specific methods for role checks.
 :::
@@ -51,17 +58,19 @@ Our performance tests have indicated that the performance impact of authorizatio
 
 For example, for both library versions, the request latency for a localhost CAP OData endpoint with instance-based authorization filters was `<= 5ms` of which most of the time was likely spent on database and network handling instead of the AMS library.
 
-## 3.8.0
+## Version 3
+
+### 3.8.0
 
 - This release removes the dependencies from `com.sap.cloud.security.ams.dcl` artifacts. All required classes,
 interfaces, etc., are now part of the `jakarta-ams` module using the same packages. So, everything should continue
 to work without any changes. Please remove any direct dependencies on `com.sap.cloud.security.ams.dcl` artifacts.
 
-## 3.7.0
+### 3.7.0
 
 - Maintenance release with updated dependencies and fixes for the Maven Central release process.
 
-## 3.6.0
+### 3.6.0
 
 - The property `cds.security.mock.enabled` is now used to enable the mock users in the
   `cap-ams-support` module.
