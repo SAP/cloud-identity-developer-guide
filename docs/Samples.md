@@ -7,9 +7,9 @@ The focus of the samples is on the authorization using the Authorization Managem
 ### Java
 The [Java samples repository](https://github.com/SAP-samples/ams-samples-java) contains the following samples for implementing AMS in Java applications:
 
-- `CAP Java`: [ams-cap-sample](https://github.com/SAP-samples/ams-samples-java/tree/main/ams-cap-sample)
-- `Spring Boot`: [spring-security-ams](https://github.com/SAP-samples/ams-samples-java/tree/main/spring-security-ams)
-- `Jakarta EE`: [jakarta-ams-sample](https://github.com/SAP-samples/ams-samples-java/tree/main/jakarta-ams-sample)
+- `CAP Java`: [ams-cap-bookshop](https://github.com/SAP-samples/ams-samples-java/tree/main/ams-cap-bookshop)
+- `Jakarta EE`: [ams-javalin-shopping](https://github.com/SAP-samples/ams-samples-java/tree/main/ams-javalin-shopping)
+- `Spring Boot`: [ams-spring-boot-shopping](https://github.com/SAP-samples/ams-samples-java/tree/main/ams-spring-boot-shopping)
 
 ### Node.js
 The [Node.js samples repository](https://github.com/SAP-samples/ams-samples-node) contains the following samples for implementing AMS in Node.js applications:
