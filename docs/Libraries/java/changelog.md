@@ -2,19 +2,19 @@
 
 ## Version 4
 
-### 4.0.6
+### 4.0.7
 
 - Fix: Read Number constants from DCN as `Double` instead of `Long/Int` to avoid runtime errors when comparing with `Double` attribute input
 - Fix `AmsCapAutoConfiguration`: Use @Order(-100) for `AmsUserInfoProvider` bean to make sure it runs late in the `UserInfoProvider` chain. For example, this fixes incompatibilities with DwcUserInfoProvider which must run before the `AmsUserInfoProvider` to extract user information from the token.
 
-### 4.0.0 - 4.0.5*
+### 4.0.0 - 4.0.6*
 
 Version 4 drastically changes the core API to streamline it with the Node.js library which received positive feedback since it introduced the same changes.
 
 Instead of checking privileges on a `PolicyDecisionPoint` with an `Attributes` object, an `AuthorizationsProvider` prepares an `Authorizations` object for the same purpose. This separates *what* to check from *how* to check it. The necessary configuration for advanced authorization scenarios such as principal propagation or non-standard authorization strategies are configured once 
 during application start. As a result, the authorization checks themselves remain straight-forward in version 4, with a focus on the application domain.
 
-\* *first publicly available 4.x release version*
+\* *first publicly available 4.x release version is 4.0.5*
 
 ### New features
 
