@@ -39,6 +39,8 @@ cds:
   security:
     authorization:
       ams:
+        edge-service:
+          url: http://localhost:8080   # Edge service URL (optional)
         bundle-loader:
           polling-interval: 20000      # Bundle update polling interval in ms (default: 20000)
           initial-retry-delay: 1000    # Initial retry delay after failure in ms (default: 1000)
