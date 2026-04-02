@@ -2,6 +2,12 @@
 
 ## Version 4
 
+### 4.1.0
+
+- Feature: added configuration option for fetching authorization bundles from an AMS Edge Service.
+- Fix: Support for multiple Mock Policy Assignment sources (file-path, map structure) has been added to prevent startup errors when a file-path is configured in the Spring properties.
+- Fix: added DEBUG log when the AMS CAP Plugin falls back to `UserInfo#getTenant` or `UserInfo#getId` because `app_tid` and/or `scim_id` claims cannot be found on `UserInfo` to allow analysis when policy assignments of a user unexpectedly do not apply.
+
 ### 4.0.7
 
 - Fix: Read Number constants from DCN as `Double` instead of `Long/Int` to avoid runtime errors when comparing with `Double` attribute input
