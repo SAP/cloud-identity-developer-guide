@@ -24,7 +24,7 @@ As registered SAP customers, report your issue by creating a ticket on the [SAP 
 | Name                                        | Service Now Component | Description                                                                                              |
 | --------------------------------------------|-----------------------|----------------------------------------------------------------------------------------------------------|
 | Identity Authentication Service (**IAS**)   | BC-IAM-IDS            | SCI tenant, User Management, Token Flows, Technical Communication etc.                                   |
-| Authorization Management Service (**AMS**)  | BC-IAM-CAS            | AMS Server, Authorization Management UI, DCL compiler, buildpack, bundle gateway                         |
+| Authorization Management Service (**AMS**)  | BC-IAM-AMS            | AMS Server, Authorization Management UI, DCL compiler, buildpack, bundle gateway                         |
 | Security Client Libraries                   | BC-CP-CF-SEC-LIB      | Java, Node.js and Go client libraries for SAP Cloud Identity Services, Authorization Management, XSUAA   |
 | BTP `identity` Service Broker               | BC-IAM-IB             | Service creation of SAP Cloud Identity Services instances on BTP                                         | 
 
