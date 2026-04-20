@@ -145,8 +145,8 @@ In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cd
 ```json [Node.js]
 // package.json
 "scripts": {
-        "jest": "NODE_ENV=test npx jest",
-        "pretest": "npx compile-dcl -d auth/dcl -o test/dcn", // [!code ++]
+    "test": "NODE_ENV=test npx jest",
+    "pretest": "npx compile-dcl -d auth/dcl -o test/dcn", // [!code ++]
 },
 "devDependencies": {
         "@sap/ams-dev": "^2", // [!code ++]
@@ -157,29 +157,22 @@ In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cd
 <!-- srv/pom.xml -->
 <build>
     <plugins>
-        <!-- STEPS TO BUILD CDS MODEL AND GENERATE POJOs -->
-        <plugin>
-            <groupId>com.sap.cds</groupId>
-            <artifactId>cds-maven-plugin</artifactId>
-            <executions>
-                <!-- ... -->
-
-                <!-- DCL -> DCN compilation before tests --> // [!code ++:14]
-                <execution>
-                    <id>compile-dcl</id>
-                    <goals>
-                        <goal>npx</goal>
-                    </goals>
-                    <phase>generate-test-resources</phase>
-                    <configuration>
-                        <arguments>--package=@sap/ams-dev compile-dcl
-                            -d ${project.basedir}/src/main/resources/ams
-                            -o ${project.basedir}/target/generated-test-sources/dcn
-                        </arguments>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+        <!-- Plugin for DCL -> DCN compilation before tests -->  <!-- [!code ++:16] -->
+            <plugin>
+                <groupId>com.sap.cloud.security.ams.dcl</groupId>
+                <artifactId>dcl-compiler-plugin</artifactId>
+                <version>${sap.cloud.security.ams.dcl-compiler.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                         <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/resources/ams</sourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
     </plugins>
 </build>
 ```
@@ -187,36 +180,16 @@ In CAP Node.js projects, this is done automatically by `@sap/ams-dev` before `cd
 ```xml [Java]
 <build>
         <plugins>
-            <!-- ... -->
-
-            <!-- Plugin for DCL -> DCN compilation before tests --> // [!code ++:31]
+            <!-- Plugin for DCL -> DCN compilation before tests --> <!-- [!code ++:13] -->
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.14.1</version>
+                <groupId>com.sap.cloud.security.ams.dcl</groupId>
+                <artifactId>dcl-compiler-plugin</artifactId>
+                <version>${sap.cloud.security.ams.dcl-compiler.version}</version>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
                         <goals>
-                            <goal>install-node-and-npm</goal>
+                            <goal>compile</goal>
                         </goals>
-                        <phase>generate-test-resources</phase>
-                        <configuration>
-                            <nodeVersion>v24.11.0</nodeVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>compile-dcl</id>
-                        <goals>
-                            <goal>npx</goal>
-                        </goals>
-                        <phase>generate-test-resources</phase>
-                        <configuration>
-                            <arguments>--package=@sap/ams-dev compile-dcl
-                                -d ${project.basedir}/src/main/resources/dcl
-                                -o ${project.basedir}/target/generated-test-sources/dcn
-                            </arguments>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
