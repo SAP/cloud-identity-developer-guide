@@ -44,23 +44,25 @@ language and framework you are using.
 
 ## Dependency Setup
 
-::: tip
-In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with
-the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli). It automatically adds the correct
-dependencies.
-:::
-
-The following tables give an overview of the required AMS module dependencies for different application setups.
+The following sections give an overview of the required AMS module dependencies for different application setups.
 
 ::: warning
 The recommended modules and versions have changed over time (see [Historical Setups](#historical-setups))
 
-**Please begin new projects with the currently recommended modules**.
+**Please begin new projects with the latest version of the currently recommended modules**.
+:::
+#
+::: tip
+In CAP applications, the [`cds add ams`](https://cap.cloud.sap/docs/tools/cds-cli#cds-add) command can be executed with
+the *latest version* of [`@sap/cds-dk`](https://cap.cloud.sap/docs/tools/cds-cli#cli) to add the recommended
+dependencies. The generated AMS versions get regularly updated in newer `@sap/cds-dk` releases.
 :::
 
 ### Java
 
-::: tip
+The latest version can always be found on [Maven Central](https://mvnrepository.com/artifact/com.sap.cloud.security.ams/ams-bom).
+
+::: tip Spring Boot Support
 The AMS modules support both Spring Boot 3 and 4.
 :::
 
@@ -192,17 +194,18 @@ alternatively `HealthIndicator` beans for Spring Boot Actuator health endpoint i
 
 #### Tooling
 
+::: tip DCL Compiler Maven plugin
+The [DCL Compiler Maven plugin](/Libraries/java/dcl-compiler-maven-plugin) allows DCL compilation for local integration [tests](/Authorization/Testing) without AMS cloud instance.
+:::
+
 ::: tip CDS Build Plugin
 In CAP Java projects, the (optional) Node.js module `@sap/ams` *should* be added in the `package.json` as a
 *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
 :::
 
-::: tip DCL compiler plugin
-In the near future, there will be new maven build plugin for DCL compilation for local integration tests without AMS cloud instance.
-For the time being, refer to the samples for an interim solution based on the Node.js tooling or continue use the old maven DCL compiler plugin.
-:::
-
 ### Node.js
+
+The latest versions of the Node.js modules can always be found on [npmjs.org](https://www.npmjs.com/package/@sap/ams).
 
 | Project Type      | @sap/ams | @sap/ams-dev | Java JDK |
 |-------------------|:--------:|:------------:|:--------:|
