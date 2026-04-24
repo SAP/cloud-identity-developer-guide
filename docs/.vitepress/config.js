@@ -61,6 +61,7 @@ export default defineConfig(withMermaid({
                             { text: 'ams-test', link: '/Libraries/java/ams-test' },
                             { text: 'cap-ams', link: '/Libraries/java/cap-ams' },
                             { text: 'spring-boot-ams', link: '/Libraries/java/spring-boot-ams' },
+                            { text: 'dcl-compiler-plugin', link: '/Libraries/java/dcl-compiler-maven-plugin' },
                             {
                                 text: 'Version 3.x',
                                 collapsed: true,
