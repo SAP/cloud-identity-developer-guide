@@ -224,10 +224,10 @@ try {
     LocalAuthorizationManagementServiceConfig amsTestConfig = 
         new LocalAuthorizationManagementServiceConfig()
             .withPolicyAssignmentsPath(
-                Path.of("src", "test", "resources", "mockPolicyAssignments.json"));
+                Path.of("src/test/resources/mockPolicyAssignments.json"));
     ams = AuthorizationManagementServiceFactory
             .fromLocalDcn(
-                Path.of("target", "generated-test-sources", "ams", "dcn"), amsTestConfig);
+                Path.of("target/generated-test-resources/ams/dcn"), amsTestConfig);
 
     ams.whenReady().get(3, TimeUnit.SECONDS);
 } catch (TimeoutException e) {
