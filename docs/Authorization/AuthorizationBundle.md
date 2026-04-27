@@ -144,10 +144,6 @@ public KeyStore amsKeyStore() {
 
 :::
 
-::: tip X509_ATTESTED with ZTIS (Spring Boot)
-For `X509_ATTESTED` bindings using the Zero Trust Identity Service (ZTIS), add the `spring-boot-starter-ams-ztis` dependency. It automatically provides the `amsKeyStore` bean from the ZTIS sidecar — no custom configuration required.
-:::
-
 ##  Startup Check
 
 While it is possible to synchronously block application startup until the AMS module becomes ready, we recommend including AMS in the application's **readiness probes**. This allows the application process to become healthy for the cloud platform but prevent traffic from being routed to the process until the AMS module is ready to serve authorization checks. 
