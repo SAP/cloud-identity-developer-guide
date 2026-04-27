@@ -79,6 +79,75 @@ After creating the `AuthorizationManagementService` instance, the application mu
 The AMS client libraries integrate into different web frameworks, such as [CAP](https://cap.cloud.sap/docs/) or [Spring Security](https://spring.io/projects/spring-security). The respective [Spring Boot starters](/Authorization/GettingStarted#java) and [Node.js CAP plugin](/Authorization/GettingStarted#node-js) automatically create the `AuthorizationManagementService` instance from the SCI service binding in the application's environment, so manual initialization is not required in these cases.
 :::
 
+### Certificate Configuration
+
+For SAP BTP service bindings with `"credential-type": "X509_PROVIDED"` or `"credential-type": "X509_ATTESTED"`, the certificate and key required for mTLS authentication with AMS is not included in the service binding and must be provided by the application before the library instantiation.
+
+::: tip X509_GENERATED
+SAP BTP service bindings with `"credential-type": "X509_GENERATED"` already contain the client certificate and key. No certificate configuration is needed in this case.
+:::
+
+::: code-group
+
+```js [Node.js]
+// Update the identityService object passed to
+// fromIdentityService with the certificate information.
+// cert and key must be PEM-encoded strings
+identityService.setCertificateAndKey(cert, key);
+
+// then create the AMS instance as usual
+const ams = AuthorizationManagementService
+    .fromIdentityService(identityService);
+```
+
+```js [Node.js (CAP)]
+const { amsCapPluginRuntime } = require("@sap/ams");
+
+// Update the credentials of the AMS CAP plugin runtime
+// with the certificate information.
+// cert and key must be PEM-encoded strings
+amsCapPluginRuntime.credentials = {
+    ...amsCapPluginRuntime.credentials,
+    cert,
+    key
+}
+```
+
+```java [Java]
+import com.sap.cloud.security.ams.api.AuthorizationManagementService;
+import com.sap.cloud.security.ams.config.CloudAuthorizationManagementServiceConfig;
+import java.security.KeyStore;
+
+// The KeyStore must contain exactly one private key entry with no password (empty password).
+KeyStore keyStore = // load KeyStore containing client certificate and private key
+
+CloudAuthorizationManagementServiceConfig config = new CloudAuthorizationManagementServiceConfig()
+    .withKeyStore(keyStore);
+
+AuthorizationManagementService ams = AuthorizationManagementService
+    .fromIdentityServiceBinding(identityServiceBinding, config);
+```
+
+```java [Spring Boot]
+import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Qualifier;
+import java.security.KeyStore;
+
+@Bean
+@Qualifier("amsKeyStore")
+public KeyStore amsKeyStore() {
+    // The KeyStore must contain exactly one private key entry with no password (empty password).
+    KeyStore keyStore = // load KeyStore containing client certificate and private key
+    return keyStore;
+}
+```
+
+:::
+
+::: tip X509_ATTESTED with ZTIS (Spring Boot)
+For `X509_ATTESTED` bindings using the Zero Trust Identity Service (ZTIS), add the `spring-boot-starter-ams-ztis` dependency. It automatically provides the `amsKeyStore` bean from the ZTIS sidecar — no custom configuration required.
+:::
+
 ##  Startup Check
 
 While it is possible to synchronously block application startup until the AMS module becomes ready, we recommend including AMS in the application's **readiness probes**. This allows the application process to become healthy for the cloud platform but prevent traffic from being routed to the process until the AMS module is ready to serve authorization checks. 
