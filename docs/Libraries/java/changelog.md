@@ -2,6 +2,12 @@
 
 ## Version 4
 
+### 4.1.1
+
+- Fix: When `spring-boot-starter-cap-ams` is used, technical user tokens are no longer authorized with empty permissions. Previously, this behaviour was a workaround to prevent authorization of nested CAP request contexts which is now checked via reflection instead (due to a lack of public API in current and older CDS versions).
+- Fix: Multiple `RESTRICT` clauses in a policy `USE` are now correctly considered as a logical `OR` instead of granting only access to data that matches the first restriction.
+- Fix: Attributes can now be set to `null` in attribute input given to `Authorizations#checkPrivilege` without throwing an exception.
+
 ### 4.1.0
 
 - Feature: added configuration option for fetching authorization bundles from an AMS Edge Service.
