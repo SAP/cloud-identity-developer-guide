@@ -2,6 +2,13 @@
 
 ## Version 4
 
+### 4.1.2
+
+- Fix: [CAP] Fixed critical bug for instance-based authorization introduced in 4.1.1 that led to filter conditions not being applied when regular user requests were identified as user switch contexts.
+- Fix: [CAP] Fixed CXN syntax error after merging generated AMS filter conditions with complex static where conditions that were in CXN format `{"xpr": ...}`.
+- Fix: The Auto-Configuration of `spring-boot-starter-ams-health` now references the correct class.
+- Added safe-guard to only accept DCN files with DCN version 1.
+
 ### 4.1.1
 
 - Fix: When `spring-boot-starter-cap-ams` is used, technical user tokens are no longer authorized with empty permissions. Previously, this behaviour was a workaround to prevent authorization of nested CAP request contexts which is now checked via reflection instead (due to a lack of public API in current and older CDS versions).
