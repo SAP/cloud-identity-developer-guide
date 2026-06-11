@@ -2,7 +2,7 @@
 
 **Authorization Management Service Support for CAP Java Applications**
 
-A general description of Authorization Management Service (**AMS**) and its functionality can be found [here](../jakarta-ams/jakarta-ams.md).
+A general description of Authorization Management Service (**AMS**) and its functionality can be found [here](./jakarta-ams.md).
 Integrating AMS into applications that use the Cloud Application Programming Model (CAP) is already possible. This can be done
 by using, for example, the API provided by `jakarta-ams` and calling it in all required CAP event handlers.
 This support module tries to make the integration of AMS into CAP more convenient.
@@ -13,7 +13,7 @@ A guide for a transition to the new approach can be found [here][1].
 
 ## <a id="api-disclaimer"></a>Disclaimer on API Usage
 This documentation provides information that might be useful in using AMS. We try to ensure that future versions of the APIs are backwards compatible with the immediately preceding version. This is also true for the API that is exposed with `com.sap.cloud.security.ams.dcl.client` package and its subpackages.  
-Please check the [release notes](../releases.md) for updates about new features and API modifications.
+Please check the [release notes](../changelog.md) for updates about new features and API modifications.
 
 ## Integration Process
 When using this module, the usage of AMS in a CAP Java application works as follows:
@@ -175,7 +175,7 @@ the `BusinessSystemId` use the `CarbonAccountantForSystemOnly` role in the `@res
 
 The `AmsUserInfoProvider` and `AmsAuthorizationHandler` also support the request customization
 going to the `PolicyDecisionPoint` (PDP) by providing an `AttributeProvider` implementation. The
-interface and configuration are described [here](../jakarta-ams/jakarta-ams.md#customize-attributes).
+interface and configuration are described [here](./jakarta-ams.md#customize-attributes).
 The two integration points require different context information. This is provided by a set of dynamic
 arguments available via the method `Principal.getDynamicAttributes()`. Constants for the
 dynamic arguments are defined in the `AmsConstants` class.
@@ -194,7 +194,7 @@ the runtime generates the 'where' clause using the [CAP exists predicate][03].
 ## Help and Support
 
 See the [SAP Cloud Identity Services Developer Guide documentation](/index.md) or the documentation
-of the other AMS client library modules [for example jakarta-ams](../jakarta-ams/jakarta-ams.md) for more information.
+of the other AMS client library modules [for example jakarta-ams](./jakarta-ams.md) for more information.
 The [sample application][02] could also be useful.
 
 If you have an issue of type "My user has assigned policy X and I expect Y but get Z", please follow 
