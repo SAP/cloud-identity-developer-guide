@@ -11,7 +11,29 @@ export default {
 
         const initMermaid = () => {
             const mermaidRenderer = createMermaidRenderer({
-                theme: isDark.value ? "dark" : "base"
+                theme: isDark.value ? "dark" : "base",
+                // Make every diagram type honor the parent container width by default
+                // so the diagram is fully visible at scale=1 and the user can zoom in
+                // via the toolbar if needed.
+                flowchart: { useMaxWidth: true },
+                sequence: { useMaxWidth: true },
+                gantt: { useMaxWidth: true },
+                journey: { useMaxWidth: true },
+                class: { useMaxWidth: true },
+                state: { useMaxWidth: true },
+                er: { useMaxWidth: true },
+                pie: { useMaxWidth: true },
+                requirement: { useMaxWidth: true },
+                mindmap: { useMaxWidth: true },
+                timeline: { useMaxWidth: true },
+                gitGraph: { useMaxWidth: true },
+                c4: { useMaxWidth: true },
+                quadrantChart: { useMaxWidth: true },
+                xyChart: { useMaxWidth: true },
+                sankey: { useMaxWidth: true },
+                block: { useMaxWidth: true },
+                packet: { useMaxWidth: true },
+                architecture: { useMaxWidth: true }
             });
             mermaidRenderer.setToolbar({
                 showLanguageLabel: false,
