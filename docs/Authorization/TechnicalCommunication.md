@@ -143,7 +143,7 @@ final ApiMapper principalPropagationApiMapper = ApiMapper.ofMap(PRINCIPAL_PROPAG
 ### Mapping registration
 Finally, a bit of configuration is required to register the mapping functions, so that the correct policies apply when external requests are made against the API permission groups.
 
-The mapping can be registered in `IdentityServiceAuthProvider` (Node.js) / `IdentityServiceAuthFactory` (Java) and its subclasses, such as `HybridAuthProvider` (Node.js) / `HybridAuthFactory` (Java).
+The mapping can be registered in `IdentityServiceAuthProvider` (Node.js) / `SciAuthorizationsProvider` (Java) and its subclasses, such as `HybridAuthProvider` (Node.js) / `HybridAuthorizationsProvider` (Java).
 
 ::: info
 These classes implement the special handling for the `principal-propagation` API permission group described [above](#authorization-via-api-permission-groups).
@@ -185,7 +185,7 @@ import static com.sap.cloud.security.ams.api.App2AppFlow.TECHNICAL_USER;
 public class AmsAuthProviderConfiguration {
 
     @Autowired
-    private IdentityServiceAuthProvider authProvider;
+    private SciAuthorizationsProvider authProvider;
 
     @PostConstruct
     public void configureAuthProvider() {
@@ -200,13 +200,13 @@ public class AmsAuthProviderConfiguration {
 ```
 
 ```java [Java]
-import com.sap.cloud.security.ams.core.IdentityServiceAuthProvider;
+import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 
 import static com.sap.cloud.security.ams.api.App2AppFlow.RESTRICTED_PRINCIPAL_PROPAGATION;
 import static com.sap.cloud.security.ams.api.App2AppFlow.TECHNICAL_USER;
 
-IdentityServiceAuthProvider authProvider =
-    IdentityServiceAuthProvider.create(ams)
+SciAuthorizationsProvider authProvider =
+    SciAuthorizationsProvider.create(ams)
         .withApiMapper(TECHNICAL_USER_API_MAPPER, TECHNICAL_USER)
         .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, RESTRICTED_PRINCIPAL_PROPAGATION);
 ```
