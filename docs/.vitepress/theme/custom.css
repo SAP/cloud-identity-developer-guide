@@ -111,3 +111,38 @@
 .vp-doc .mermaid p {
   line-height: 24px !important;
 }
+
+/* vitepress-mermaid-renderer overrides:
+ * The plugin hard-codes a min-height: 20rem / max-height: 50vh container with
+ * overflow:hidden, which clips taller diagrams and makes the default view look
+ * "zoomed in". Let the container size to the diagram's natural rendered height
+ * so scale=1 shows the full diagram; the toolbar still allows zoom + pan. */
+.mermaid-container,
+.mermaid-container .diagram-wrapper {
+  min-height: 0 !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+.mermaid-container .mermaid {
+  display: block;
+  width: 100%;
+}
+
+/* Drop the VitePress code-block background that wraps the rendered diagram, so
+ * the diagram renders against the page background like other figures. */
+.mermaid-wrapper,
+div[class*="language-"]:has(> .mermaid-wrapper),
+div[class*="language-"]:has(> pre[data-mermaid-processed]) {
+  background: transparent !important;
+}
+
+.mermaid-wrapper .mermaid-container {
+  background: transparent !important;
+}
+
+/* Reserve a little space at the bottom of the diagram area so the floating
+ * zoom/pan toolbar does not overlap the bottom edge of the rendered diagram. */
+.mermaid-container .diagram-wrapper {
+  padding-bottom: 4rem;
+}
