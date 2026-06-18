@@ -101,16 +101,23 @@ const ams = AuthorizationManagementService
 ```
 
 ```js [Node.js (CAP)]
+// server.js
+const cds = require('@sap/cds');
 const { amsCapPluginRuntime } = require("@sap/ams");
 
-// Update the credentials of the AMS CAP plugin runtime
-// with the certificate information.
-// cert and key must be PEM-encoded strings
-amsCapPluginRuntime.credentials = {
-    ...amsCapPluginRuntime.credentials,
-    cert,
-    key
-}
+// Extend the AMS CAP plugin runtime credentials with the provided certificate/key.
+cds.on('served', async () => {
+    // assuming cert and key are PEM-encoded strings
+    amsCapPluginRuntime.credentials.certificate = cert;
+    amsCapPluginRuntime.credentials.key = key; 
+});
+
+// If certificate/key change during runtime, update the properties inside the credentials object again.
+someCredentialsWatcher.on('change', (newCert, newKey) => {
+    // assuming newCert and newKey are PEM-encoded strings
+    amsCapPluginRuntime.credentials.certificate = newCert;
+    amsCapPluginRuntime.credentials.key = newKey;
+});
 ```
 
 ```java [Java]
