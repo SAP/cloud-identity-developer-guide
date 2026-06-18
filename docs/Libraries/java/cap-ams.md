@@ -48,10 +48,11 @@ graph TD
 
 ### CdsAuthorizations
 
-The `CdsAuthorizations` **bean** is a *singleton JDK Dynamic Proxy* that implements the `CdsAuthorizations` **interface**. Every method invocation on the proxy resolves the current user's authorizations with the `AuthorizationsProvider` bean based on the thread-local `RequestContext` and the corresponding `UserInfo`. Additional information is obtained from the thread-local `SecurityContext` if necessary, e.g. whether an SCI or XSUAA token has been used for authentication.
+The `CdsAuthorizations` **bean** is a *singleton JDK Dynamic Proxy* that implements the `CdsAuthorizations` **interface**. Every method invocation on the proxy resolves the current user's authorizations with the `AuthorizationsProvider` bean based on the thread-local `RequestContext` and the corresponding `UserInfo`. Additional information is obtained from the thread-local `SecurityContext` if necessary, e.g. whether an SCI or XSUAA token has been used for authentication. This proxy mechanism makes authorization checks against the `CdsAuthorizations` interface very convenient, even though internally one instance of `CdsAuthorizations` is created and cached per request context.
 
-::: tip
-The proxy mechanism makes it very convenient for applications to make authorization checks against the `CdsAuthorizations` interface, even though internally one instance of `CdsAuthorizations` is created and cached per request context.
+
+::: warning
+Avoid using the `CdsAuthorizations` bean for custom authorization checks unless necessary. It is best practice to use a declarative approach with cds annotations to let the AMS plugin handle role computation and filter generation while CAP handles the actual authorization enforcement based on the result.
 :::
 
 #### Interface
@@ -102,6 +103,46 @@ public class BookServiceHandler implements EventHandler {
 
 - `SciAuthorizationsProvider`, the default implementation of `AuthorizationsProvider`, caches computed authorizations in a `WeakHashMap` keyed by the `RequestContext` lifecycle reference — so within a single request, authorizations are resolved only once.
 - The `AmsUserInfoProvider` runs earlier (during `RequestContext` construction) to add AMS roles to `UserInfo`. To prevent a recursive stack overflow, it does not compute user roles with the `CdsAuthorizations` proxy (which would request the `UserInfo` again - forming a cyclic dependency). Instead, it presents the previous `UserInfo` to the `AuthorizationsProvider`.
+
+### AmsCdsRouteSecurity
+
+`AmsCdsRouteSecurity` provides Spring Security `AuthorizationManager` instances for route-level role checks with Spring Security outside the CAP framework. 
+
+::: warning
+Avoid using the `AmsCdsRouteSecurity` bean for custom authorization checks unless necessary. It is recommended to use a declarative approach with cds annotations to enforce authorization of application logic. The bean is meant for use cases where this is not practical.
+:::
+
+`AmsCdsRouteSecurity` operates on the `CdsAuthorizations` proxy and offers two semantics:
+
+- **`checkRole(role)`** — grants access only if the role is unconditionally granted (no conditions). Rejects conditional and denied decisions.
+- **`precheckRole(role)`** — grants access if the role is not definitely denied (i.e., granted or conditional). Use this only when the service layer implements an additional contextual authorization check that enforces the filter conditions.
+
+Multi-role variants `checkAnyRole`, `checkAllRoles`, `precheckAnyRole`, and `precheckAllRoles` combine multiple role checks with OR/AND semantics respectively.
+
+```java
+@Configuration
+public class SecurityConfiguration {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, AmsCdsRouteSecurity via) throws Exception {
+        http.authorizeHttpRequests(authz -> authz
+                .requestMatchers("/actuator/health").permitAll()
+                // Custom REST endpoint outside CAP — requires unconditional Admin role
+                .requestMatchers("/api/admin/**").access(via.checkRole("Admin"))
+                .anyRequest().denyAll()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+
+        return http.build();
+    }
+}
+```
+
+::: tip
+The `.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))` call configures Spring Security to validate incoming Bearer tokens as JWTs. This is required for any application that receives OAuth2 tokens (from SAP Identity Service / IAS). Without it, Spring Security will not extract the authenticated principal from the `Authorization` header, and no `SecurityContext` will be available for downstream AMS checks.
+
+CAP Java applications that use `cds-starter-cloudfoundry` or `cds-starter-k8s` typically get this configured automatically. You only need to declare it explicitly if you provide a custom `SecurityFilterChain` bean (which overrides the auto-configured one).
+:::
 
 ## Configuration Properties
 
