@@ -2,6 +2,10 @@
 
 ## Version 4
 
+### 4.2.0
+
+- Added convenience methods to AmsRouteSecurity and AmsCdsRouteSecurity for composing multiple privilege/role checks with `OR` (*any*) and `AND` (*all*) semantics, e.g. `precheckAnyPrivilege(Privilege...)`, `checkAnyRole(String...)`, ....
+
 ### 4.1.2
 
 - Fix: [CAP] Fixed critical bug for instance-based authorization introduced in 4.1.1 that led to filter conditions not being applied when regular user requests were identified as user switch contexts.
