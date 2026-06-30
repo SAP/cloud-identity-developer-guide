@@ -2,6 +2,10 @@
 
 ## Version 4
 
+### 4.2.1
+
+- Fix: The exponential retry mechanism in `AmsBundleLoader` no longer accidentally retries failed requests without a delay after ~100 consecutive failures, preventing 429 Too Many Requests errors.
+
 ### 4.2.0
 
 - Added convenience methods to AmsRouteSecurity and AmsCdsRouteSecurity for composing multiple privilege/role checks with `OR` (*any*) and `AND` (*all*) semantics, e.g. `precheckAnyPrivilege(Privilege...)`, `checkAnyRole(String...)`, ....
