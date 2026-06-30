@@ -68,7 +68,7 @@ interface with additional CAP-specific methods for role-based authorization chec
 
 ## AuthorizationsProvider
 
-To create and access the `Authorizations` object for the current request, an `AuthorizationsProvider` is used. It
+To create (and access) the `Authorizations` object for the current request, an `AuthorizationsProvider` is used. It
 determines which policies apply and provides default values for authorization attributes of the principal such as
 `$user.email`.
 
@@ -107,7 +107,7 @@ SciAuthorizationsProvider<Authorizations> authProvider
 The `SciAuthorizationsProvider` combines authorizations from two sources:
 
 - **User Authorizations**: Policies assigned to the authenticated user in the SAP Cloud Identity Services directory.
-- **Client Authorizations**: Policies derived from technical communication scenarios (e.g., consumed App-to-App APIs,
+- **Client Authorizations**: Policies derived from the client sending the request in technical communication scenarios (e.g., consumed App-to-App APIs,
   BTP service plans).
 
 By default*, the authorizations of these two layers are combined as follows:
@@ -145,7 +145,7 @@ described on that page in detail.
 ##### Overriding Methods
 
 You can override the `getUserAuthorizations`,
-`getClientAuthorizations` and the methods for building default input for authorization checks if necessary.
+`getClientAuthorizations` and the methods for building default input for authorization checks to derive a [custom implementation](#custom-implementation) from the class if necessary.
 
 **Example: Customizing Default Input for Authorization Checks**
 
@@ -154,7 +154,35 @@ claim that is not included by default:
 
 ::: code-group
 
+```js [Node.js (CAP)]
+const cds = require('@sap/cds');
+const { amsCapPluginRuntime, IdentityServiceAuthProvider } = require("@sap/ams");
+
+class CustomAuthProvider extends IdentityServiceAuthProvider {
+    /**
+     * @param {import("@sap/xssec").IdentityServiceSecurityContext} securityContext
+     */
+    getInput(securityContext) {
+        const defaultInput = super.getInput(securityContext);
+
+        const division = securityContext.token.payload.division;
+        if (division) {
+            defaultInput["$user.division"] = division;
+        }
+
+        return defaultInput;
+    }
+}
+
+// Register the custom auth provider in srv/server.js
+cds.on('bootstrap', () => {
+    amsCapPluginRuntime.authProvider.xssecAuthProvider = new CustomAuthProvider(amsCapPluginRuntime.ams);
+})
+```
+
 ```js [Node.js]
+const { IdentityServiceAuthProvider } = require("@sap/ams");
+
 class CustomAuthProvider extends IdentityServiceAuthProvider {
     /**
      * @param {import("@sap/xssec").IdentityServiceSecurityContext} securityContext
@@ -172,6 +200,67 @@ class CustomAuthProvider extends IdentityServiceAuthProvider {
 }
 ```
 
+```java [Spring Boot (CAP)]
+import org.springframework.context.annotation.Bean;
+
+import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.cap.api.*;
+import com.sap.cloud.security.ams.api.expression.AttributeName;
+
+import java.util.Map;
+
+// Define in a @Configuration class
+@Bean
+public AuthorizationsProvider<CdsAuthorizations> customAmsAuthProvider(AuthorizationManagementService ams) {
+    return new CustomAuthorizationsProvider(ams, CdsAuthorizations::of);
+}
+
+public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Authorizations> {
+    private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
+
+    @Override
+    protected Map<AttributeName, Object> getDefaultInput(Principal principal) {
+        Map<AttributeName, Object> defaultInput = super.getDefaultInput(principal);
+
+        principal.getClaimAsString("division")
+                .ifPresent(division -> defaultInput.put($USER_DIVISION, division));
+
+        return defaultInput;
+    }
+}
+```
+
+```java [Spring Boot]
+import org.springframework.context.annotation.Bean;
+
+import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.api.expression.AttributeName;
+
+import java.util.Map;
+
+// Define in a @Configuration class
+@Bean
+public AuthorizationsProvider<Authorizations> customAmsAuthProvider(AuthorizationManagementService ams) {
+    return new CustomAuthorizationsProvider(ams);
+}
+
+public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Authorizations> {
+    private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
+
+    @Override
+    protected Map<AttributeName, Object> getDefaultInput(Principal principal) {
+        Map<AttributeName, Object> defaultInput = super.getDefaultInput(principal);
+
+        principal.getClaimAsString("division")
+                .ifPresent(division -> defaultInput.put($USER_DIVISION, division));
+
+        return defaultInput;
+    }
+}
+```
+
 ```java [Java]
 import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 import com.sap.cloud.security.ams.api.*;
@@ -180,12 +269,7 @@ import com.sap.cloud.security.ams.api.expression.AttributeName;
 import java.util.Map;
 
 public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Authorizations> {
-
     private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
-
-    public CustomAuthorizationsProvider(AuthorizationManagementService ams) {
-        super(ams, AuthorizationsAdapter::identity);
-    }
 
     @Override
     protected Map<AttributeName, Object> getDefaultInput(Principal principal) {
@@ -224,8 +308,27 @@ configured `ScopeMapper`. Relevant scopes are typically prefixed with the applic
 
 ::: code-group
 
+```js [Node.js (CAP)]
+const cds = require('@sap/cds');
+const { amsCapPluginRuntime, HybridAuthProvider } = require('@sap/ams');
+
+const scopeToPolicyMapper = (scope) => {
+    const scopeToPoliciesMap = {
+        'na-foobar!t4711.ProductReader': ['shopping.ReadProducts'],
+        'na-foobar!t4711.ProductAdmin': ['shopping.ReadProducts', 'shopping.WriteProducts'],
+    };
+    return scopeToPoliciesMap[scope] || [];
+};
+
+// Register the hybrid auth provider in srv/server.js
+cds.on('bootstrap', () => {
+    amsCapPluginRuntime.authProvider.xssecAuthProvider =
+        new HybridAuthProvider(amsCapPluginRuntime.ams, scopeToPolicyMapper);
+})
+```
+
 ```js [Node.js]
-const {HybridAuthProvider} = require('@sap/ams');
+const { HybridAuthProvider } = require('@sap/ams');
 
 const scopeToPolicyMapper = (scope) => {
     const scopeToPoliciesMap = {
@@ -236,6 +339,59 @@ const scopeToPolicyMapper = (scope) => {
 };
 
 const authProvider = new HybridAuthProvider(ams, scopeToPolicyMapper);
+```
+
+```java [Spring Boot (CAP)]
+import org.springframework.context.annotation.Bean;
+
+import com.sap.cloud.security.ams.core.HybridAuthorizationsProvider;
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.cap.api.*;
+
+import java.util.Map;
+import java.util.Set;
+
+private static final PolicyName READ_PRODUCTS = PolicyName.of("shopping.ReadProducts");
+private static final PolicyName WRITE_PRODUCTS = PolicyName.of("shopping.WriteProducts");
+
+private static final Map<String, Set<PolicyName>> scopeToPoliciesMap = Map.of(
+        "ProductReader", Set.of(READ_PRODUCTS),
+        "ProductAdmin", Set.of(READ_PRODUCTS, WRITE_PRODUCTS)
+);
+
+// Define in a @Configuration class
+@Bean
+public AuthorizationsProvider<CdsAuthorizations> hybridAmsAuthProvider(AuthorizationManagementService ams) {
+    return HybridAuthorizationsProvider
+            .create(ams, ScopeMapper.ofMapMultiple(scopeToPoliciesMap), CdsAuthorizations::of)
+            .withXsAppName("na-foobar!t4711"); // TODO: inject dynamically from service binding
+}
+```
+
+```java [Spring Boot]
+import org.springframework.context.annotation.Bean;
+
+import com.sap.cloud.security.ams.core.HybridAuthorizationsProvider;
+import com.sap.cloud.security.ams.api.*;
+
+import java.util.Map;
+import java.util.Set;
+
+private static final PolicyName READ_PRODUCTS = PolicyName.of("shopping.ReadProducts");
+private static final PolicyName WRITE_PRODUCTS = PolicyName.of("shopping.WriteProducts");
+
+private static final Map<String, Set<PolicyName>> scopeToPoliciesMap = Map.of(
+        "ProductReader", Set.of(READ_PRODUCTS),
+        "ProductAdmin", Set.of(READ_PRODUCTS, WRITE_PRODUCTS)
+);
+
+// Define in a @Configuration class
+@Bean
+public AuthorizationsProvider<Authorizations> hybridAmsAuthProvider(AuthorizationManagementService ams) {
+    return HybridAuthorizationsProvider
+            .create(ams, ScopeMapper.ofMapMultiple(scopeToPoliciesMap))
+            .withXsAppName("na-foobar!t4711"); // TODO: inject dynamically from service binding
+}
 ```
 
 ```java [Java]
@@ -253,17 +409,50 @@ Map<String, Set<PolicyName>> scopeToPoliciesMap = Map.of(
 
 HybridAuthorizationsProvider<?> authProvider = HybridAuthorizationsProvider
         .create(ams, ScopeMapper.ofMapMultiple(scopeToPoliciesMap))
-        .withXsAppName("na-foobar!t4711");
+        .withXsAppName("na-foobar!t4711"); // TODO: inject dynamically from service binding
 ```
 
 :::
 
 ### Custom Implementation
 
-If necessary, you can also implement a custom `AuthorizationsProvider` with your own logic for determining which
-policies apply:
+If necessary, you can also implement a fully custom `AuthorizationsProvider`, although we recommend using the standard implementations as a basis to benefit from bug fixes and ticket support:
 
 ::: code-group
+
+```js [Node.js (CAP)]
+const cds = require('@sap/cds');
+const { amsCapPluginRuntime, XssecAuthProvider } = require('@sap/ams');
+
+class XsuaaAuthProvider extends XssecAuthProvider {
+    /**
+     * @param {import("@sap/xssec").XsuaaSecurityContext} securityContext
+     */
+    async getAuthorizations(securityContext) {
+        throw new Error("Method not implemented.");
+    }
+
+    /**
+     * @param {import("@sap/xssec").XsuaaSecurityContext} securityContext
+     */
+    getInput(securityContext) {
+        throw new Error("Method not implemented.");
+    }
+
+    /**
+     * @param {import("@sap/xssec").XsuaaSecurityContext} securityContext
+     */
+    supportsSecurityContext(securityContext) {
+        throw new Error("Method not implemented.");
+    }
+}
+
+// Register the custom auth provider in srv/server.js
+cds.on('bootstrap', () => {
+    amsCapPluginRuntime.authProvider.xssecAuthProvider =
+        new XsuaaAuthProvider(amsCapPluginRuntime.ams);
+})
+```
 
 ```js [Node.js (Typescript)]
 import {Authorizations, Types, XssecAuthProvider} from "@sap/ams";
@@ -285,9 +474,55 @@ class XsuaaAuthProvider
 }
 ```
 
-```java [Java]
+```java [Spring Boot (CAP)]
+import org.springframework.context.annotation.Bean;
+
 import com.sap.cloud.security.ams.api.*;
 import com.sap.cloud.security.ams.api.PolicyName;
+import com.sap.cloud.security.ams.cap.api.*;
+
+import java.util.Set;
+
+// Define in a @Configuration class
+@Bean
+public AuthorizationsProvider<CdsAuthorizations> customAmsAuthProvider(AuthorizationManagementService ams) {
+    return new CustomAuthorizationsProvider(ams);
+}
+
+public class CustomAuthorizationsProvider implements AuthorizationsProvider<CdsAuthorizations> {
+    private final AuthorizationManagementService ams;
+
+    public CustomAuthorizationsProvider(AuthorizationManagementService ams) {
+        this.ams = ams;
+    }
+
+    @Override
+    public CdsAuthorizations getAuthorizations(Principal principal) {
+        // Custom logic to determine which policies apply
+        Set<PolicyName> policies = determinePoliciesFromContext(principal);
+        return CdsAuthorizations.of(ams.getAuthorizations(policies));
+    }
+
+    private Set<PolicyName> determinePoliciesFromContext(Principal principal) {
+        // Your custom policy resolution logic here
+        return Set.of(PolicyName.of("shopping.ReadProducts"));
+    }
+}
+```
+
+```java [Spring Boot]
+import org.springframework.context.annotation.Bean;
+
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.api.PolicyName;
+
+import java.util.Set;
+
+// Define in a @Configuration class
+@Bean
+public AuthorizationsProvider<Authorizations> customAmsAuthProvider(AuthorizationManagementService ams) {
+    return new CustomAuthorizationsProvider(ams);
+}
 
 public class CustomAuthorizationsProvider implements AuthorizationsProvider<Authorizations> {
     private final AuthorizationManagementService ams;
@@ -305,11 +540,36 @@ public class CustomAuthorizationsProvider implements AuthorizationsProvider<Auth
 
     private Set<PolicyName> determinePoliciesFromContext(Principal principal) {
         // Your custom policy resolution logic here
-        return Set.of(PolicyName.of("myapp.DefaultPolicy"));
+        return Set.of(PolicyName.of("shopping.ReadProducts"));
     }
 }
+```
 
-AuthorizationsProvider<?> authProvider = new CustomAuthorizationsProvider(ams);
+```java [Java]
+import com.sap.cloud.security.ams.api.*;
+import com.sap.cloud.security.ams.api.PolicyName;
+
+import java.util.Set;
+
+public class CustomAuthorizationsProvider implements AuthorizationsProvider<Authorizations> {
+    private final AuthorizationManagementService ams;
+
+    public CustomAuthorizationsProvider(AuthorizationManagementService ams) {
+        this.ams = ams;
+    }
+
+    @Override
+    public Authorizations getAuthorizations(Principal principal) {
+        // Custom logic to determine which policies apply
+        Set<PolicyName> policies = determinePoliciesFromContext(principal);
+        return ams.getAuthorizations(policies);
+    }
+
+    private Set<PolicyName> determinePoliciesFromContext(Principal principal) {
+        // Your custom policy resolution logic here
+        return Set.of(PolicyName.of("shopping.ReadProducts"));
+    }
+}
 ```
 
 :::
