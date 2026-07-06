@@ -5,7 +5,7 @@
 ### 4.3.0
 
 - Feature: The `spring-boot-starter-ams-test` auto-configuration no longer matches when an `identity` service binding is found. This enables CAP applications to include `spring-boot-starter-cap-ams-test` as regular (instead of test-scoped) dependency to start locally with mock users and file-based authorization bundles without explicitly including test-scoped dependencies. To override this auto-configuration matcher, the property `sap.ams.test.enabled` can be explicitly set to `true` or `false`.
-- Fix: `AmsRouteSecurity` is not useable with Spring Boot 3 / Spring Security 6 in addition to Spring Boot 4 / Spring Security 7.
+- Fix: `AmsRouteSecurity` is now useable with Spring Boot 3 / Spring Security 6 in addition to Spring Boot 4 / Spring Security 7.
 - Fix: The `spring-boot-starter-ams-ztis` auto-configuration no longer configures the AMS library with Zero Trust Identity Service certificates unless the `credential-type` of the `identity` service binding is `X509_ATTESTED` and it has the same `app-identifier` as the `zero-trust-identity` service binding.
 
 ### 4.2.1
