@@ -2,6 +2,12 @@
 
 ## Version 4
 
+### 4.4.0
+
+- Feature: Synchronous startup readiness check in Spring Boot starters. The `AuthorizationManagementService` bean now blocks during application startup until the initial authorization bundle has been loaded. This is enabled by default; see [Startup Check](/Authorization/AuthorizationBundle#startup-check) for details, including how to adjust the timeout or opt out. The new utility method `AuthorizationManagementService.awaitReady(Duration)` simplifies synchronously awaiting the first bundle outside Spring.
+- Fix: The auto-configuration matcher that decides whether to use ZTIS certificates now extracts the `identity` binding app-identifier from the correct location in the service binding credentials.
+- Fix: A policy `USE` with multiple `RESTRICT` clauses now correctly interprets each restriction set as an independent alternative, i.e.`(b = 10 AND c = 100) OR (b = 20 AND c = 200)` (correct) instead of `(b = 10 OR b = 20) AND (c = 100 OR c = 200)` (incorrect).
+
 ### 4.3.0
 
 - Feature: The `spring-boot-starter-ams-test` auto-configuration no longer matches when an `identity` service binding is found. This enables CAP applications to include `spring-boot-starter-cap-ams-test` as regular (instead of test-scoped) dependency to start locally with mock users and file-based authorization bundles without explicitly including test-scoped dependencies. To override this auto-configuration matcher, the property `sap.ams.test.enabled` can be explicitly set to `true` or `false`.
