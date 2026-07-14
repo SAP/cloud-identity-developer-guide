@@ -153,9 +153,20 @@ public KeyStore amsKeyStore() {
 
 ##  Startup Check
 
-While it is possible to synchronously block application startup until the AMS module becomes ready, we recommend including AMS in the application's **readiness probes**. This allows the application process to become healthy for the cloud platform but prevent traffic from being routed to the process until the AMS module is ready to serve authorization checks. 
+The application must ensure that the `AuthorizationManagementService` instance has loaded its initial authorization bundle before it performs authorization checks. Otherwise, exceptions are thrown because no authorization data is available yet.
 
-If an application does not provide readiness probes, it can alternatively include the AMS readiness state in its **health endpoint**.
+There are two general approaches to achieve this:
+
+- **Synchronous startup check**: block application startup until the instance is ready, failing after a timeout. This is the most robust option because it prevents *any* premature usage of the instance during startup, including *internal* usage by frameworks such as CAP — not just *external* traffic.
+- **Readiness endpoint integration**: expose the instance's readiness state through a health or readiness endpoint so that the platform does not route traffic to the process until the instance is ready. This only delays authorization checks triggered by *external* traffic.
+
+::: tip Spring Boot starters do this for you
+The [Spring Boot starters](/Authorization/GettingStarted#java) perform a synchronous startup check out of the box, so no manual startup check is required there. Its timeout can be adjusted and it can be disabled via configuration (see the `Spring Boot` examples below).
+
+Other setups — including the [Node.js CAP plugin](/Authorization/GettingStarted#node-js) — must implement the startup check themselves, as shown in the examples below.
+:::
+
+The following examples show, per framework, how the startup check is performed or configured, and how to expose the readiness state in a custom health endpoint. For Spring Boot the check runs automatically and the tabs only show how to adjust the timeout or opt out. Disabling the check is discouraged: the application then becomes responsible for ensuring readiness before performing authorization checks (e.g. via the programmatic APIs shown here).
 
 ::: code-group
 ```js [Node.js (CAP)]
@@ -164,17 +175,17 @@ const cds = require('@sap/cds');
 const { amsCapPluginRuntime } = require("@sap/ams");
 
 cds.on('served', async () => {
-    // effectively a synchronous startup check that prevents the server
-    // from serving requests for up to 30s before throwing an error
+    // CAP awaits all 'served' handlers to finish before it serves traffic.
+    // So even though whenReady is awaited asynchronously here, it effectively
+    // blocks application startup until AMS is ready — or aborts it if the handler
+    // throws after the 30s timeout.
     await amsCapPluginRuntime.ams.whenReady(30);
     console.log("AMS has become ready.");
 });
-
-// *better*: use amsCapPluginRuntime.ams.isReady() in health or readiness endpoint
 ```
 
 ```js [Node.js]
-// uses readiness status in health endpoint
+// demonstrates readiness status via health endpoint
 
 let isReady = false;
 const healthCheck = (req, res) => {
@@ -204,15 +215,38 @@ const server = app.listen(PORT, () => {
 amsStartupCheck();
 ```
 
+```yaml [Spring Boot (CAP)]
+# The synchronous startup check runs automatically.
+# Adjust its timeout or opt out via configuration:
+cds:
+  security:
+    authorization:
+      ams:
+        startup-check:
+          enabled: true   # perform synchronous startup check (default: true)
+          timeout: 30s    # fail startup if not ready within this duration (default: 30s)
+```
+
+```yaml [Spring Boot]
+# The synchronous startup check runs automatically.
+# Adjust its timeout or opt out via configuration:
+sap:
+  ams:
+    startup-check:
+      enabled: true   # perform synchronous startup check (default: true)
+      timeout: 30s    # fail startup if not ready within this duration (default: 30s)
+```
+
 ```java [Java]
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // Synchronous startup check:
 // throws an error if the AMS module doesn't get ready within 30 seconds
-ams.whenReady().get(30, TimeUnit.SECONDS);
+ams.awaitReady(Duration.ofSeconds(30));
 
-// Asynchronous startup check: uses readiness status in health endpoint
+// Asynchronous startup check: demonstrates readiness status in health endpoint
 private static final AtomicBoolean isReady = new AtomicBoolean(false);
 
 app.get("/health", ctx -> {
@@ -234,21 +268,13 @@ ams.whenReady().orTimeout(30, TimeUnit.SECONDS).thenRun(() -> {
 });
 ```
 
-```java [Spring Boot Readiness]
-// The spring-boot-starter-ams-readiness module provides an auto-config for a
-// AmsReadinessContributor bean. It autowires an AuthorizationManagementService
-// instance and uses AvailabilityChangeEvent.publish
-// to integrate its readiness state with Spring Boot's availability state.
-// The AMS readiness starter is included transitively in all AMS Spring Boot starters.
-```
+:::
 
-```java [Spring Boot Health Actuator]
-// The spring-boot-starter-ams-health and spring-boot-3-starter-ams-health modules
-// provide an auto-config for a HealthIndicator bean that integrates with the
-// Spring Boot Actuator health endpoint. It autowires an
-// AuthorizationManagementService instance and includes its readiness state
-// in the health status.
-// The AMS health starter is NOT included transitively in any AMS Spring Boot starter.
-```
+::: tip Expose AMS readiness in the Spring Boot Actuator health endpoint
+Beyond the startup check, applications can expose the AMS readiness state through the **Spring Boot Actuator health endpoint** (for example, to observe the time since the last bundle refresh at runtime) by including one of the optional health starters:
 
+- `spring-boot-starter-ams-health` for Spring Boot 4
+- `spring-boot-3-starter-ams-health` for Spring Boot 3
+
+These provide an auto-configured `HealthIndicator` bean that autowires the `AuthorizationManagementService` and includes its readiness state in the health status. They are *not* included transitively by any AMS starter.
 :::

@@ -185,11 +185,10 @@ Use the `ams-bom` for consistent version management across all AMS modules:
 
 :::
 
-::: tip Health Indicators
-The `spring-boot-starter-ams-readiness` module provides readiness state integration via `AvailabilityChangeEvent` and
-is already included **transitively** in all Spring Boot starters. The optional health modules listed above provide
-alternatively `HealthIndicator` beans for Spring Boot Actuator health endpoint integration
-(see [Startup Check](/Authorization/AuthorizationBundle#startup-check)).
+::: tip Startup check & health indicators
+All AMS Spring Boot starters perform a synchronous [startup check](/Authorization/AuthorizationBundle#startup-check) by
+default, blocking startup until the initial authorization bundle is loaded. The optional health modules listed above can additionally expose the AMS readiness state (e.g. time since the last bundle refresh) through a
+`HealthIndicator` bean for the Spring Boot Actuator health endpoint.
 :::
 
 #### Tooling

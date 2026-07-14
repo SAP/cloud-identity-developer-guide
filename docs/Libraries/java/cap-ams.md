@@ -155,6 +155,9 @@ cds:
       ams:
         edge-service:
           url: http://localhost:8080   # Edge service URL (optional)
+        startup-check:
+          enabled: true                # Block startup until initial bundle is loaded (default: true)
+          timeout: 30s                 # Fail startup if not ready within this duration (default: 30s)
         bundle-loader:
           polling-interval: 20000      # Bundle update polling interval in ms (default: 20000)
           initial-retry-delay: 1000    # Initial retry delay after failure in ms (default: 1000)
@@ -163,3 +166,5 @@ cds:
         features:
           generateExists: true         # Generate EXISTS predicates for filter attributes behind 1:N associations (default: true)
 ```
+
+See [Startup Check](/Authorization/AuthorizationBundle#startup-check) for details on the synchronous startup check and the optional health actuator integration.

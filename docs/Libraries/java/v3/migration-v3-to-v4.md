@@ -50,7 +50,7 @@ If you are using a Spring Boot starter, the `AuthorizationManagementService` and
 - Implement startup check as described [here](/Authorization/AuthorizationBundle#startup-check)
 
 ::: tip
-If you use a Spring Boot starter, it automatically integrates into Spring Boot readiness. Alternatively, you can use the Spring Boot 3 or 4 starter for health actuator integration.
+If you use a Spring Boot starter, it performs a synchronous startup check by default, blocking startup until the initial authorization bundle is loaded. Optionally, you can add the Spring Boot 3 or 4 health starter for health actuator integration.
 :::
 
 ### AttributesProcessor Removal

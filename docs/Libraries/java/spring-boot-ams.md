@@ -41,7 +41,7 @@ The starter automatically configures:
 - Request-scoped `Authorizations` proxy bean for the current request
 - `AmsRouteSecurity` bean for route-level authorization
 - `AmsMethodSecurity` bean for method-level authorization
-- Readiness state integration (via `spring-boot-starter-ams-readiness`)
+- Synchronous [startup check](/Authorization/AuthorizationBundle#startup-check) that blocks startup until the initial authorization bundle is loaded
 
 ## Declarative Authorization
 
@@ -183,9 +183,13 @@ sap:
     method-security:
       enabled: true      # Enable method-level security (default: true)
 
+    startup-check:
+      enabled: true      # Block startup until initial bundle is loaded (default: true)
+      timeout: 30s       # Fail startup if not ready within this duration (default: 30s)
+
     actuator:
       health:
-        enabled: true    # Enable health indicator (default: true)
-      readiness:
-        enabled: true    # Enable readiness state contributor (default: true)
+        enabled: true    # Enable AMS health indicator, requires spring-boot(-3)-starter-ams-health (default: true)
 ```
+
+See [Startup Check](/Authorization/AuthorizationBundle#startup-check) for details on the synchronous startup check and the optional health actuator integration.
