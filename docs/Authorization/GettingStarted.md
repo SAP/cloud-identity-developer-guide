@@ -206,17 +206,16 @@ In CAP Java projects, the (optional) Node.js module `@sap/ams` *should* be added
 
 The latest versions of the Node.js modules can always be found on [npmjs.org](https://www.npmjs.com/package/@sap/ams).
 
-| Project Type      | @sap/ams | @sap/ams-dev | Java JDK |
-|-------------------|:--------:|:------------:|:--------:|
-| Plain Node.js     |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ 
-| express (Node.js) |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ 
-| CAP (Node.js)     |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ 
+| Project Type      | @sap/ams | @sap/ams-dev |
+|-------------------|:--------:|:------------:|
+| Plain Node.js     |   ✓ ^3   |   (✓)* ^3    |
+| express (Node.js) |   ✓ ^3   |   (✓)* ^3    |
+| CAP (Node.js)     |   ✓ ^3   |   (✓)* ^3    |
 
 (✓) = *devDependency*
 
 ::: tip *
-only required to compile DCL files before running local tests. We are currently finishing a compiler in Javascript that
-will make these dependencies obsolete.
+only required to compile DCL files before running local tests. Since `@sap/ams-dev` version `^3`, the DCL compiler is bundled as a WebAssembly module, so a Java JDK is no longer required.
 :::
 
 ### Go
@@ -266,4 +265,22 @@ For major version 3 of the Java libraries, the following dependency setup was re
 ::: tip
 In CAP Java projects, the (optional) Node.js module `@sap/ams` *should* be added in the `package.json` as a
 *devDependency* with version `^3` to provide dev-time features as [cds build plugin](/CAP/cds-Plugin).
+:::
+
+### Node.js Library Version 2
+
+For major version 2 of `@sap/ams-dev`, the following dependency setup was recommended:
+
+| Project Type      | @sap/ams | @sap/ams-dev | Java JDK |
+|-------------------|:--------:|:------------:|:--------:|
+| Plain Node.js     |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ |
+| express (Node.js) |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ |
+| CAP (Node.js)     |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ |
+
+(✓) = *devDependency*
+
+::: tip *
+only required to compile DCL files before running local tests. In `@sap/ams-dev` version `^2`, the DCL compiler was
+Java-based and therefore required a Java JDK (version 17 or higher) to be installed. This dependency was removed in
+version `^3`, where the compiler is bundled as a WebAssembly module.
 :::
