@@ -206,17 +206,16 @@ In CAP Java projects, the (optional) Node.js module `@sap/ams` *should* be added
 
 The latest versions of the Node.js modules can always be found on [npmjs.org](https://www.npmjs.com/package/@sap/ams).
 
-| Project Type      | @sap/ams | @sap/ams-dev | Java JDK |
-|-------------------|:--------:|:------------:|:--------:|
-| Plain Node.js     |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ 
-| express (Node.js) |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ 
-| CAP (Node.js)     |   ✓ ^3   |   (✓)* ^2    | (✓)* 17+ 
+| Project Type      | @sap/ams | @sap/ams-dev |
+|-------------------|:--------:|:------------:|
+| Plain Node.js     |   ✓ ^3   |   (✓)* ^3    |
+| express (Node.js) |   ✓ ^3   |   (✓)* ^3    | 
+| CAP (Node.js)     |   ✓ ^3   |   (✓)* ^3    | 
 
 (✓) = *devDependency*
 
 ::: tip *
-only required to compile DCL files before running local tests. We are currently finishing a compiler in Javascript that
-will make these dependencies obsolete.
+only required to compile DCL files before running local tests.
 :::
 
 ### Go
