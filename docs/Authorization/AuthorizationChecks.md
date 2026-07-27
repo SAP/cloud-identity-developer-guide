@@ -150,13 +150,15 @@ described on that page in detail.
 
 ##### Overriding Methods
 
-You can override the `getUserAuthorizations`,
-`getClientAuthorizations` and the methods for building default input for authorization checks to derive a [custom implementation](#custom-implementation) from the class if necessary.
+You can override `getUserAuthorizations` and `getClientAuthorizations` to customize which policies apply for a
+principal, or override the methods for building default input to add custom attribute values for authorization checks.
+This lets you derive a [custom implementation](#custom-implementation) from the standard class while reusing its token
+handling.
 
-**Example: Customizing Default Input for Authorization Checks**
+**Example: Granting Additional Policies Based on Token Attributes**
 
-In this example, we override `getDefaultInput` to include a custom user attribute (`$user.division`) from a token
-claim that is not included by default:
+In this example, we override `getUserAuthorizations` to grant an additional policy based on a token claim: users from
+the `Sales` department receive the `shopping.SalesDashboard` policy on top of their assigned policies.
 
 ::: code-group
 
@@ -168,15 +170,15 @@ class CustomAuthProvider extends IdentityServiceAuthProvider {
     /**
      * @param {import("@sap/xssec").IdentityServiceSecurityContext} securityContext
      */
-    getInput(securityContext) {
-        const defaultInput = super.getInput(securityContext);
+    async getUserAuthorizations(securityContext) {
+        const userAuthorizations = await super.getUserAuthorizations(securityContext);
 
-        const division = securityContext.token.payload.division;
-        if (division) {
-            defaultInput["$user.division"] = division;
+        // grant an additional policy to users from the Sales department
+        if (userAuthorizations && securityContext.token.payload.department === 'Sales') {
+            userAuthorizations.policySet.policies.push('shopping.SalesDashboard');
         }
 
-        return defaultInput;
+        return userAuthorizations;
     }
 }
 
@@ -193,15 +195,15 @@ class CustomAuthProvider extends IdentityServiceAuthProvider {
     /**
      * @param {import("@sap/xssec").IdentityServiceSecurityContext} securityContext
      */
-    getInput(securityContext) {
-        const defaultInput = super.getInput(securityContext);
+    async getUserAuthorizations(securityContext) {
+        const userAuthorizations = await super.getUserAuthorizations(securityContext);
 
-        const division = securityContext.token.payload.division;
-        if (division) {
-            defaultInput["$user.division"] = division;
+        // grant an additional policy to users from the Sales department
+        if (userAuthorizations && securityContext.token.payload.department === 'Sales') {
+            userAuthorizations.policySet.policies.push('shopping.SalesDashboard');
         }
 
-        return defaultInput;
+        return userAuthorizations;
     }
 }
 ```
@@ -212,9 +214,10 @@ import org.springframework.context.annotation.Bean;
 import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 import com.sap.cloud.security.ams.api.*;
 import com.sap.cloud.security.ams.cap.api.*;
-import com.sap.cloud.security.ams.api.expression.AttributeName;
+import com.sap.cloud.security.ams.api.PolicyName;
 
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 // Define in a @Configuration class
 @Bean
@@ -223,16 +226,22 @@ public AuthorizationsProvider<CdsAuthorizations> customAmsAuthProvider(Authoriza
 }
 
 public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Authorizations> {
-    private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
+    private static final PolicyName SALES_DASHBOARD = PolicyName.of("shopping.SalesDashboard");
 
     @Override
-    protected Map<AttributeName, Object> getDefaultInput(Principal principal) {
-        Map<AttributeName, Object> defaultInput = super.getDefaultInput(principal);
+    protected Authorizations getUserAuthorizations(Principal principal) {
+        Authorizations userAuthorizations = super.getUserAuthorizations(principal);
 
-        principal.getClaimAsString("division")
-                .ifPresent(division -> defaultInput.put($USER_DIVISION, division));
+        // grant an additional policy to users from the Sales department
+        boolean isSales = principal.getClaimAsString("department")
+                .filter("Sales"::equals).isPresent();
+        if (userAuthorizations != null && isSales) {
+            Set<PolicyName> policies = new HashSet<>(userAuthorizations.getPolicies());
+            policies.add(SALES_DASHBOARD);
+            userAuthorizations.setPolicies(policies);
+        }
 
-        return defaultInput;
+        return userAuthorizations;
     }
 }
 ```
@@ -242,9 +251,10 @@ import org.springframework.context.annotation.Bean;
 
 import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 import com.sap.cloud.security.ams.api.*;
-import com.sap.cloud.security.ams.api.expression.AttributeName;
+import com.sap.cloud.security.ams.api.PolicyName;
 
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 // Define in a @Configuration class
 @Bean
@@ -253,16 +263,22 @@ public AuthorizationsProvider<Authorizations> customAmsAuthProvider(Authorizatio
 }
 
 public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Authorizations> {
-    private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
+    private static final PolicyName SALES_DASHBOARD = PolicyName.of("shopping.SalesDashboard");
 
     @Override
-    protected Map<AttributeName, Object> getDefaultInput(Principal principal) {
-        Map<AttributeName, Object> defaultInput = super.getDefaultInput(principal);
+    protected Authorizations getUserAuthorizations(Principal principal) {
+        Authorizations userAuthorizations = super.getUserAuthorizations(principal);
 
-        principal.getClaimAsString("division")
-                .ifPresent(division -> defaultInput.put($USER_DIVISION, division));
+        // grant an additional policy to users from the Sales department
+        boolean isSales = principal.getClaimAsString("department")
+                .filter("Sales"::equals).isPresent();
+        if (userAuthorizations != null && isSales) {
+            Set<PolicyName> policies = new HashSet<>(userAuthorizations.getPolicies());
+            policies.add(SALES_DASHBOARD);
+            userAuthorizations.setPolicies(policies);
+        }
 
-        return defaultInput;
+        return userAuthorizations;
     }
 }
 ```
@@ -270,21 +286,28 @@ public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Auth
 ```java [Java]
 import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 import com.sap.cloud.security.ams.api.*;
-import com.sap.cloud.security.ams.api.expression.AttributeName;
+import com.sap.cloud.security.ams.api.PolicyName;
 
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CustomAuthorizationsProvider extends SciAuthorizationsProvider<Authorizations> {
-    private static final AttributeName $USER_DIVISION = AttributeName.of("$user.division");
+    private static final PolicyName SALES_DASHBOARD = PolicyName.of("shopping.SalesDashboard");
 
     @Override
-    protected Map<AttributeName, Object> getDefaultInput(Principal principal) {
-        Map<AttributeName, Object> defaultInput = super.getDefaultInput(principal);
+    protected Authorizations getUserAuthorizations(Principal principal) {
+        Authorizations userAuthorizations = super.getUserAuthorizations(principal);
 
-        principal.getClaimAsString("division")
-                .ifPresent(division -> defaultInput.put($USER_DIVISION, division));
+        // grant an additional policy to users from the Sales department
+        boolean isSales = principal.getClaimAsString("department")
+                .filter("Sales"::equals).isPresent();
+        if (userAuthorizations != null && isSales) {
+            Set<PolicyName> policies = new HashSet<>(userAuthorizations.getPolicies());
+            policies.add(SALES_DASHBOARD);
+            userAuthorizations.setPolicies(policies);
+        }
 
-        return defaultInput;
+        return userAuthorizations;
     }
 }
 ```
