@@ -2,6 +2,11 @@
 
 ## Version 4
 
+### 4.4.1
+
+- `SciAuthorizationsProvider` now populates any String/String[] `$user` attributes from the AMS schema based on token claims with the same name (e.g. `department` -> `$user.department`), not just the default `$user` attributes.
+- The `AmsBundleLoader` now sets a timeout of 30s for all requests for improved resilience.
+
 ### 4.4.0
 
 - Feature: Synchronous startup readiness check in Spring Boot starters. The `AuthorizationManagementService` bean now blocks during application startup until the initial authorization bundle has been loaded. This is enabled by default; see [Startup Check](/Authorization/AuthorizationBundle#startup-check) for details, including how to adjust the timeout or opt out. The new utility method `AuthorizationManagementService.awaitReady(Duration)` simplifies synchronously awaiting the first bundle outside Spring.
@@ -71,7 +76,7 @@ The CAP Spring Boot starter already wraps the standard `Authorizations` in a `Cd
 - Improved [Spring Security beans](/Libraries/java/spring-boot-ams#auto-configuration) for custom authorization checks
 - New [event logging API](/Libraries/java/ams-core#events-logging) for logging authorization events
 - Configuration options for [technical communication](/Authorization/TechnicalCommunication) scenarios via SAP Identity Service
-- Customization of authorization strategy via `AuthorizationsProvider` interface, e.g. [custom user attribute injection](/Authorization/AuthorizationChecks#overriding-methods)
+- Customization of authorization strategy via `AuthorizationsProvider` interface, e.g. [granting additional policies based on token attributes](/Authorization/AuthorizationChecks#overriding-methods)
 - JUnit 5+ extension for unit testing policy semantics without a full-blown integration test using [`ams-test`](/Libraries/java/ams-test).
 - Detailed [**DEBUG**](/Troubleshooting) logging about construction of `Authorizations` from token
 - **TRACE** logging of authorization bundle content and logic engine evaluations, showing how conditions are built and grounded with attribute input and how the predicates were evaluated
