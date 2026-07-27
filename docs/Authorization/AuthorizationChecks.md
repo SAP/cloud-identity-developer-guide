@@ -87,6 +87,12 @@ The `SciAuthorizationsProvider` (Node.js: `IdentityServiceAuthProvider`) is the 
 using SAP Cloud Identity Services for authentication. It derives authorizations from SAP Identity Service token
 principals.
 
+::: tip Custom `$user` attributes are populated automatically
+Any `String` or `String[]` attribute declared in your AMS schema under `$user` is automatically populated from the token claim of the
+same name (e.g. the `department` claim populates `$user.department`). You only need to
+[customize the default input](#overriding-methods) for attributes whose claim has a different name or type, or if it is a computed value.
+:::
+
 ::: code-group
 
 ```js [Node.js]
