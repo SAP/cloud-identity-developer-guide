@@ -2,6 +2,12 @@
 
 ## Version 4
 
+### 4.5.0
+
+- Added support for SAP "act-as" support users: `SciAuthorizationsProvider` now builds `Authorizations` with a preference for claims from the `sap_support_act_as` claim structure over top-level claims.
+- Use new `sap_id_type` claim to distinguish named user from technical user tokens instead of `sub == azp` heuristic.
+- Fix: Added DCN resolution fallback for local application starts, so that the relative DCN root can be resolved independent of the working directory in which the application was started. 
+
 ### 4.4.1
 
 - `SciAuthorizationsProvider` now populates any String/String[] `$user` attributes from the AMS schema based on token claims with the same name (e.g. `department` -> `$user.department`), not just the default `$user` attributes.
