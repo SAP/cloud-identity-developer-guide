@@ -18,9 +18,17 @@ resources:
       service-name: ams-cap-nodejs-bookshop-ias
       service-plan: application
       config:
-        authorization: # [!code focus:2]
+        authorization: # [!code focus:4]
           enabled: true
+          value-help-url: "",
+          value-help-api-name: "",
 ```
+
+### Configuration details
+
+For details about specific configurations please refer to the dedicated feature documentation pages:
+- `value-help-url` and `value-help-api-name`: [Value Help](ValueHelp.md#ams-service-configuration)
+
 
 ## Supported Languages and Frameworks
 
