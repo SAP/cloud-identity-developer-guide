@@ -10,6 +10,7 @@ For each SCI service instance that is created, the service configuration decides
 or not. This is controlled with the `authorization` property in the service configuration:
 
 ```yml [mta.yaml]
+# mta.yaml
 resources:
   - name: ams-cap-nodejs-bookshop-ias
     type: org.cloudfoundry.managed-service
