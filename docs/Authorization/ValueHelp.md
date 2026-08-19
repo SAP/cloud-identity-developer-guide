@@ -21,10 +21,10 @@ The value help feature allows the administrator to select the `electronics` cate
 Furthermore, the values can be shown with a human-readable label, such as *Electronic Devices* instead of showing the raw ID of the values.
 
 #### Single Select Value Help
-![Single Select Value Help](/public/images/vhp-valuehelpdialog-single.jpg){width=250px}
+![Single Select Value Help](/images/vhp-valuehelpdialog-single.jpg){width=250px}
 
 #### Multi Select Value Help
-![Multi Select Value help](/public/images/vhp-valuehelpdialog-multi.jpg)
+![Multi Select Value help](/images/vhp-valuehelpdialog-multi.jpg)
 
 ## Implementation
 To implement the value help feature, the following steps are necessary:
