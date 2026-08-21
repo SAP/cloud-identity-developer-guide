@@ -30,6 +30,8 @@ resources:
 For details about specific configurations please refer to the dedicated feature documentation pages:
 - `value-help-url` and `value-help-api-name`: [Value Help](ValueHelp.md#ams-service-configuration)
 
+For details on the specific parameter syntax in the service provider tools see:
+- [Identity Broker](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/reference-information-for-identity-service-of-sap-btp)
 
 ## Supported Languages and Frameworks
 
