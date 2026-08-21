@@ -2,6 +2,10 @@
 
 ## Version 4
 
+### 4.5.1
+- Fix: AmsBundleLoader no longer freezes the mTLS client certificate on first use. A KeyStore supplier (e.g. for ZTIS) or updated PEM credentials are checked before each bundle request, and the HTTP client is rebuilt when the certificate changes. 
+- Minor breaking change: The Spring auto-configurations now only accept an `amsKeyStore` bean of type `Supplier<KeyStore>` to support certificate rotations, no longer a plain `KeyStore`. If you provide your own `amsKeyStore` bean, change its type to `Supplier<KeyStore>`, e.g. by returning `() -> keyStore`.
+
 ### 4.5.0
 
 - Added support for SAP "act-as" support users: `SciAuthorizationsProvider` now builds `Authorizations` with a preference for claims from the `sap_support_act_as` claim structure over top-level claims.
