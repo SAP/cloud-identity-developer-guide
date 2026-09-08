@@ -156,7 +156,7 @@ If the policies listed here are different from the ones used for the authorizati
 Make sure there are no typos in API names in the mapping functions.
 
 ::: warning
-If you want to enable the special [`principal-propagation`](/Authorization/TechnicalCommunication#authorization-via-api-permission-groups) API, make sure to name it correctly. The name is case-sensitive and must be exactly `principal-propagation` and *not* `principle-propagation`.
+If you want to enable the special [`principal-propagation`](/Authorization/App2App#authorization-via-api-permission-groups) API, make sure to name it correctly. The name is case-sensitive and must be exactly `principal-propagation` and *not* `principle-propagation`.
 :::
 
 ##### Incorrect Policy Names 

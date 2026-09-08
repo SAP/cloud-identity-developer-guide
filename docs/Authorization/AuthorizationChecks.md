@@ -126,7 +126,7 @@ By default*, the authorizations of these two layers are combined as follows:
 | null                | null                  | Fully denied, empty authorizations (unexpected scenario)                   |
 
 \* *In the future, it might be possible to explicitly decide
-for [principal propagation tokens](/Authorization/TechnicalCommunication) how the authorizations
+for [principal propagation tokens](/Authorization/App2App) how the authorizations
 should be enforced with a configuration property of the App-to-App dependency. In that case, this default logic
 would be overridden based on this information in the token.*
 
@@ -145,7 +145,7 @@ Consider an authorization check with [conditional policies](#conditional-policie
 
 `SciAuthorizationsProvider` supports customization through configuration methods and method overriding.
 
-The current configuration methods are for [Technical Communication](/Authorization/TechnicalCommunication). They are
+The current configuration methods are for [Technical Communication](/Authorization/App2App). They are
 described on that page in detail.
 
 ##### Overriding Methods
