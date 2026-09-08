@@ -10,7 +10,7 @@ The main difference between the communication patterns is how trust between the 
 
 When you develop an application that needs to authorize requests coming from another system, the first question is **what** should be authorized. The answer depends entirely on the use case, and the two approaches are:
 
-- **Technical Communication**: the calling application itself is the principal. The caller is the entity that is authenticated and authorized, and no user is involved in the decision. Different authorization levels are typically mapped to different usage scenarios of the callee.
+- **Technical Communication** (also referred to as *technical access*): the calling application itself is the principal. The caller is the entity that is authenticated and authorized, and no user is involved in the decision. Different authorization levels are typically mapped to different usage scenarios of the callee.
 - **Principal Propagation**: the calling application acts on behalf of a user. The application is authenticated, but the user is the principal, so the effective authorizations depend on both the caller's and the user's access levels. This is the right approach when the data in the receiving application is owned by the user, or when actions should be performed on the user's behalf.
 
 An application can support both approaches at the same time, and it decides per request which one applies based on the incoming token.

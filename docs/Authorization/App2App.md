@@ -58,6 +58,8 @@ We recommend to keep API permission groups **coarse-grained**, at a level compar
 
 Fine-grained API permission groups, for example one per endpoint, push authorization decisions into the tenant administrator's configuration and make the integration harder to reason about for both sides.
 
+Keeping them coarse-grained works because API permission groups and authorization policies form two layers. The API permission group decides **whether** a caller may use a set of endpoints at all, and is configured by the tenant administrator. The internal policy behind it decides **which privileges** that grants, down to instance-based restrictions, and is defined by the application.
+
 ## API Policies
 
 For each API permission group that is provided by the application, it defines an *internal* policy. This is a policy that is not visible to administrators.
