@@ -1,8 +1,9 @@
 # System-to-System Communication
 
-System-to-System communication describes a programmatic data exchange between two applications or services, without a user sitting in front of a browser driving the request.
-
-The Authorization Management Service (**AMS**) supports authorization of system-to-system communication for both *technical users* (systems acting on their own behalf) and *principal propagation* (systems acting on behalf of a user whose request is forwarded).
+System-to-System communication describes a programmatic data exchange between two applications or services. The
+Authorization Management Service (**AMS**) supports authorization of system-to-system communication for both *technical
+users* (systems acting on their own behalf) and *principal propagation* (systems acting on behalf of a user whose
+request is forwarded).
 
 The main difference between the communication patterns is how trust between the parties is established and how they authenticate. Understanding the authentication side is a prerequisite for the authorization side described here. See [Consume APIs from Other Applications](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) for the authentication details.
 
