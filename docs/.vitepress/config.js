@@ -33,7 +33,7 @@ export default defineConfig({
                     { text: 'Authorization Bundle', link: '/Authorization/AuthorizationBundle' },
                     { text: 'Authorization Checks', link: '/Authorization/AuthorizationChecks' },
                     { text: 'Testing', link: '/Authorization/Testing' },
-                    { text: 'System-to-System Communication', link: '/Authorization/SystemToSystem', items: [
+                    { text: 'System-to-System Communication', link: '/Authorization/SystemToSystem', collapsed: true, items: [
                         { text: 'App-to-App', link: '/Authorization/App2App' },
                     ]},
                     { text: 'Deploying DCL', link: '/Authorization/DeployDCL' },
