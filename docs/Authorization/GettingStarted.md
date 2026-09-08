@@ -21,8 +21,8 @@ resources:
       config:
         authorization: # [!code focus:4]
           enabled: true
-          value-help-url: "",
-          value-help-api-name: "",
+          value-help-url: ""
+          value-help-api-name: ""
 ```
 
 ### Configuration details

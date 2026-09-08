@@ -309,7 +309,7 @@ To enable that audit logging of the application must configure and register this
 To correlate this audit log message with logs written for the same request context `PolicyEvaluationV2AuditLogger` also fills `sap-passport` if provided with the mapped diagnostic context (MDC) context. These applications must 
 
 - leverage a slf4j implementation that supports MDC like [logback](http://logback.qos.ch/manual/mdc.html)
-- provide dependencies to [Audit Log Service Java Client](https://github.wdf.sap.corp/xs-audit-log/audit-java-client)
+- provide dependencies to the Audit Log Service Java Client
 - fetch `sap_passport, for example, from the http header
 - enrich the MDC as following:<br>
 

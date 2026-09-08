@@ -57,7 +57,7 @@ If you use a Spring Boot starter, it performs a synchronous startup check by def
 
 - Remove any implementations of the `AttributesProcessor` interface and the meta data configuration for the service loader.
 
-Typical use cases for `AttributesProcessor` such as [technical communication](/Authorization/TechnicalCommunication), [XSUAA scope mapping](/Authorization/AuthorizationChecks#hybridauthorizationsprovider) or [custom user attribute injection](/Authorization/AuthorizationChecks#overriding-methods) can now be implemented much simpler via `AuthorizationsProvider` configuration.
+Typical use cases for `AttributesProcessor` such as [technical communication](/Authorization/App2App), [XSUAA scope mapping](/Authorization/AuthorizationChecks#hybridauthorizationsprovider) or [custom user attribute injection](/Authorization/AuthorizationChecks#overriding-methods) can now be implemented much simpler via `AuthorizationsProvider` configuration.
 
 ### PolicyDecisionPoint checks
 

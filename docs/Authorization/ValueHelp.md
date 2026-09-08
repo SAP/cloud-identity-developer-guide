@@ -119,12 +119,12 @@ If the attribute for which value help is requested [depends on other attributes]
 
 ## Authorizing Value Help Requests
 
-The value help endpoints in your application MUST be protected because they return business data. To allow the application to authorize value help requests, the AMS server calls the application with an [App-To-App](/Authorization/TechnicalCommunication#app-to-app) principal propagation token based on the administrator who requests value help in the administration console.
+The value help endpoints in your application MUST be protected because they return business data. To allow the application to authorize value help requests, the AMS server calls the application with an [App-To-App](/Authorization/App2App) principal propagation token based on the administrator who requests value help in the administration console.
 
 ### API Permission Group
 
 The API permission group consumed by the AMS server can be freely chosen in the service configuration of the AMS instance.
-It is best practice to setup an internal policy for this API permission group to limit privileges to those that are necessary for the value help endpoints as described in the App-To-App documentation for [principal propagation](/Authorization/TechnicalCommunication.html#authorization-via-api-permission-groups).
+It is best practice to setup an internal policy for this API permission group to limit privileges to those that are necessary for the value help endpoints as described in the App-To-App documentation for [principal propagation](/Authorization/App2App#authorization-via-api-permission-groups).
 
 ::: warning Important
 Note that such an API policy defines just an upper limit for the privileges that can be used with this token. The administrator using the administration console must additionally have the necessary privileges based on assigned policies to access the value help endpoints in your application.

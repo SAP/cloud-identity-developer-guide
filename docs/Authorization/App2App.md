@@ -1,12 +1,16 @@
-# Technical Communication
+# App-to-App
 
-The Authorization Management Service (**AMS**) supports authorization of technical communication for both *technical users* (systems) and *principal propagation*. In principle propagation, user requests are forwarded, as documented below.
+The recommended strategy for authorizing technical communication requests in provider applications is to use SAP Cloud Identity Services [App-to-App Integration](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications). Here, the request of the caller is authorized by authorization policies in the provider application based on the consumed API permission groups.
 
-## App-to-App
+App-to-App is one of the patterns described under [System-to-System Communication](/Authorization/SystemToSystem), which also explains the difference between authorizing a *technical user* and *principal propagation*.
 
-The recommended strategy for authorizing technical communication requests in provider applications is to use SAP Cloud Identity Services [App-to-App Integration](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications). Here, the request of the caller is authorized by authorization policies in the provider application based on the consumed API permission groups. 
+## When to Use App-to-App
 
-The consumed API permission groups can be found in the the `ias_apis` claim of the tokens from SAP Cloud Identity Services:
+App-to-App integration exposes APIs using JWT tokens issued by SAP Cloud Identity Services. It can be used whenever the
+calling and the called application are registered in the same SAP Cloud Identity Services tenant and accept JWT tokens
+for authentication.
+
+The consumed API permission groups can be found in the `ias_apis` claim of the tokens from SAP Cloud Identity Services:
 
 ```json
 {
@@ -42,7 +46,21 @@ The decision **which application** may consume which API permission group is mad
 The CAP authentication handlers use the list of `ias_apis` to automatically grant **cds roles** with the same name in case of **technical user** tokens. The strategy described below is only relevant outside CAP or if you want to use the API permission groups in the context of principal propagation requests.
 :::
 
-### API Policies
+## Choosing API Permission Groups
+
+The API permission groups that an application provides are free-text names. SAP Cloud Identity Services doesn't make any assumptions about their content, so it's up to the application to choose a meaningful granularity.
+
+We recommend to keep API permission groups **coarse-grained**, at a level comparable to a *plan* of a service. The callee should define names that describe what a caller is allowed to do as a whole, together with a corresponding description, for example:
+
+- `full-access`
+- `read-only-access`
+- `manage-sales-orders`
+
+Fine-grained API permission groups, for example one per endpoint, push authorization decisions into the tenant administrator's configuration and make the integration harder to reason about for both sides.
+
+Keeping them coarse-grained works because API permission groups and authorization policies form two layers. The API permission group decides **whether** a caller may use a set of endpoints at all, and is configured by the tenant administrator. The internal policy behind it decides **which privileges** that grants, down to instance-based restrictions, and is defined by the application.
+
+## API Policies
 
 For each API permission group that is provided by the application, it defines an *internal* policy. This is a policy that is not visible to administrators.
 
@@ -64,7 +82,7 @@ It's best practice to map policies separately for the *technical user* and *forw
 If you want to define different privileges for technical und forwarded user tokens consuming the same API permission group, you can map the API permission group to different internal policies depending on the flow.
 :::
 
-### Authorization via API Permission Groups
+## Authorization via API Permission Groups
 
 For technical user requests, the resulting policy is used directly in subsequent authorization checks to determine the caller's privileges.
 
@@ -88,9 +106,17 @@ graph TD
 
 ::: info
 Principal propagation requests that consume the special `principal-propagation` API permission group are authorized based on the user's policies without imposing an upper limit. This API permission group corresponds to `All APIs` consumption in the SCI administration console and can be [optionally provided](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/consume-apis-from-other-applications) by the application if it's not necessary to distinguish between internal and external user requests.
+
+This is also the right choice if you don't want to restrict the user's privileges at all but still need the user principal in the callee, for example to write audit log entries that attribute an action to the user on whose behalf it was performed.
 :::
 
-### Mapping implementation
+## Administration of API Permission Groups
+
+Once the callee application is visible in the SCI administration console, either as an application or as an application reference, administrators can assign its authorization policies to users just like for an application that end users access directly. The policies are managed on the *Authorization Policies* tab of the application.
+
+To review which API permission groups a calling application consumes, administrators navigate from the **calling** application to the callee and its policies via `Trust -> Application APIs -> Dependencies -> APIs`.
+
+## Mapping Implementation
 The *API Name -> Policy Name* mapping is typically implemented as a simple function in the application code.
 
 ::: tip
@@ -128,19 +154,22 @@ function mapPrincipalPropagationApi(api) {
 ```
 
 ```java [Java]
-final Map<String, Set<String>> TECHNICAL_USER_API_TO_POLICY = Map.of(
-    "ReadCatalog", Set.of("internal.ReadCatalog"));
+import com.sap.cloud.security.ams.api.ApiMapper;
+import com.sap.cloud.security.ams.api.PolicyName;
+
+final Map<String, Set<PolicyName>> TECHNICAL_USER_API_TO_POLICY = Map.of(
+    "ReadCatalog", Set.of(PolicyName.of("internal.ReadCatalog")));
 final ApiMapper technicalUserApiMapper = ApiMapper.ofMap(TECHNICAL_USER_API_TO_POLICY);
 
-final Map<String, Set<String>> PRINCIPAL_PROPAGATION_API_TO_POLICY = Map.of(
-    "AMS_ValueHelp", Set.of("internal.AMS_ValueHelp"),
-    "ReadCatalog", Set.of("internal.ReadCatalog"));
+final Map<String, Set<PolicyName>> PRINCIPAL_PROPAGATION_API_TO_POLICY = Map.of(
+    "AMS_ValueHelp", Set.of(PolicyName.of("internal.AMS_ValueHelp")),
+    "ReadCatalog", Set.of(PolicyName.of("internal.ReadCatalog")));
 final ApiMapper principalPropagationApiMapper = ApiMapper.ofMap(PRINCIPAL_PROPAGATION_API_TO_POLICY);
 ```
 
 :::
 
-### Mapping registration
+## Mapping Registration
 Finally, a bit of configuration is required to register the mapping functions, so that the correct policies apply when external requests are made against the API permission groups.
 
 The mapping can be registered in `IdentityServiceAuthProvider` (Node.js) / `SciAuthorizationsProvider` (Java) and its subclasses, such as `HybridAuthProvider` (Node.js) / `HybridAuthorizationsProvider` (Java).
@@ -178,7 +207,7 @@ const authProvider = new IdentityServiceAuthProvider(ams)
 ```
 
 ```java [Spring Boot/Spring Boot (CAP)]
-import static com.sap.cloud.security.ams.api.App2AppFlow.RESTRICTED_PRINCIPAL_PROPAGATION;
+import static com.sap.cloud.security.ams.api.App2AppFlow.FILTERED_PRINCIPAL_PROPAGATION;
 import static com.sap.cloud.security.ams.api.App2AppFlow.TECHNICAL_USER;
 
 @Configuration
@@ -194,7 +223,7 @@ public class AmsAuthProviderConfiguration {
 
         authProvider
                 .withApiMapper(TECHNICAL_USER_API_MAPPER, TECHNICAL_USER)
-                .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, RESTRICTED_PRINCIPAL_PROPAGATION);
+                .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, FILTERED_PRINCIPAL_PROPAGATION);
     }
 }
 ```
@@ -202,12 +231,12 @@ public class AmsAuthProviderConfiguration {
 ```java [Java]
 import com.sap.cloud.security.ams.core.SciAuthorizationsProvider;
 
-import static com.sap.cloud.security.ams.api.App2AppFlow.RESTRICTED_PRINCIPAL_PROPAGATION;
+import static com.sap.cloud.security.ams.api.App2AppFlow.FILTERED_PRINCIPAL_PROPAGATION;
 import static com.sap.cloud.security.ams.api.App2AppFlow.TECHNICAL_USER;
 
 SciAuthorizationsProvider authProvider =
     SciAuthorizationsProvider.create(ams)
         .withApiMapper(TECHNICAL_USER_API_MAPPER, TECHNICAL_USER)
-        .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, RESTRICTED_PRINCIPAL_PROPAGATION);
+        .withApiMapper(PRINCIPAL_PROPAGATION_API_MAPPER, FILTERED_PRINCIPAL_PROPAGATION);
 ```
 :::

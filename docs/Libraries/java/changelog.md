@@ -85,7 +85,7 @@ The CAP Spring Boot starter already wraps the standard `Authorizations` in a `Cd
 - Provided [CAP Spring beans](/Libraries/java/cap-ams.html#auto-configuration) for custom authorization checks
 - Improved [Spring Security beans](/Libraries/java/spring-boot-ams#auto-configuration) for custom authorization checks
 - New [event logging API](/Libraries/java/ams-core#events-logging) for logging authorization events
-- Configuration options for [technical communication](/Authorization/TechnicalCommunication) scenarios via SAP Identity Service
+- Configuration options for [technical communication](/Authorization/App2App) scenarios via SAP Identity Service
 - Customization of authorization strategy via `AuthorizationsProvider` interface, e.g. [granting additional policies based on token attributes](/Authorization/AuthorizationChecks#overriding-methods)
 - JUnit 5+ extension for unit testing policy semantics without a full-blown integration test using [`ams-test`](/Libraries/java/ams-test).
 - Detailed [**DEBUG**](/Troubleshooting) logging about construction of `Authorizations` from token
