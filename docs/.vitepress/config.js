@@ -40,6 +40,7 @@ export default defineConfig({
                     { text: 'Changing DCL', link: '/Authorization/ChangingDCL' },
                     { text: 'Value Help', link: '/Authorization/ValueHelp' },
                     { text: 'Logging', link: '/Authorization/Logging' },
+                    { text: 'Authorizations in the Token', link: '/Authorization/AuthorizationsInToken' },
                 ]
             },
             {
