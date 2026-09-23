@@ -28,8 +28,7 @@ The core API changed from `PolicyDecisionPoint`, `Attributes` and `AttributesPro
 
 - Remove the previous AMS maven dependencies for group id `com.sap.cloud.security.ams.client`.\*
 - Add the [recommended dependencies](/Authorization/GettingStarted#dependency-setup) for group id `com.sap.cloud.security.ams`.
-
-\* You can keep the old `dcl-compiler-plugin` for now. However, there will be an improved `dcl-compiler-plugin` available very soon.
+- Replace the old `dcl-compiler-plugin` from group id `com.sap.cloud.security.ams.client` with the new one from group id `com.sap.cloud.security.ams.dcl` as demonstrated [here](/Libraries/java/dcl-compiler-maven-plugin). Note that it no longer shares the version and release cycle with the client libraries, so its version needs to be defined independently from the version of `ams-bom`.
 
 
 

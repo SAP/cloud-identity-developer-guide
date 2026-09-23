@@ -27,6 +27,10 @@ integration examples):
 </build>
 ```
 
+::: warning
+**Note**: Its version and release cycle is decoupled from the client library and therefore not managed by the `ams-bom`. We recommend defining an additional property, e.g. `sap.cloud.security.ams.dcl-compiler.version`, and keeping both up-to-date independently.
+:::
+
 The latest version can be found on [Maven Central](https://mvnrepository.com/artifact/com.sap.cloud.security.ams.dcl/dcl-compiler-plugin).
 
 ## Goals
