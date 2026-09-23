@@ -286,7 +286,7 @@ token (independent of which policy grants it). Note that `write` is still listed
 syntax, which breaks builds that compile DCL:
 
 - `@sap/ams-dev` (DCL compilation before local tests): version 3.0.2 or higher
-- `dcl-compiler-plugin` (Maven builds): version 1.5 or higher
+- `dcl-compiler-plugin` (Maven builds): version 1.5 or higher of `com.sap.cloud.security.ams.dcl`. The group id has changed with client lib version 4. The old `dcl-compiler-plugin` from group id `com.sap.cloud.security.ams.client` does NOT work. See also [Migration Guide (3.x → 4.x)](../Libraries/java/v3/migration-v3-to-v4.md#dependency-migration) 
 - DCL VSCode extension: TBD
 
 :::
