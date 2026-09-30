@@ -127,9 +127,9 @@ annotate SalesOrder with @restrict: [
 
 ## Effect of Attribute Filters
 
-When the `SalesRepresentativeEUElectronics` policy is assigned to a user, the CAP modules for AMS dynamically adjusts the cds `where` condition to inject the attribute conditions from authorization policies.
+When the `SalesRepresentativeEUElectronics` policy is assigned to a user, the CAP modules for AMS dynamically adjust the cds `where` conditions of the privileges during each request to inject the attribute conditions from authorization policies. The AMS module adjusts privileges temporarily for the current authorization check only; the cds model itself isn't changed for other contexts.
 
-For example, when accessing the `SalesOrder` entity with this policy, the AMS module will add a `where` condition to the privilege for the `SalesRepresentative` role that looks like this:
+For example, when accessing the `SalesOrder` entity above with the `SalesRepresentativeEUElectronics` policy, the AMS module will add a `where` condition to the second privilege (for the `SalesRepresentative` role) that looks like this:
 
 ```js
 @restrict: [
@@ -141,18 +141,88 @@ For example, when accessing the `SalesOrder` entity with this policy, the AMS mo
 ]
 ```
 
-If a user has more than one cds role that grants access to a resource, the AMS module combines the attribute conditions of all roles using `OR`. For example, if the user also has the `SalesManager` role assigned with unfiltered access, the resulting `where` condition on `Product` would effectively look like this (before being simplified by the AMS module):
+::: tip
+After adjusting the `where` condition, the CAP framework will enforce the attribute-based restrictions as usual. In particular, the AMS plugin is not directly responsible for `403` response codes.
+:::
+
+### Details
+
+The AMS module computes the filter separately for each privilege whose role requirements are met and applies the filters with the following strategy.
+
+1. **Collect the required roles.** The AMS module determines the roles required on 
+- *service level* (`@requires` or `@restrict` of the service)
+
+and on
+- *privilege level* (`@restrict` or `@requires` on an entity, action, or function). If the entity, action, or function has multiple privileges, each is considered separately.
+
+On each level, only the roles that the user actually got from AMS policies are considered. Other roles of the user are ignored for the filter computation. If a level (implicitly or explicitly) grants access to the pseudo-roles `any` or `authenticated-user`, filters are only computed for the other level because this one is already fully accessible without an AMS policy.
+
+2. **Compute a condition for each role.** For each of these roles, the AMS module computes an individual condition based on the user's policies that assign that role. The condition is either `true` (unrestricted access), `false` (no access), or an attribute condition on the elements mapped via `@ams.attributes`.
+
+3. **Combine the roles within a level with `OR`.** One of the roles listed on each level is sufficient to satisfy the role requirement, so the conditions for these roles are combined with `OR`. For example, if the second privilege for `SalesOrder` also allowed `READ` with the `SalesManager` role and the user in our example additionally had a policy with unfiltered access for `SalesManager` assigned, the resulting `where` condition would effectively look like this (before being simplified by the AMS module):
+
+   ```js
+   @restrict: [
+       {
+         grant: ['READ'],
+         to: [ 'SalesManager', 'SalesRepresentative' ],
+         where: "true OR (region = 'EU' AND product.category = 'Electronics')", // [!code ++]
+       }
+   ]
+   ```
+
+4. **Combine the levels with `AND`.** The user must pass both the service level and the privilege level role annotations, so the conditions of the two levels are combined with `AND`.
+
+5. **Combine with the static `where` condition using `AND`.** When there is already a static `where` condition on the privilege, it's combined with the AMS filter by using `AND`. If the AMS filter is `true`, the privilege remains unchanged. If it's `false`, the privilege no longer grants access.
+
+#### Example
+
+In the following model, the service requires the `SalesUser` role, and the privilege on `SalesOrder` has a static `where` condition:
 
 ```js
-@restrict: [
+annotate SalesService with @requires: 'SalesUser';
+
+annotate SalesOrder with @restrict: [
     {
-      grant: ['READ'],
+      grant: [ 'READ' ],
       to: [ 'SalesManager', 'SalesRepresentative' ],
-      where: "true OR (region = 'EU' AND product.category = 'Electronics')", // [!code ++]
-    }
-]
+      where: 'archived = false'
+    },
+];
 ```
 
-::: tip
-When there is already a static *where* condition on a cds privilege, the AMS module combines the static *where* condition with the attribute conditions from authorization policies by using `AND`.
+For a user who has all three roles assigned via AMS policies, the `where` condition of the privilege effectively becomes:
+
+```js
+where: "(archived = false) AND (<SalesUser filter>) AND (<SalesManager filter> OR <SalesRepresentative filter>)"
+```
+
+```mermaid
+graph TD
+    Result["Effective where condition"] --> AndNode["AND"]
+    AndNode --> Static["Static where: archived = false"]
+    AndNode --> ServiceLevel["Service level: OR over AMS roles"]
+    AndNode --> PrivilegeLevel["Privilege level: OR over AMS roles"]
+    ServiceLevel --> SalesUser["SalesUser filter"]
+    PrivilegeLevel --> SalesManager["SalesManager filter"]
+    PrivilegeLevel --> SalesRep["SalesRepresentative filter"]
+```
+
+::: tip Mixing AMS with Non-AMS Roles
+If the application makes use of additional roles that are not granted **by AMS policies**, e.g. because they are assigned by custom application logic, you should not mix them with AMS roles in cds annotations. Otherwise, the filters for the AMS role will be applied to the privilege which may not be desired if the application intended unfiltered access with the other role.
+
+```js
+// Auditor is NOT assigned via AMS policies (e.g., it comes from a custom role mapping)
+
+// Avoid: users with both Auditor and SalesRepresentative role get the SalesRepresentative filter
+annotate SalesOrder with @restrict: [
+    { grant: 'READ', to: [ 'SalesRepresentative', 'Auditor' ] },
+];
+
+// Prefer: Auditor grants full access, while SalesRepresentative role on its own is still filtered by AMS
+annotate SalesOrder with @restrict: [
+    { grant: 'READ', to: 'SalesRepresentative' },
+    { grant: 'READ', to: 'Auditor' },
+];
+```
 :::
