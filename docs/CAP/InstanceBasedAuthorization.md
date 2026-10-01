@@ -90,7 +90,7 @@ This derived policy is equivalent to the policy defined in the [Motivation](#mot
 
 ## Annotating the CDS Model
 
-Finally, via `@ams.attributes` annotations, the AMS attributes are mapped to elements (or association paths) in the cds model using compile-safe cds expressions. Whenever requests access the annotated resources, the result is filtered based on the attribute conditions computed by AMS.
+Finally, via `@ams.attributes` annotations, the AMS attributes are mapped to elements (or association paths) in the cds model using compile-safe cds expressions. Whenever requests access the annotated resources, the result is filtered based on attribute conditions dynamically injected by the AMS CAP library module for the current user's roles.
 
 ```js
 annotate Product with @ams.attributes: { // [!code ++:8]
@@ -125,9 +125,9 @@ annotate SalesOrder with @restrict: [
 `ams.attributes` annotations are supported on *aspects*, *entities*, and *actions/functions bound to a single entity*. They are the [cds resources that support *where* conditions](https://cap.cloud.sap/docs/guides/security/authorization#supported-combinations-with-cds-resources).
 :::
 
-## Effect of Attribute Filters
+## Dynamic Filter Injection
 
-When the `SalesRepresentativeEUElectronics` policy is assigned to a user, the CAP modules for AMS dynamically adjust the cds `where` conditions of the privileges during each request to inject the attribute conditions from authorization policies. The AMS module adjusts privileges temporarily for the current authorization check only; the cds model itself isn't changed for other contexts.
+When the `SalesRepresentativeEUElectronics` policy is assigned to a user, the AMS CAP library modules dynamically adjust the cds `where` conditions of the privileges during each request to inject the attribute conditions from authorization policies. The AMS module adjusts privileges temporarily for the current authorization check only; the cds model itself isn't changed for other contexts.
 
 For example, when accessing the `SalesOrder` entity above with the `SalesRepresentativeEUElectronics` policy, the AMS module will add a `where` condition to the second privilege (for the `SalesRepresentative` role) that looks like this:
 
