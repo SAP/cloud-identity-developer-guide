@@ -18,11 +18,11 @@ POLICY SalesRepresentative {
 }
 ```
 
-::: tip Policy Generation
-The AMS Node.js module [`@sap/ams`](https://www.npmjs.com/package/@sap/ams) can be used to [generate](/CAP/cds-Plugin#base-policy-generation) base policies from a cds model.
+::: tip CAP User Object
+The AMS CAP library modules automatically **extend** the current user's roles with the roles assigned through AMS policies during authentication. Afterwards, these roles are visible to the CDS framework, which then enforces the role requirements from cds `@requires` and `@restrict` annotations as usual. They are also available for programmatic role checks on the user object like any other role.
 :::
 
-### Role Policy Guidelines
+### Naming Guidelines
 There is no technical requirement for the policy name to match the role name. For example, policies can also be used to define higher-level business roles that assign lower-level technical roles from the cds model:
 ```dcl
 POLICY SalesRepresentative {
@@ -32,6 +32,10 @@ POLICY SalesRepresentative {
 ```
 
 If a policy assigns exactly one role, it is a good practice to use the same name of the role as policy name.
+
+::: tip Policy Generation
+The AMS Node.js module [`@sap/ams`](https://www.npmjs.com/package/@sap/ams) can be used to [generate](/CAP/cds-Plugin#base-policy-generation) 1 base policy per cds role from the cds model.
+:::
 
 ## ASSIGN ROLE keyword
 The `ASSIGN ROLE` keyword is CAP-specific syntactic sugar of DCL to abstract away from the underlying *action*/*resource* model of AMS and to allow a more intuitive way of defining policies that assign cds roles to users.
